@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>🗣️Yes!🌎 — Vokabeltrainer</title>
+<title>Yes!🌎 — Vokabeltrainer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -201,7 +201,9 @@
     width: 100%; margin-top: 8px; padding: 14px 15px; border-radius: 4px;
     clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
     border: 1px solid var(--border); background: var(--card); color: var(--ink);
-    font-size: 14px; font-weight: 500; font-family: var(--font-body);
+    /* font-size: 16px ist kein Zufall — unter 16px zoomt iOS Safari automatisch
+       ins Feld hinein, sobald man es antippt/die Tastatur öffnet. */
+    font-size: 16px; font-weight: 500; font-family: var(--font-body);
     box-shadow: var(--shadow-soft);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
@@ -214,7 +216,7 @@
     width: 100%; margin-top: 8px; padding: 14px 15px; border-radius: 4px;
     clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
     border: 1px solid var(--border); background: var(--card); color: var(--ink);
-    font-size: 14px; font-weight: 600; font-family: var(--font-body); appearance: none;
+    font-size: 16px; font-weight: 600; font-family: var(--font-body); appearance: none;
     box-shadow: var(--shadow-soft);
     background-image: linear-gradient(45deg, transparent 50%, var(--accent) 50%), linear-gradient(135deg, var(--accent) 50%, transparent 50%);
     background-position: calc(100% - 21px) center, calc(100% - 16px) center;
@@ -702,15 +704,15 @@
     </select>
 
     <div class="header" style="margin-top: 26px;">
-      <h1 class="title" id="appTitleLogin">🗣️Yes!🌎</h1>
+      <h1 class="title" id="appTitleLogin">Yes!🌎</h1>
       <div class="app-subtitle" id="loginSubtitle">Wähle deinen Benutzernamen</div>
     </div>
 
     <div class="toggle-group-label" id="loginNameLabel">Benutzername</div>
-    <input class="text-input" id="loginName" type="text" maxlength="24" placeholder="z. B. Anna" />
+    <input class="text-input" id="loginName" type="text" maxlength="24" placeholder="z. B. Dora" />
 
     <div class="toggle-group-label" id="loginEmailLabel">E-Mail (optional)</div>
-    <input class="text-input" id="loginEmail" type="email" placeholder="anna@beispiel.de" />
+    <input class="text-input" id="loginEmail" type="email" placeholder="dora@beispiel.de" />
 
     <button class="primary-button" id="loginSubmit" style="margin-top: 26px;">Los geht's →</button>
 
@@ -724,7 +726,7 @@
     <div class="menu-header-row">
       <div class="menu-header-spacer"></div>
       <div class="header">
-        <h1 class="title" id="appTitleMenu">🗣️Yes!🌎</h1>
+        <h1 class="title" id="appTitleMenu">Yes!🌎</h1>
         <div class="app-subtitle" id="appSubtitle">Sprachen lernen</div>
         <div class="stats-bar" id="statsBar">
           <button class="stats-bar-item" id="pillRank">⚔️ 0</button>
@@ -853,6 +855,10 @@
         <div class="profile-stat">
           <div class="profile-stat-value" id="xpWalletValue">💎 0</div>
           <div class="profile-stat-label" id="xpWalletLabel">Verbleibende XP für Käufe</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-value" id="xpAvgPerDayValue">📊 0</div>
+          <div class="profile-stat-label" id="xpAvgPerDayLabel">Ø XP / Tag</div>
         </div>
       </div>
 
@@ -1247,6 +1253,7 @@
       modeNameTyping: '✍️ Tippen',
       avatarLockedTooltip: (n) => `Für ${n} XP freischaltbar`,
       xpWalletLabel: 'Verbleibende XP für Käufe',
+      xpAvgPerDayLabel: 'Ø XP / Tag',
       xpWalletAffords: (n) => `Reicht noch für ${n} weitere${n === 1 ? 's' : ''} Profilbild${n === 1 ? '' : 'er'}`,
       xpWalletNotEnough: (need) => `Noch ${need} XP bis zum nächsten Profilbild`,
       avatarConfirmTitle: 'Profilbild freischalten?',
@@ -1337,6 +1344,7 @@
       modeNameTyping: '✍️ Digitar',
       avatarLockedTooltip: (n) => `Desbloqueável por ${n} XP`,
       xpWalletLabel: 'XP restante para compras',
+      xpAvgPerDayLabel: 'Média XP / dia',
       xpWalletAffords: (n) => `Dá para mais ${n} avatar${n === 1 ? '' : 'es'}`,
       xpWalletNotEnough: (need) => `Faltam ${need} XP para o próximo avatar`,
       avatarConfirmTitle: 'Desbloquear avatar?',
@@ -1427,6 +1435,7 @@
       modeNameTyping: '✍️ Typing',
       avatarLockedTooltip: (n) => `Unlockable for ${n} XP`,
       xpWalletLabel: 'Remaining XP for purchases',
+      xpAvgPerDayLabel: 'Avg XP / day',
       xpWalletAffords: (n) => `Enough for ${n} more avatar${n === 1 ? '' : 's'}`,
       xpWalletNotEnough: (need) => `${need} XP to go until the next avatar`,
       avatarConfirmTitle: 'Unlock this avatar?',
@@ -1503,6 +1512,7 @@
   let modeXp = { phrases: 0, typing: 0 }; // XP je Spielmodus
   let streak = 0;
   let lastActiveDate = null;
+  let firstActiveDate = null; // für die "Ø XP pro Tag"-Statistik auf der XP-Seite
 
   function gainXp(amount, mode) {
     xp += amount;
@@ -1624,6 +1634,7 @@
         walletXp = (typeof data.walletXp === 'number') ? data.walletXp : xp;
         streak = data.streak || 0;
         lastActiveDate = data.lastActiveDate || null;
+        firstActiveDate = data.firstActiveDate || null;
         if (data.langXp) Object.assign(langXp, data.langXp);
         if (data.modeXp) Object.assign(modeXp, data.modeXp);
 
@@ -1662,7 +1673,7 @@
     if (!hasStorage()) return;
     try {
       await db.set('gameState', JSON.stringify({
-        stagesStateByLang, typingStagesStateByLang, xp, walletXp, langXp, modeXp, streak, lastActiveDate,
+        stagesStateByLang, typingStagesStateByLang, xp, walletXp, langXp, modeXp, streak, lastActiveDate, firstActiveDate,
       }));
     } catch (e) {}
     syncSocialStats();
@@ -1750,6 +1761,7 @@
 
   function updateStreakOnOpen() {
     const today = todayString();
+    if (!firstActiveDate) firstActiveDate = today;
     if (lastActiveDate !== today) {
       const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
       streak = (lastActiveDate === yesterday) ? streak + 1 : 1;
@@ -1791,8 +1803,15 @@
 
   // --- Typing state (Level-Struktur wie Phrases) ---
   const RANK_STEP = 250; // Rang 1 ab 250 XP, Rang 2 ab 500 XP, …
-  const BONUS_AVATAR_COUNT = 5; // letzte 5 Profilbilder sind kaufbar
-  const AVATAR_PRICE = 250; // Preis je Profilbild in XP
+  const BONUS_AVATAR_COUNT = 10; // letzte 10 Profilbilder sind kaufbar (erste 5 automatisch frei)
+  const AVATAR_PRICE_TIER_SIZE = 5; // je 5 Bonus-Profilbilder eine Preisstufe
+  const AVATAR_PRICE_TIERS = [250, 500]; // Preis je Stufe: erste 5 kaufbare = 250, nächste 5 = 500
+
+  // Liefert den Preis für ein Bonus-Profilbild anhand seiner Position innerhalb der Bonus-Bilder (0-basiert)
+  function avatarPriceForBonusPos(bonusPos) {
+    const tier = Math.floor(bonusPos / AVATAR_PRICE_TIER_SIZE);
+    return AVATAR_PRICE_TIERS[Math.min(tier, AVATAR_PRICE_TIERS.length - 1)];
+  }
 
   /* =====================================================================
      ASSET-REGISTER — einzige Quelle für alle Icons/Emojis der App.
@@ -1839,7 +1858,7 @@
       warning: { type: 'emoji', value: '⚠️' },
       gift: { type: 'emoji', value: '🎁' },
     },
-    // 15 Profilbilder — die letzten BONUS_AVATAR_COUNT sind kostenpflichtig (siehe AVATAR_PRICE)
+    // 15 Profilbilder — die letzten BONUS_AVATAR_COUNT sind kostenpflichtig (siehe AVATAR_PRICE_TIERS)
     avatars: [
       { type: 'emoji', value: '🔋' }, { type: 'emoji', value: '🌎' }, { type: 'emoji', value: '♥️' },
       { type: 'emoji', value: '🗣️' }, { type: 'emoji', value: '🎂' }, { type: 'emoji', value: '🍑' },
@@ -1923,6 +1942,7 @@
   const xpTotalValue = $('xpTotalValue'), xpTotalLabel = $('xpTotalLabel');
   const xpByModeLabel = $('xpByModeLabel'), xpModeList = $('xpModeList');
   const xpWalletValue = $('xpWalletValue'), xpWalletLabel = $('xpWalletLabel');
+  const xpAvgPerDayValue = $('xpAvgPerDayValue'), xpAvgPerDayLabel = $('xpAvgPerDayLabel');
   const confirmOverlay = $('confirmOverlay'), confirmEmoji = $('confirmEmoji');
   const confirmTitle = $('confirmTitle'), confirmText = $('confirmText');
   const confirmYesBtn = $('confirmYesBtn'), confirmCancelBtn = $('confirmCancelBtn');
@@ -2005,7 +2025,7 @@
 
   /* ================= LOGIN ================= */
   function brandTitleHTML() {
-    return `${assetHTML('brand.mic')}Yes!${assetHTML('brand.globe')}`;
+    return `Yes!${assetHTML('brand.globe')}`;
   }
 
   function renderLogin() {
@@ -2334,6 +2354,14 @@
     });
   }
 
+  function avgXpPerDay() {
+    if (!firstActiveDate) return xp; // erster Tag: noch keine Zeitspanne, zeig einfach die Gesamt-XP
+    const first = new Date(firstActiveDate + 'T00:00:00');
+    const today = new Date(todayString() + 'T00:00:00');
+    const days = Math.max(1, Math.round((today - first) / 86400000) + 1);
+    return Math.round(xp / days);
+  }
+
   function renderXpPage() {
     xpPageTitle.textContent = t('xpPageTitle');
     backFromXp.textContent = t('back');
@@ -2341,6 +2369,8 @@
     xpTotalLabel.textContent = t('xpTotalLabel');
     xpWalletValue.innerHTML = `${assetHTML('stats.wallet')} ${walletXp}`;
     xpWalletLabel.textContent = t('xpWalletLabel');
+    xpAvgPerDayValue.innerHTML = `📊 ${avgXpPerDay()}`;
+    xpAvgPerDayLabel.textContent = t('xpAvgPerDayLabel');
     xpByModeLabel.textContent = t('xpByModeLabel');
     xpByLangLabel.textContent = t('langXpLabel');
 
@@ -2390,27 +2420,30 @@
   }
 
   async function tryUnlockAvatar(idx) {
+    const bonusStart = ASSETS.avatars.length - BONUS_AVATAR_COUNT;
+    const price = avatarPriceForBonusPos(idx - bonusStart);
+
     const confirmed = await showConfirm({
       emoji: assetHTML('overlays.lockConfirm'),
       title: t('avatarConfirmTitle'),
-      text: t('avatarConfirmText', AVATAR_PRICE),
+      text: t('avatarConfirmText', price),
       confirmLabel: t('avatarConfirmYes'),
       cancelLabel: t('avatarConfirmCancel'),
     });
     if (!confirmed) return;
 
-    if (walletXp < AVATAR_PRICE) {
+    if (walletXp < price) {
       await showConfirm({
         emoji: assetHTML('overlays.warning'),
         title: t('notEnoughXpTitle'),
-        text: t('notEnoughXpText', AVATAR_PRICE, walletXp),
+        text: t('notEnoughXpText', price, walletXp),
         confirmLabel: t('notEnoughXpOk'),
         singleButton: true,
       });
       return;
     }
 
-    walletXp -= AVATAR_PRICE;
+    walletXp -= price;
     currentProfile.unlockedAvatars = currentProfile.unlockedAvatars || [];
     currentProfile.unlockedAvatars.push(idx);
     currentProfile.avatarKey = idx;
@@ -2431,13 +2464,14 @@
     ASSETS.avatars.forEach((_, idx) => {
       const isBonus = idx >= bonusStart;
       const locked = isBonus && !owned.includes(idx);
+      const price = isBonus ? avatarPriceForBonusPos(idx - bonusStart) : 0;
 
       const btn = document.createElement('button');
       btn.className = 'avatar-option' + (currentProfile.avatarKey === idx ? ' selected' : '') + (locked ? ' locked' : '');
 
       if (locked) {
-        btn.innerHTML = `<span class="avatar-preview">${avatarHTML(idx)}</span><span class="avatar-lock-overlay">${assetHTML('levelState.locked')}</span><span class="avatar-lock-badge">${AVATAR_PRICE}</span>`;
-        btn.title = t('avatarLockedTooltip', AVATAR_PRICE);
+        btn.innerHTML = `<span class="avatar-preview">${avatarHTML(idx)}</span><span class="avatar-lock-overlay">${assetHTML('levelState.locked')}</span><span class="avatar-lock-badge">${price}</span>`;
+        btn.title = t('avatarLockedTooltip', price);
         btn.addEventListener('click', () => tryUnlockAvatar(idx));
       } else {
         btn.innerHTML = avatarHTML(idx);
