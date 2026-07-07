@@ -1,0 +1,3094 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🗣️Yes!🌎 — Vokabeltrainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-grad: linear-gradient(165deg, #EAF4FF 0%, #D8EBFE 55%, #C6E2FD 100%);
+    --card: #FFFFFF;
+    --card-glass: rgba(255, 255, 255, 0.9);
+    --border: #C9DFF7;
+    --text-dim: #4A6584;
+    --text-dimmer: #7E9AB8;
+    --text-mid: #27405C;
+    --accent: #0EA5E9;
+    --accent-deep: #0284C7;
+    --accent-soft: rgba(14, 165, 233, 0.13);
+    --danger: #EF4444;
+    --danger-soft: rgba(239, 68, 68, 0.12);
+    --ink: #0B1B30;
+    --title-color: #0284C7;
+    --page-ink: #0B1B30;
+    --page-dim: #40608A;
+    --page-border: rgba(11, 27, 48, 0.18);
+    --shadow-card: 0 18px 40px rgba(2, 60, 110, 0.16);
+    --shadow-soft: 0 8px 22px rgba(2, 60, 110, 0.12);
+    --font-display: 'Space Grotesk', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SFMono-Regular', monospace;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  body.dark {
+    --bg-grad: radial-gradient(ellipse 120% 80% at 50% -10%, #0C1930 0%, #050810 45%, #020408 100%);
+    --card: #0B1220;
+    --card-glass: rgba(10, 16, 30, 0.86);
+    --border: #1C2A42;
+    --text-dim: #8AA0C0;
+    --text-dimmer: #4F6280;
+    --text-mid: #C4D3EA;
+    --accent: #38BDF8;
+    --accent-deep: #0EA5E9;
+    --accent-soft: rgba(56, 189, 248, 0.14);
+    --danger: #FB7185;
+    --danger-soft: rgba(251, 113, 133, 0.14);
+    --ink: #F1F6FD;
+    --title-color: #38BDF8;
+    --page-ink: #F1F6FD;
+    --page-dim: #8FA3C2;
+    --page-border: #22314C;
+    --shadow-card: 0 20px 46px rgba(0, 0, 0, 0.55);
+    --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg-grad) fixed;
+    font-family: var(--font-body);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 28px 16px 60px;
+    transition: background 0.4s ease;
+    position: relative;
+  }
+
+  .app { width: 100%; max-width: 430px; position: relative; z-index: 1; }
+
+  .screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: screenIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .screen.hidden { display: none; }
+
+  button { font-family: inherit; border: none; cursor: pointer; }
+
+  .back-button {
+    align-self: flex-start;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(8px);
+    color: var(--page-ink);
+    border: 1px solid var(--page-border);
+    padding: 9px 18px;
+    border-radius: 4px;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    margin-bottom: 20px;
+    transition: background 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+  }
+  .back-button:hover { background: rgba(255,255,255,0.13); border-color: var(--accent); }
+  .back-button:active { transform: scale(0.95); }
+
+  .header { text-align: center; width: 100%; }
+  .title {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 700;
+    background: linear-gradient(120deg, var(--title-color), var(--accent) 45%, var(--title-color));
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 1px;
+    margin: 0;
+    filter: drop-shadow(0 0 18px rgba(14, 165, 233, 0.35));
+    animation: titleShine 6s linear infinite;
+  }
+  @keyframes titleShine {
+    0% { background-position: 0% center; }
+    100% { background-position: 220% center; }
+  }
+  .app-subtitle { font-family: var(--font-mono); font-size: 12px; color: var(--page-dim); font-weight: 500; margin-top: 8px; letter-spacing: 0.3px; }
+  .mode-label { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--page-ink); margin: 0; letter-spacing: 0.3px; }
+  .subtitle {
+    font-family: var(--font-mono); font-size: 11px; color: var(--accent); font-weight: 600; margin-top: 10px;
+    text-transform: uppercase; letter-spacing: 2.4px;
+  }
+  .progress-counter { font-family: var(--font-mono); font-size: 12px; color: var(--page-dim); font-weight: 500; margin-top: 14px; }
+
+  /* --- Menü-Kopf --- */
+  .menu-header-row { display: flex; align-items: flex-start; justify-content: space-between; width: 100%; gap: 8px; }
+  .icon-btn {
+    width: 42px; height: 42px; border-radius: 4px;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+    background: rgba(255,255,255,0.06); backdrop-filter: blur(8px);
+    border: 1px solid var(--page-border);
+    font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: background 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+  }
+  .icon-btn:hover { background: rgba(255,255,255,0.16); border-color: var(--accent); }
+  .icon-btn:active { transform: scale(0.92); }
+  .icon-col { display: flex; flex-direction: column; gap: 8px; }
+  .menu-header-spacer { width: 42px; flex-shrink: 0; }
+
+  .settings-bottom-link {
+    background: transparent; color: var(--page-dim); font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+    margin: 30px auto 0; padding: 10px 18px; border-radius: 4px;
+    display: block; text-align: center;
+    transition: color 0.2s ease;
+  }
+  .settings-bottom-link:hover { color: var(--accent); }
+
+  .stats-row { display: flex; gap: 8px; margin-top: 14px; justify-content: center; flex-wrap: wrap; }
+  .stats-bar {
+    display: flex; margin-top: 14px; background: var(--card-glass);
+    border: 1px solid var(--page-border);
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    border-radius: 4px; box-shadow: var(--shadow-soft); overflow: hidden;
+  }
+  .stats-bar-item {
+    flex: 1; background: transparent; color: var(--ink);
+    padding: 10px 10px; font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    position: relative; transition: background 0.15s ease;
+    white-space: nowrap;
+  }
+  .stats-bar-item:not(:last-child)::after {
+    content: ''; position: absolute; right: 0; top: 22%; bottom: 22%; width: 1px;
+    background: var(--page-border);
+  }
+  .stats-bar-item:active { background: var(--accent-soft); }
+  .stats-bar-item:hover { background: var(--accent-soft); color: var(--accent); }
+  .stat-pill {
+    background: var(--card-glass);
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    color: var(--ink);
+    padding: 8px 15px;
+    border-radius: 4px;
+    clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex; align-items: center; gap: 5px;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
+  }
+  .stat-pill:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .stat-pill:active { transform: scale(0.95); }
+
+  /* --- Formulare --- */
+  .toggle-group-label {
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600; color: var(--page-dim); letter-spacing: 2px;
+    text-transform: uppercase; margin-top: 24px; align-self: flex-start;
+  }
+
+  .text-input, .bio-input {
+    width: 100%; margin-top: 8px; padding: 14px 15px; border-radius: 4px;
+    clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+    border: 1px solid var(--border); background: var(--card); color: var(--ink);
+    font-size: 14px; font-weight: 500; font-family: var(--font-body);
+    box-shadow: var(--shadow-soft);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .text-input:focus, .bio-input:focus { outline: none; border-color: var(--accent); }
+  .text-input::placeholder, .bio-input::placeholder { color: var(--text-dimmer); font-weight: 500; }
+
+  .bio-input { resize: vertical; min-height: 130px; line-height: 1.5; }
+
+  .lang-select {
+    width: 100%; margin-top: 8px; padding: 14px 15px; border-radius: 4px;
+    clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+    border: 1px solid var(--border); background: var(--card); color: var(--ink);
+    font-size: 14px; font-weight: 600; font-family: var(--font-body); appearance: none;
+    box-shadow: var(--shadow-soft);
+    background-image: linear-gradient(45deg, transparent 50%, var(--accent) 50%), linear-gradient(135deg, var(--accent) 50%, transparent 50%);
+    background-position: calc(100% - 21px) center, calc(100% - 16px) center;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+  }
+
+  .target-toggle {
+    display: flex; width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 4px;
+    padding: 4px; margin-top: 8px; gap: 4px; box-shadow: var(--shadow-soft);
+  }
+  .target-btn {
+    flex: 1; background: transparent; color: var(--text-mid); padding: 12px 8px;
+    border-radius: 4px; font-family: var(--font-mono); font-size: 12px; font-weight: 700; letter-spacing: 0.3px;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .target-btn.active { background: linear-gradient(135deg, var(--accent), var(--accent-deep)); color: #FFFFFF; box-shadow: 0 0 14px rgba(14,165,233,0.4); }
+
+  .login-note { font-family: var(--font-mono); font-size: 10.5px; color: var(--page-dim); text-align: center; line-height: 1.7; margin-top: 18px; }
+  .guest-link { background: transparent; color: var(--page-ink); text-decoration: underline; font-size: 13px; font-weight: 700; margin-top: 16px; }
+
+  /* --- Mode-Karten & Level-Grid --- */
+  .mode-list { width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: 26px; }
+  .mode-block { width: 100%; }
+
+  .mode-card {
+    width: 100%; background: var(--card-glass); border-radius: 6px;
+    clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+    padding: 19px; display: flex; align-items: center; gap: 15px; text-align: left;
+    border: 1px solid var(--page-border);
+    box-shadow: var(--shadow-card);
+    position: relative; overflow: hidden;
+    transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .mode-card::before {
+    content: ''; position: absolute; top: 0; left: 12%; right: 12%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0.7;
+  }
+  .mode-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .mode-card:active { transform: scale(0.98); }
+
+  .mode-icon {
+    font-size: 23px; width: 46px; height: 46px; border-radius: 4px;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+    background: var(--accent-soft);
+    border: 1px solid rgba(14, 165, 233, 0.25);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .mode-info { flex: 1; }
+  .mode-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--ink); letter-spacing: 0.3px; }
+
+  /* --- Asset-Icons: Platzhalter für spätere Higgsfield-Bilder/Animationen --- */
+  .asset-icon {
+    width: 1em; height: 1em; object-fit: contain;
+    display: inline-block; vertical-align: -0.15em; border-radius: 3px;
+  }
+  .mode-icon .asset-icon, .avatar .asset-icon, .avatar-preview .asset-icon { width: 1.4em; height: 1.4em; }
+  .avatar .asset-icon { width: 100%; height: 100%; border-radius: 50%; }
+  .mode-desc { font-size: 12px; color: var(--text-dim); margin-top: 3px; line-height: 1.45; }
+  .mode-arrow { color: var(--accent); font-size: 14px; transition: transform 0.25s ease; }
+  .mode-arrow.open { transform: rotate(180deg); }
+
+  .stage-panel {
+    max-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 10px;
+    transition: max-height 0.35s cubic-bezier(0.22, 1, 0.36, 1), margin-top 0.3s ease;
+  }
+  .stage-panel.open { max-height: 2400px; margin-top: 10px; }
+
+  .stage-group {
+    background: var(--card-glass); border-radius: 6px; padding: 15px;
+    border: 1px solid var(--page-border);
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+    box-shadow: var(--shadow-soft);
+  }
+  .stage-group.locked { opacity: 0.55; }
+  .stage-group-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .stage-group-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--ink); letter-spacing: 0.2px; }
+  .stage-group-sub { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim); margin-top: 2px; }
+  .stage-group-badge { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--accent); white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+  .stage-caret { display: inline-block; color: var(--text-dim); transition: transform 0.25s ease; font-size: 11px; }
+  .stage-caret.open { transform: rotate(180deg); }
+
+  .level-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 7px;
+    margin-top: 12px;
+  }
+  .level-chip {
+    background: var(--accent-soft);
+    border: 1px solid rgba(14, 165, 233, 0.2);
+    border-radius: 4px;
+    padding: 9px 2px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    transition: transform 0.15s ease, border-color 0.2s ease;
+  }
+  .level-chip:not(.locked):hover { transform: translateY(-2px); border-color: var(--accent); }
+  .level-chip:not(.locked):active { transform: scale(0.93); }
+  .level-chip.locked { background: transparent; border: 1px dashed var(--border); color: var(--text-dimmer); cursor: default; }
+  .level-chip.current { border-color: var(--accent); background: linear-gradient(135deg, var(--accent), var(--accent-deep)); color: #fff; }
+  .level-chip .chip-emoji { font-size: 14px; }
+
+  /* --- Spielkarte --- */
+  .card {
+    width: 100%; background: var(--card); border-radius: 8px; padding: 30px 24px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border: 1px solid var(--page-border);
+    clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+    box-shadow: var(--shadow-card);
+    margin-top: 24px;
+    position: relative; overflow: hidden;
+    transition: border-color 0.3s ease, transform 0.2s ease;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 8%; right: 8%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0.8;
+  }
+  .card.correct { border-color: var(--accent); box-shadow: var(--shadow-card), 0 0 0 1px var(--accent), 0 0 26px rgba(14,165,233,0.35); animation: pulseOk 0.4s ease; }
+  .card.wrong { border-color: var(--danger); animation: shake 0.4s ease; }
+
+  @keyframes pulseOk {
+    0% { transform: scale(1); } 40% { transform: scale(1.02); } 100% { transform: scale(1); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-7px); } 75% { transform: translateX(7px); }
+  }
+
+  .card-indicator { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 3px; }
+  .main-word { font-family: var(--font-display); font-size: 30px; font-weight: 700; color: var(--ink); line-height: 1.25; margin: 14px 0 0; text-align: center; }
+  .phonetics { font-size: 14px; color: var(--text-dim); font-style: italic; margin-top: 10px; min-height: 18px; }
+
+  .menu-label {
+    font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim); font-weight: 600; letter-spacing: 1.6px;
+    text-transform: uppercase; margin-top: 26px; align-self: flex-start;
+  }
+
+  .options { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
+
+  .option-button {
+    background: var(--accent-soft);
+    color: var(--ink); padding: 16px 10px; border-radius: 4px;
+    border: 1px solid rgba(14, 165, 233, 0.22);
+    font-size: 14px; font-weight: 600; line-height: 1.3; text-align: center;
+    transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  }
+  .option-button:not(.disabled):hover { border-color: var(--accent); transform: translateY(-2px); }
+  .option-button:active { transform: scale(0.96); }
+  .option-button.disabled { cursor: default; }
+  .option-button.correct-answer { background: linear-gradient(135deg, var(--accent), var(--accent-deep)); border-color: var(--accent); color: #fff; }
+  .option-button.wrong-answer { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
+  .option-button.faded { opacity: 0.35; }
+
+  .feedback { font-size: 13px; font-weight: 700; margin-top: 18px; min-height: 18px; text-align: center; }
+  .feedback.correct { color: var(--accent); }
+  .feedback.wrong { color: var(--danger); }
+
+  .footer { width: 100%; min-height: 62px; display: flex; align-items: center; justify-content: center; margin-top: 8px; }
+
+  .primary-button {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+    padding: 16px 8px; border-radius: 5px; color: #fff; font-family: var(--font-display); font-size: 14px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1.4px;
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+    box-shadow: 0 8px 24px rgba(14, 165, 233, 0.4);
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+  }
+  .primary-button:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(14, 165, 233, 0.5); }
+  .primary-button:active { transform: scale(0.97); }
+
+  .secondary-button {
+    background: var(--card); padding: 16px 8px; border-radius: 5px;
+    border: 1px solid var(--page-border);
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    color: var(--text-mid); font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.15s ease, border-color 0.2s ease;
+  }
+  .secondary-button:hover { border-color: var(--accent); }
+  .secondary-button:active { transform: scale(0.96); }
+
+  /* --- Streak / Runden-Punkte --- */
+  .streak-row { display: flex; justify-content: center; gap: 10px; margin-top: 14px; }
+  .streak-dot {
+    width: 10px; height: 10px;
+    background: transparent; border: 2px solid var(--page-border);
+    transform: rotate(45deg);
+    transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .streak-dot.correct { background: var(--accent); border-color: var(--accent); transform: rotate(45deg) scale(1.25); box-shadow: 0 0 10px rgba(14, 165, 233, 0.8); }
+  .streak-dot.wrong { background: var(--danger); border-color: var(--danger); transform: rotate(45deg) scale(1.25); box-shadow: 0 0 10px rgba(239, 68, 68, 0.8); }
+  .streak-label { font-family: var(--font-mono); font-size: 11px; color: var(--page-dim); margin-top: 10px; font-weight: 500; text-align: center; line-height: 1.5; }
+
+  /* --- Karteikarten mit 3D-Flip --- */
+  .chunk-tabs { display: flex; gap: 8px; margin-top: 16px; justify-content: center; flex-wrap: wrap; }
+  .chunk-tab {
+    background: var(--card-glass); color: var(--ink);
+    border: 1px solid rgba(14, 165, 233, 0.25);
+    padding: 9px 17px; border-radius: 4px; font-family: var(--font-mono); font-size: 13px; font-weight: 700;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .chunk-tab:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .chunk-tab:active { transform: scale(0.94); }
+  .chunk-tab.active { background: linear-gradient(135deg, var(--accent), var(--accent-deep)); color: #fff; }
+
+  .flip-scene { width: 100%; perspective: 1200px; margin-top: 24px; }
+  .flip-card {
+    width: 100%; min-height: 300px; position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4, 0.1, 0.2, 1);
+    cursor: pointer;
+  }
+  .flip-card.flipped { transform: rotateY(180deg); }
+  .flip-face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    background: var(--card); border-radius: 8px; padding: 30px 24px;
+    border: 1px solid var(--page-border);
+    clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-card);
+  }
+  .flip-face.back { transform: rotateY(180deg); border: 1px solid var(--accent); box-shadow: var(--shadow-card), 0 0 24px rgba(14,165,233,0.25); }
+  .flip-hint { font-family: var(--font-mono); font-size: 11px; color: var(--text-dimmer); font-weight: 500; margin-top: 20px; }
+
+  .flash-flip-button {
+    width: 100%; margin-top: 18px;
+    background: var(--card-glass); color: var(--accent);
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    padding: 14px 8px; border-radius: 5px; font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.15s ease, border-color 0.2s ease;
+  }
+  .flash-flip-button:hover { border-color: var(--accent); }
+  .flash-flip-button:active { transform: scale(0.96); }
+
+  .flash-nav { width: 100%; display: flex; gap: 10px; margin-top: 12px; }
+  .flash-nav .secondary-button { flex: 1; }
+  .flash-nav .primary-button { flex: 1.3; width: auto; }
+
+  /* --- Profil --- */
+  .profile-card {
+    width: 100%; background: var(--card-glass); border-radius: 8px; padding: 26px;
+    border: 1px solid var(--page-border);
+    clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+    box-shadow: var(--shadow-card); margin-top: 22px;
+    display: flex; flex-direction: column; align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .profile-card::before {
+    content: ''; position: absolute; top: 0; left: 8%; right: 8%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0.8;
+  }
+  .avatar {
+    width: 76px; height: 76px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; font-weight: 900; color: #fff;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0 4px var(--accent-soft), 0 8px 24px rgba(14, 165, 233, 0.45);
+  }
+  .profile-name { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--ink); margin-top: 13px; }
+  .profile-email { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-top: 3px; }
+  .profile-stats { display: flex; gap: 10px; margin-top: 18px; width: 100%; }
+  .profile-stat {
+    flex: 1; background: var(--accent-soft); border: 1px solid rgba(14, 165, 233, 0.18); border-radius: 4px; padding: 14px 8px;
+    text-align: center;
+  }
+  .profile-stat-value { font-family: var(--font-mono); font-size: 19px; font-weight: 700; color: var(--ink); }
+  .profile-stat-label { font-family: var(--font-mono); font-size: 10px; font-weight: 600; color: var(--text-dim); margin-top: 3px; text-transform: uppercase; letter-spacing: 1.2px; }
+
+  .bio-counter { font-family: var(--font-mono); font-size: 10.5px; color: var(--page-dim); align-self: flex-end; margin-top: 5px; }
+  .bio-saved-msg { font-size: 12px; color: var(--page-ink); font-weight: 700; margin-top: 8px; min-height: 15px; text-align: center; }
+
+  .follow-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: var(--card-glass); border: 1px solid var(--page-border); border-radius: 4px;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+    padding: 11px 14px;
+    box-shadow: var(--shadow-soft); margin-top: 8px;
+  }
+  .follow-item-avatar {
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    background: var(--accent-soft); display: flex; align-items: center; justify-content: center;
+    font-size: 16px; overflow: hidden;
+  }
+  .follow-item-info { flex: 1; min-width: 0; }
+  .follow-item-name { font-size: 13px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .follow-item-stats { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim); margin-top: 2px; }
+  .unfollow-btn {
+    background: var(--danger-soft); color: var(--danger);
+    padding: 7px 12px; border-radius: 4px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+
+  .lang-xp-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: var(--card-glass); border: 1px solid var(--page-border); border-radius: 4px;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+    padding: 12px 15px;
+    box-shadow: var(--shadow-soft);
+  }
+  .lang-xp-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+  .lang-xp-value { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--accent); }
+
+  .profile-bio {
+    font-size: 13px; color: var(--text-mid); margin-top: 12px;
+    line-height: 1.55; text-align: center; white-space: pre-wrap;
+    max-width: 100%; word-break: break-word;
+    border-top: 1px solid var(--border); padding-top: 12px;
+  }
+
+  /* --- Avatar-Auswahl --- */
+  .avatar-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+    width: 100%; margin-top: 8px;
+  }
+  .avatar-option {
+    background: var(--card-glass); border: 1px solid var(--page-border); border-radius: 4px;
+    font-size: 24px; padding: 10px 0; box-shadow: var(--shadow-soft);
+    transition: transform 0.15s ease, border-color 0.2s ease;
+  }
+  .avatar-option:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .avatar-option:active { transform: scale(0.9); }
+  .profile-stat-link { border: none; cursor: pointer; transition: transform 0.15s ease; }
+  .profile-stat-link:hover { transform: translateY(-2px); }
+  .profile-stat-link:active { transform: scale(0.95); }
+
+  .avatar-option.locked { cursor: pointer; position: relative; background: var(--accent-soft); }
+  .avatar-preview { display: block; filter: grayscale(65%) brightness(0.75); opacity: 0.6; }
+  .avatar-lock-overlay { position: absolute; top: 4px; right: 6px; font-size: 11px; }
+  .avatar-option.selected { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 14px rgba(14,165,233,0.35); }
+  .avatar-lock-badge { display: block; font-family: var(--font-mono); font-size: 9.5px; margin-top: 2px; font-weight: 700; color: var(--accent); }
+
+  /* --- Tipp-Modus --- */
+  .typo-err { color: var(--danger); font-weight: 900; text-decoration: underline; }
+  .typed-line { font-family: var(--font-mono); font-size: 15px; margin-top: 8px; letter-spacing: 0.4px; color: var(--ink); }
+  .correct-line { font-size: 14px; margin-top: 6px; color: var(--text-mid); }
+  .correct-line b { color: var(--accent); }
+  .new-badge {
+    display: inline-block; background: linear-gradient(135deg, var(--accent), var(--accent-deep)); color: #fff;
+    font-family: var(--font-mono); font-size: 9.5px; font-weight: 700; letter-spacing: 1px;
+    padding: 4px 10px; border-radius: 4px; margin-top: 10px;
+  }
+  .typing-input-row { width: 100%; display: flex; gap: 10px; margin-top: 20px; }
+  .typing-input-row .text-input { flex: 1; margin-top: 0; }
+  .typing-input-row .primary-button { width: auto; padding-left: 22px; padding-right: 22px; }
+
+  .logout-btn {
+    margin-top: 26px; background: rgba(255,255,255,0.06); backdrop-filter: blur(8px);
+    border: 1px solid var(--page-border); color: var(--page-ink);
+    padding: 12px 22px; border-radius: 4px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.4px;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+  .logout-btn:hover { background: rgba(255,255,255,0.13); border-color: var(--accent); }
+
+  /* --- Theme-Switch --- */
+  .theme-toggle-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 14px; font-size: 16px; }
+  .theme-switch {
+    width: 56px; height: 31px; background: var(--card); border: 1px solid var(--border); border-radius: 999px;
+    position: relative; padding: 3px; cursor: pointer; box-shadow: var(--shadow-soft);
+  }
+  .theme-switch .thumb {
+    width: 25px; height: 25px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+    position: absolute; top: 2px; left: 2px;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  body.dark .theme-switch .thumb { transform: translateX(25px); }
+
+  /* --- Overlay --- */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(2, 4, 8, 0.72);
+    backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center; padding: 0 28px; z-index: 10;
+  }
+  .overlay.visible { display: flex; }
+  .overlay-card {
+    width: 100%; max-width: 380px; background: var(--card); border-radius: 10px; padding: 34px;
+    text-align: center; border: 1px solid var(--accent);
+    clip-path: polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px);
+    animation: overlayPop 0.32s cubic-bezier(0.34, 1.4, 0.64, 1);
+    box-shadow: var(--shadow-card);
+  }
+  .overlay-card.repeat { border-color: var(--danger); }
+  @keyframes overlayPop {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .overlay-emoji { font-size: 46px; margin-bottom: 12px; animation: bounceIn 0.5s ease; }
+  @keyframes bounceIn {
+    0% { transform: scale(0); } 60% { transform: scale(1.2); } 100% { transform: scale(1); }
+  }
+  .overlay-title { font-family: var(--font-display); font-size: 21px; font-weight: 700; color: var(--ink); margin: 0; }
+  .overlay-text { font-size: 14px; color: var(--text-mid); margin-top: 10px; line-height: 1.5; }
+  .overlay-button {
+    margin-top: 24px; background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+    padding: 14px 40px; border-radius: 5px; color: #fff; font-family: var(--font-display); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+    box-shadow: 0 8px 24px rgba(14, 165, 233, 0.4);
+    transition: transform 0.15s ease;
+  }
+  .overlay-button:active { transform: scale(0.95); }
+  .overlay-card.repeat .overlay-button { background: linear-gradient(135deg, var(--danger), #DC2626); box-shadow: 0 8px 20px rgba(239, 68, 68, 0.35); }
+  /* ================================================================
+     HUD-Umgebung — Tiefe, Glow und Bewegung (gleiche Blau-Palette)
+     ================================================================ */
+
+  :root {
+    --glow: 0 0 12px rgba(14, 165, 233, 0.4), 0 0 30px rgba(14, 165, 233, 0.16);
+    --glow-strong: 0 0 20px rgba(14, 165, 233, 0.6), 0 0 50px rgba(14, 165, 233, 0.28);
+    --grid-line: rgba(2, 132, 199, 0.08);
+  }
+  body.dark {
+    --glow: 0 0 14px rgba(56, 189, 248, 0.5), 0 0 38px rgba(56, 189, 248, 0.22);
+    --glow-strong: 0 0 22px rgba(56, 189, 248, 0.75), 0 0 58px rgba(56, 189, 248, 0.35);
+    --grid-line: rgba(56, 189, 248, 0.09);
+  }
+
+  /* HUD-Gitter + Glow-Kerne + wandernde Scanlinie über dem Verlauf */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% -10%, rgba(14,165,233,0.16), transparent 60%),
+      radial-gradient(ellipse 50% 35% at 85% 110%, rgba(2,132,199,0.14), transparent 60%),
+      repeating-linear-gradient(0deg, var(--grid-line) 0 1px, transparent 1px 46px),
+      repeating-linear-gradient(90deg, var(--grid-line) 0 1px, transparent 1px 46px);
+  }
+  body::after {
+    content: '';
+    position: fixed; left: 0; right: 0; height: 140px; pointer-events: none; z-index: 0;
+    background: linear-gradient(180deg, transparent, rgba(56, 189, 248, 0.05), transparent);
+    animation: scanDrift 9s linear infinite;
+  }
+  @keyframes scanDrift {
+    0% { top: -140px; } 100% { top: 100%; }
+  }
+
+  .mode-card:hover, .avatar-option:hover { box-shadow: var(--shadow-card), var(--glow); }
+  .card.correct, .flip-face.back { box-shadow: var(--shadow-card), var(--glow); }
+  .overlay-card { box-shadow: var(--shadow-card), var(--glow-strong); }
+
+  .primary-button:hover, .overlay-button:hover { box-shadow: 0 12px 30px rgba(14, 165, 233, 0.5), var(--glow); }
+
+  .option-button:not(.disabled):hover { box-shadow: var(--glow); }
+  .option-button.correct-answer { box-shadow: var(--glow-strong); }
+
+  .stat-pill:hover, .chunk-tab:hover { box-shadow: var(--glow); }
+  .chunk-tab.active { box-shadow: var(--glow); }
+
+  .level-chip.current { box-shadow: var(--glow); animation: chipPulse 2.2s ease-in-out infinite; }
+  @keyframes chipPulse {
+    0%, 100% { box-shadow: var(--glow); }
+    50% { box-shadow: var(--glow-strong); }
+  }
+
+  .theme-switch .thumb { box-shadow: var(--glow); }
+  .text-input:focus, .bio-input:focus { box-shadow: var(--glow); }
+
+  /* Feineres Screen-Einblenden mit leichtem Hologramm-Effekt */
+  @keyframes screenIn {
+    0% { opacity: 0; transform: translateY(16px) scale(0.985); filter: brightness(1.4) saturate(0.6); }
+    60% { filter: brightness(1.05) saturate(1); }
+    100% { opacity: 1; transform: translateY(0) scale(1); filter: none; }
+  }
+</style>
+</head>
+<body class="dark">
+
+<div class="app">
+
+  <!-- ============ LOGIN ============ -->
+  <section class="screen" id="screen-login">
+    <select class="lang-select" id="loginLangSelect" style="max-width: 170px; align-self: flex-end; margin-top: 0;">
+      <option value="de">🇩🇪 Deutsch</option>
+      <option value="pt">🇵🇹 Português</option>
+      <option value="en">🇬🇧 English</option>
+    </select>
+
+    <div class="header" style="margin-top: 26px;">
+      <h1 class="title" id="appTitleLogin">🗣️Yes!🌎</h1>
+      <div class="app-subtitle" id="loginSubtitle">Wähle deinen Benutzernamen</div>
+    </div>
+
+    <div class="toggle-group-label" id="loginNameLabel">Benutzername</div>
+    <input class="text-input" id="loginName" type="text" maxlength="24" placeholder="z. B. Anna" />
+
+    <div class="toggle-group-label" id="loginEmailLabel">E-Mail (optional)</div>
+    <input class="text-input" id="loginEmail" type="email" placeholder="anna@beispiel.de" />
+
+    <button class="primary-button" id="loginSubmit" style="margin-top: 26px;">Los geht's →</button>
+
+    <div class="login-note" id="loginNote">
+      Kein Passwort, keine E-Mail nötig — der Benutzername reicht. Dein Fortschritt wird lokal in diesem Chat gespeichert.
+    </div>
+  </section>
+
+  <!-- ============ MENU ============ -->
+  <section class="screen hidden" id="screen-menu">
+    <div class="menu-header-row">
+      <div class="menu-header-spacer"></div>
+      <div class="header">
+        <h1 class="title" id="appTitleMenu">🗣️Yes!🌎</h1>
+        <div class="app-subtitle" id="appSubtitle">Sprachen lernen</div>
+        <div class="stats-bar" id="statsBar">
+          <button class="stats-bar-item" id="pillRank">⚔️ 0</button>
+          <button class="stats-bar-item" id="pillStreak">🔥 0</button>
+          <button class="stats-bar-item" id="pillXp">⭐ 0 XP</button>
+          <button class="stats-bar-item" id="pillProfile">👤</button>
+        </div>
+      </div>
+      <div class="menu-header-spacer"></div>
+    </div>
+
+    <div class="toggle-group-label" id="targetLangLabel">Ich möchte lernen</div>
+    <div class="target-toggle" id="targetToggle"></div>
+
+    <div class="mode-list">
+      <div class="mode-block">
+        <button class="mode-card" id="modePhrasesToggle">
+          <div class="mode-icon" id="iconModePhrases">💬</div>
+          <div class="mode-info">
+            <div class="mode-title">Phrases</div>
+            <div class="mode-desc" id="modePhrasesDesc">Multiple-Choice mit Levels</div>
+          </div>
+          <div class="mode-arrow" id="phrasesArrow">▾</div>
+        </button>
+        <div class="stage-panel" id="phrasesStagePanel"></div>
+      </div>
+
+      <div class="mode-block">
+        <button class="mode-card" id="modeTypingToggle">
+          <div class="mode-icon" id="iconModeTyping">✍️</div>
+          <div class="mode-info">
+            <div class="mode-title" id="modeTypingTitle">Tippen</div>
+            <div class="mode-desc" id="modeTypingDesc">Schreibe die Vokabel selbst — Levels wie bei Phrases</div>
+          </div>
+          <div class="mode-arrow" id="typingArrow">▾</div>
+        </button>
+        <div class="stage-panel" id="typingStagePanel"></div>
+      </div>
+
+      <div class="mode-block">
+        <button class="mode-card" id="modeFlashToggle">
+          <div class="mode-icon" id="iconModeFlash">🗂️</div>
+          <div class="mode-info">
+            <div class="mode-title" id="modeFlashTitle">Karteikarten</div>
+            <div class="mode-desc" id="modeFlashDesc">Alle Vokabeln der Reihe nach durchblättern</div>
+          </div>
+          <div class="mode-arrow" id="flashArrow">▾</div>
+        </button>
+        <div class="stage-panel" id="flashStagePanel"></div>
+      </div>
+    </div>
+
+    <div class="toggle-group-label" id="uiLangLabel" style="align-self: center; margin-top: 30px;">Oberfläche</div>
+    <select class="lang-select" id="uiLangSelect" style="max-width: 220px;">
+      <option value="de">🇩🇪 Deutsch</option>
+      <option value="pt">🇵🇹 Português</option>
+      <option value="en">🇬🇧 English</option>
+    </select>
+
+    <button class="settings-bottom-link" id="openSettingsBtn">⚙️ Einstellungen</button>
+  </section>
+
+  <!-- ============ PROFIL ============ -->
+  <section class="screen hidden" id="screen-profile">
+    <button class="back-button" id="backFromProfile">← Menü</button>
+
+    <div class="header">
+      <div class="mode-label" id="profileTitle">Profil</div>
+    </div>
+
+    <div class="profile-card">
+      <div class="avatar" id="profileAvatar">A</div>
+      <div class="profile-name" id="profileName">Anna</div>
+      <div class="profile-email" id="profileEmail"></div>
+      <div class="profile-bio" id="profileBioText" style="display:none;"></div>
+
+      <div class="profile-stats">
+        <div class="profile-stat">
+          <div class="profile-stat-value" id="profileRankValue">⚔️ 0</div>
+          <div class="profile-stat-label" id="profileRankLabel">Rang</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-value" id="profileStreakValue">🔥 0</div>
+          <div class="profile-stat-label" id="profileStreakLabel">Streak</div>
+        </div>
+        <button class="profile-stat profile-stat-link" id="profileXpStat">
+          <div class="profile-stat-value" id="profileXpValue">⭐ 0</div>
+          <div class="profile-stat-label" id="profileXpLabel">XP</div>
+        </button>
+      </div>
+
+      <div class="profile-stats" style="margin-top: 10px;">
+        <div class="profile-stat">
+          <div class="profile-stat-value" id="profileFollowersValue">👥 0</div>
+          <div class="profile-stat-label" id="profileFollowersLabel">Follower</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-value" id="profileFollowingValue">➡️ 0</div>
+          <div class="profile-stat-label" id="profileFollowingLabel">Folge ich</div>
+        </div>
+      </div>
+
+      <button class="primary-button" id="editProfileBtn" style="margin-top: 18px;">✏️ Profil bearbeiten</button>
+    </div>
+
+    <div class="toggle-group-label" id="followLabel">Per E-Mail folgen</div>
+    <input class="text-input" id="followEmailInput" type="email" placeholder="freund@beispiel.de" />
+    <button class="primary-button" id="followBtn" style="margin-top: 12px;">➕ Folgen</button>
+    <div class="bio-saved-msg" id="followMsg"></div>
+    <div id="followingList" style="width: 100%; margin-top: 6px;"></div>
+  </section>
+
+  <!-- ============ XP-ÜBERSICHT ============ -->
+  <section class="screen hidden" id="screen-xp">
+    <button class="back-button" id="backFromXp">← Menü</button>
+
+    <div class="header">
+      <div class="mode-label" id="xpPageTitle">XP-Übersicht</div>
+    </div>
+
+    <div class="profile-card">
+      <div class="profile-stat-value" id="xpTotalValue" style="font-size: 38px;">⭐ 0</div>
+      <div class="profile-stat-label" id="xpTotalLabel">Gesamt-XP</div>
+
+      <div class="profile-stats" style="margin-top: 18px;">
+        <div class="profile-stat">
+          <div class="profile-stat-value" id="xpWalletValue">💎 0</div>
+          <div class="profile-stat-label" id="xpWalletLabel">Verbleibende XP für Käufe</div>
+        </div>
+      </div>
+
+      <div class="toggle-group-label" id="xpByModeLabel" style="align-self: flex-start; margin-top: 26px;">XP je Modus</div>
+      <div id="xpModeList" style="width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 10px;"></div>
+    </div>
+
+    <div class="toggle-group-label" id="xpByLangLabel">XP je Sprache</div>
+    <div id="xpLangList" style="width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 8px;"></div>
+  </section>
+
+  <!-- ============ PROFIL BEARBEITEN ============ -->
+  <section class="screen hidden" id="screen-profile-edit">
+    <button class="back-button" id="backFromProfileEdit">← Profil</button>
+
+    <div class="header">
+      <div class="mode-label" id="profileEditTitle">Profil bearbeiten</div>
+    </div>
+
+    <div class="toggle-group-label" id="avatarLabel">Profilbild wählen</div>
+    <div class="avatar-grid" id="avatarGrid"></div>
+
+    <div class="toggle-group-label" id="bioLabel">Bio (max. 25 Zeilen)</div>
+    <textarea class="bio-input" id="bioInput" placeholder="Erzähl etwas über dich…"></textarea>
+    <div class="bio-counter" id="bioCounter">0 / 25</div>
+    <button class="primary-button" id="bioSaveBtn" style="margin-top: 12px;">Bio speichern</button>
+    <div class="bio-saved-msg" id="bioSavedMsg"></div>
+  </section>
+
+  <!-- ============ EINSTELLUNGEN ============ -->
+  <section class="screen hidden" id="screen-settings">
+    <button class="back-button" id="backFromSettings">← Menü</button>
+
+    <div class="header">
+      <div class="mode-label" id="settingsTitle">Einstellungen</div>
+    </div>
+
+
+    <div class="toggle-group-label" id="appearanceLabel" style="align-self: center; margin-top: 30px;">Erscheinungsbild</div>
+    <div class="theme-toggle-row">
+      <span>☀️</span>
+      <div class="theme-switch" id="themeSwitch"><div class="thumb"></div></div>
+      <span>🌙</span>
+    </div>
+
+    <button class="logout-btn" id="logoutBtn">Abmelden / Profil wechseln</button>
+  </section>
+
+  <!-- ============ PHRASES (Quiz) ============ -->
+  <section class="screen hidden" id="screen-phrases">
+    <button class="back-button" id="backFromPhrases">← Menü</button>
+
+    <div class="header">
+      <div class="mode-label" id="phrasesStageLabel">Phrases</div>
+      <div class="subtitle" id="subtitle">Level 1 von 10</div>
+      <div class="progress-counter" id="progressCounter"></div>
+      <div class="streak-row" id="streakRow"></div>
+      <div class="streak-label" id="streakLabel"></div>
+    </div>
+
+    <div class="card" id="card">
+      <div class="card-indicator" id="cardIndicator">PORTUGUÊS</div>
+      <p class="main-word" id="mainWord"></p>
+      <div class="phonetics" id="phonetics"></div>
+      <div class="menu-label" id="chooseLabel">Wähle die richtige Übersetzung</div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <div class="footer" id="footer"></div>
+  </section>
+
+  <!-- ============ KARTEIKARTEN (Flashcards) ============ -->
+  <section class="screen hidden" id="screen-flashcards">
+    <button class="back-button" id="backFromFlashcards">← Menü</button>
+
+    <div class="header">
+      <div class="mode-label" id="flashModeLabel">Karteikarten</div>
+      <div class="chunk-tabs" id="chunkTabs"></div>
+      <div class="subtitle" id="flashSubtitle">Vokabeln 1–50</div>
+      <div class="progress-counter" id="flashProgress">1 von 50</div>
+    </div>
+
+    <div class="flip-scene">
+      <div class="flip-card" id="flipCard">
+        <div class="flip-face front">
+          <div class="card-indicator" id="flashFrontLabel">PORTUGUÊS</div>
+          <p class="main-word" id="flashFrontWord"></p>
+          <div class="phonetics" id="flashFrontPhonetics"></div>
+          <div class="flip-hint" id="flashFrontHint">Tippen zum Umdrehen →</div>
+        </div>
+        <div class="flip-face back">
+          <div class="card-indicator" id="flashBackLabel">DEUTSCH</div>
+          <p class="main-word" id="flashBackWord"></p>
+          <div class="phonetics" id="flashBackPhonetics"></div>
+          <div class="flip-hint" id="flashBackHint">← Zurückdrehen</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="flash-flip-button" id="flashFlipBtn">↻ Karte umdrehen</button>
+
+    <div class="flash-nav">
+      <button class="secondary-button" id="flashPrev">← Zurück</button>
+      <button class="primary-button" id="flashNext">Weiter →</button>
+    </div>
+  </section>
+
+  <!-- ============ TIPPEN (Typing) ============ -->
+  <section class="screen hidden" id="screen-typing">
+    <button class="back-button" id="backFromTyping">← Menü</button>
+
+    <div class="header">
+      <div class="mode-label" id="typingModeLabel">Tippen</div>
+      <div class="subtitle" id="typingSubtitle"></div>
+      <div class="progress-counter" id="typingIntroCounter"></div>
+      <div class="streak-row" id="typingDots"></div>
+      <div class="streak-label" id="typingHint"></div>
+    </div>
+
+    <div class="card" id="typingCard">
+      <div class="card-indicator" id="typingIndicator">DEUTSCH</div>
+      <p class="main-word" id="typingWord"></p>
+      <div class="phonetics" id="typingPhonetics"></div>
+
+      <div class="typing-input-row">
+        <input class="text-input" id="typingInput" type="text" autocomplete="off" autocapitalize="off" placeholder="Antwort eintippen…" />
+        <button class="primary-button" id="typingCheckBtn">✓</button>
+      </div>
+
+      <div class="feedback" id="typingFeedback"></div>
+    </div>
+
+    <div class="footer" id="typingFooter"></div>
+  </section>
+
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-card" id="overlayCard">
+    <div class="overlay-emoji" id="overlayEmoji">🚀</div>
+    <p class="overlay-title" id="overlayTitle"></p>
+    <p class="overlay-text" id="overlayText"></p>
+    <button class="overlay-button" id="overlayButton">Weiter</button>
+  </div>
+</div>
+
+<div class="overlay" id="confirmOverlay">
+  <div class="overlay-card" id="confirmCard">
+    <div class="overlay-emoji" id="confirmEmoji">🔒</div>
+    <p class="overlay-title" id="confirmTitle"></p>
+    <p class="overlay-text" id="confirmText"></p>
+    <div style="display: flex; gap: 10px; margin-top: 22px; width: 100%;">
+      <button class="secondary-button" id="confirmCancelBtn" style="flex: 1;">Abbrechen</button>
+      <button class="overlay-button" id="confirmYesBtn" style="flex: 1; margin-top: 0;">Freischalten</button>
+    </div>
+  </div>
+</div>
+
+<!--
+  Firebase SDK (Compat-Version, funktioniert ohne Build-Tool direkt im Browser).
+  Wird nur gebraucht, wenn STORAGE_BACKEND im Hauptskript weiter unten auf
+  'firebase' gestellt ist. Solange 'claude' aktiv ist, liegen die Skripte
+  einfach ungenutzt herum — kein Problem, kann aber auch entfernt werden.
+-->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+  /* ================= VOKABELN: 150 Konzepte in DE / PT / EN ================= */
+  const VOCABS = [
+    // ---- STUFE 1 (Grundwortschatz, 50) ----
+    { de:'Hallo', pt:'Olá', ptContext:'[oh-lah]', en:'Hello', enContext:'[heh-loh]' },
+    { de:'Danke', pt:'Obrigado / Obrigada', ptContext:'[oh-bree-gah-doo / -dah]', en:'Thank you', enContext:'[thank yoo]' },
+    { de:'Bitte', pt:'Por favor', ptContext:'[poor fah-vohr]', en:'Please', enContext:'[pleez]' },
+    { de:'Ja', pt:'Sim', ptContext:'[seeng]', en:'Yes', enContext:'[yes]' },
+    { de:'Nein', pt:'Não', ptContext:'[nawng]', en:'No', enContext:'[noh]' },
+    { de:'Guten Morgen', pt:'Bom dia', ptContext:'[bong jee-ah]', en:'Good morning', enContext:'[good mor-ning]' },
+    { de:'Guten Abend', pt:'Boa noite', ptContext:'[boh-ah noy-chee]', en:'Good evening', enContext:'[good eev-ning]' },
+    { de:'Entschuldigung', pt:'Com licença', ptContext:'[kong lee-sen-sah]', en:'Excuse me', enContext:'[ik-skyooz mee]' },
+    { de:'Es tut mir leid', pt:'Desculpa', ptContext:'[dess-kool-pah]', en:"I'm sorry", enContext:'[aim sor-ee]' },
+    { de:'Bis bald', pt:'Até logo', ptContext:'[ah-teh loh-goo]', en:'See you soon', enContext:'[see yoo soon]' },
+    { de:"Wie geht's?", pt:'Tudo bem?', ptContext:'[too-doo bayng]', en:'How are you?', enContext:'[hau ar yoo]' },
+    { de:'Ich verstehe nicht', pt:'Eu não entendo', ptContext:'[eh-oo nawng en-ten-doo]', en:"I don't understand", enContext:'[ai dont un-der-stand]' },
+    { de:'Sprichst du Englisch?', pt:'Você fala inglês?', ptContext:'[voh-say fah-lah een-glays]', en:'Do you speak English?', enContext:'[doo yoo speek ing-lish]' },
+    { de:'Wie viel kostet das?', pt:'Quanto custa?', ptContext:'[kwan-too koos-tah]', en:'How much does it cost?', enContext:'[hau muhch duz it kost]' },
+    { de:'Wo ist...?', pt:'Onde fica...?', ptContext:'[ohn-jee fee-kah]', en:'Where is...?', enContext:'[wair iz]' },
+    { de:'Wie heißt du?', pt:'Qual é o seu nome?', ptContext:'[kwahl eh oh seh-oo noh-mee]', en:"What's your name?", enContext:'[wots yor naym]' },
+    { de:'Mein Name ist...', pt:'Meu nome é...', ptContext:'[meh-oo noh-mee eh]', en:'My name is...', enContext:'[mai naym iz]' },
+    { de:'Wie spät ist es?', pt:'Que horas são?', ptContext:'[kee oh-rahs sow]', en:'What time is it?', enContext:'[wot taim iz it]' },
+    { de:'Ich brauche Hilfe', pt:'Eu preciso de ajuda', ptContext:'[eh-oo preh-see-zoo jee ah-zhoo-dah]', en:'I need help', enContext:'[ai need help]' },
+    { de:'Kannst du mir helfen?', pt:'Você pode me ajudar?', ptContext:'[voh-say poh-jee mee ah-zhoo-dar]', en:'Can you help me?', enContext:'[kan yoo help mee]' },
+    { de:'eins', pt:'um', ptContext:'[oong]', en:'one', enContext:'[wan]' },
+    { de:'zwei', pt:'dois', ptContext:'[doys]', en:'two', enContext:'[tuu]' },
+    { de:'drei', pt:'três', ptContext:'[trays]', en:'three', enContext:'[thriii]' },
+    { de:'vier', pt:'quatro', ptContext:'[kwah-troo]', en:'four', enContext:'[for]' },
+    { de:'fünf', pt:'cinco', ptContext:'[seeng-koo]', en:'five', enContext:'[faif]' },
+    { de:'sechs', pt:'seis', ptContext:'[says]', en:'six', enContext:'[siks]' },
+    { de:'sieben', pt:'sete', ptContext:'[set-chee]', en:'seven', enContext:'[sev-en]' },
+    { de:'acht', pt:'oito', ptContext:'[oy-too]', en:'eight', enContext:'[eit]' },
+    { de:'neun', pt:'nove', ptContext:'[noh-vee]', en:'nine', enContext:'[nain]' },
+    { de:'zehn', pt:'dez', ptContext:'[dez]', en:'ten', enContext:'[ten]' },
+    { de:'Montag', pt:'segunda-feira', ptContext:'[seh-goon-dah fay-rah]', en:'Monday', enContext:'[mun-day]' },
+    { de:'Dienstag', pt:'terça-feira', ptContext:'[ter-sah fay-rah]', en:'Tuesday', enContext:'[tyooz-day]' },
+    { de:'Mittwoch', pt:'quarta-feira', ptContext:'[kwar-tah fay-rah]', en:'Wednesday', enContext:'[wenz-day]' },
+    { de:'Donnerstag', pt:'quinta-feira', ptContext:'[keen-tah fay-rah]', en:'Thursday', enContext:'[thurz-day]' },
+    { de:'Freitag', pt:'sexta-feira', ptContext:'[says-tah fay-rah]', en:'Friday', enContext:'[frai-day]' },
+    { de:'Samstag', pt:'sábado', ptContext:'[sah-bah-doo]', en:'Saturday', enContext:'[sat-ur-day]' },
+    { de:'Sonntag', pt:'domingo', ptContext:'[doh-meeng-goo]', en:'Sunday', enContext:'[sun-day]' },
+    { de:'rot', pt:'vermelho', ptContext:'[ver-meh-lyoo]', en:'red', enContext:'[red]' },
+    { de:'blau', pt:'azul', ptContext:'[ah-zool]', en:'blue', enContext:'[bloo]' },
+    { de:'grün', pt:'verde', ptContext:'[ver-jee]', en:'green', enContext:'[green]' },
+    { de:'gelb', pt:'amarelo', ptContext:'[ah-mah-reh-loo]', en:'yellow', enContext:'[yel-oh]' },
+    { de:'schwarz', pt:'preto', ptContext:'[pray-too]', en:'black', enContext:'[blak]' },
+    { de:'weiß', pt:'branco', ptContext:'[brahn-koo]', en:'white', enContext:'[wait]' },
+    { de:'orange', pt:'laranja', ptContext:'[lah-rahn-jah]', en:'orange', enContext:'[or-inj]' },
+    { de:'lila', pt:'roxo', ptContext:'[hoh-shoo]', en:'purple', enContext:'[pur-pl]' },
+    { de:'Mutter', pt:'mãe', ptContext:'[my]', en:'mother', enContext:'[muh-dher]' },
+    { de:'Vater', pt:'pai', ptContext:'[pie]', en:'father', enContext:'[fah-dher]' },
+    { de:'Bruder', pt:'irmão', ptContext:'[eer-mow]', en:'brother', enContext:'[bruh-dher]' },
+    { de:'Schwester', pt:'irmã', ptContext:'[eer-mah]', en:'sister', enContext:'[sis-ter]' },
+    { de:'Kind', pt:'criança', ptContext:'[kree-ahn-sah]', en:'child', enContext:'[chai-eld]' },
+
+    // ---- STUFE 2 (Aufbauwortschatz, 100) ----
+    { de:'elf', pt:'onze', ptContext:'[own-zee]', en:'eleven', enContext:'[ih-lev-en]' },
+    { de:'zwölf', pt:'doze', ptContext:'[doh-zee]', en:'twelve', enContext:'[twelv]' },
+    { de:'dreizehn', pt:'treze', ptContext:'[tray-zee]', en:'thirteen', enContext:'[thur-teen]' },
+    { de:'vierzehn', pt:'catorze', ptContext:'[kah-tor-zee]', en:'fourteen', enContext:'[for-teen]' },
+    { de:'fünfzehn', pt:'quinze', ptContext:'[keen-zee]', en:'fifteen', enContext:'[fif-teen]' },
+    { de:'sechzehn', pt:'dezesseis', ptContext:'[deh-zee-say-ees]', en:'sixteen', enContext:'[siks-teen]' },
+    { de:'siebzehn', pt:'dezessete', ptContext:'[deh-zee-set-chee]', en:'seventeen', enContext:'[sev-en-teen]' },
+    { de:'achtzehn', pt:'dezoito', ptContext:'[deh-zoy-too]', en:'eighteen', enContext:'[ay-teen]' },
+    { de:'neunzehn', pt:'dezenove', ptContext:'[deh-zee-noh-vee]', en:'nineteen', enContext:'[nain-teen]' },
+    { de:'zwanzig', pt:'vinte', ptContext:'[veen-chee]', en:'twenty', enContext:'[twen-tee]' },
+    { de:'dreißig', pt:'trinta', ptContext:'[treen-tah]', en:'thirty', enContext:'[thur-tee]' },
+    { de:'vierzig', pt:'quarenta', ptContext:'[kwah-ren-tah]', en:'forty', enContext:'[for-tee]' },
+    { de:'fünfzig', pt:'cinquenta', ptContext:'[seeng-kwen-tah]', en:'fifty', enContext:'[fif-tee]' },
+    { de:'sechzig', pt:'sessenta', ptContext:'[seh-sen-tah]', en:'sixty', enContext:'[siks-tee]' },
+    { de:'siebzig', pt:'setenta', ptContext:'[seh-ten-tah]', en:'seventy', enContext:'[sev-en-tee]' },
+    { de:'achtzig', pt:'oitenta', ptContext:'[oy-ten-tah]', en:'eighty', enContext:'[ay-tee]' },
+    { de:'neunzig', pt:'noventa', ptContext:'[noh-ven-tah]', en:'ninety', enContext:'[nain-tee]' },
+    { de:'hundert', pt:'cem', ptContext:'[seng]', en:'one hundred', enContext:'[wan huhn-dred]' },
+    { de:'tausend', pt:'mil', ptContext:'[meel]', en:'one thousand', enContext:'[wan thau-zand]' },
+    { de:'null', pt:'zero', ptContext:'[zeh-roo]', en:'zero', enContext:'[zeer-oh]' },
+    { de:'Januar', pt:'janeiro', ptContext:'[zhah-nay-roo]', en:'January', enContext:'[jan-yoo-air-ee]' },
+    { de:'Februar', pt:'fevereiro', ptContext:'[feh-veh-ray-roo]', en:'February', enContext:'[feb-roo-air-ee]' },
+    { de:'März', pt:'março', ptContext:'[mar-soo]', en:'March', enContext:'[march]' },
+    { de:'April', pt:'abril', ptContext:'[ah-breel]', en:'April', enContext:'[ay-pril]' },
+    { de:'Mai', pt:'maio', ptContext:'[my-oo]', en:'May', enContext:'[may]' },
+    { de:'Juni', pt:'junho', ptContext:'[zhoo-nyoo]', en:'June', enContext:'[joon]' },
+    { de:'Juli', pt:'julho', ptContext:'[zhoo-lyoo]', en:'July', enContext:'[joo-lai]' },
+    { de:'August', pt:'agosto', ptContext:'[ah-gos-too]', en:'August', enContext:'[aw-gust]' },
+    { de:'September', pt:'setembro', ptContext:'[seh-tem-broo]', en:'September', enContext:'[sep-tem-ber]' },
+    { de:'Oktober', pt:'outubro', ptContext:'[oh-too-broo]', en:'October', enContext:'[ok-toh-ber]' },
+    { de:'November', pt:'novembro', ptContext:'[noh-vem-broo]', en:'November', enContext:'[noh-vem-ber]' },
+    { de:'Dezember', pt:'dezembro', ptContext:'[deh-zem-broo]', en:'December', enContext:'[dee-sem-ber]' },
+    { de:'Frühling', pt:'primavera', ptContext:'[pree-mah-veh-rah]', en:'spring', enContext:'[spring]' },
+    { de:'Sommer', pt:'verão', ptContext:'[veh-rowng]', en:'summer', enContext:'[suh-mer]' },
+    { de:'Herbst', pt:'outono', ptContext:'[oh-toh-noo]', en:'autumn', enContext:'[aw-tum]' },
+    { de:'Winter', pt:'inverno', ptContext:'[een-ver-noo]', en:'winter', enContext:'[win-ter]' },
+    { de:'sonnig', pt:'ensolarado', ptContext:'[en-soh-lah-rah-doo]', en:'sunny', enContext:'[suh-nee]' },
+    { de:'regnerisch', pt:'chuvoso', ptContext:'[shoo-voh-zoo]', en:'rainy', enContext:'[ray-nee]' },
+    { de:'bewölkt', pt:'nublado', ptContext:'[noo-blah-doo]', en:'cloudy', enContext:'[klau-dee]' },
+    { de:'windig', pt:'ventoso', ptContext:'[ven-toh-zoo]', en:'windy', enContext:'[win-dee]' },
+    { de:'heiß', pt:'quente', ptContext:'[ken-chee]', en:'hot', enContext:'[hot]' },
+    { de:'kalt', pt:'frio', ptContext:'[free-oo]', en:'cold', enContext:'[kohld]' },
+    { de:'Kopf', pt:'cabeça', ptContext:'[kah-beh-sah]', en:'head', enContext:'[hed]' },
+    { de:'Auge', pt:'olho', ptContext:'[oh-lyoo]', en:'eye', enContext:'[ai]' },
+    { de:'Nase', pt:'nariz', ptContext:'[nah-reez]', en:'nose', enContext:'[nohz]' },
+    { de:'Mund', pt:'boca', ptContext:'[boh-kah]', en:'mouth', enContext:'[mauth]' },
+    { de:'Ohr', pt:'orelha', ptContext:'[oh-reh-lyah]', en:'ear', enContext:'[eer]' },
+    { de:'Hand', pt:'mão', ptContext:'[mow]', en:'hand', enContext:'[hand]' },
+    { de:'Fuß', pt:'pé', ptContext:'[peh]', en:'foot', enContext:'[fuut]' },
+    { de:'Bauch', pt:'barriga', ptContext:'[bah-hee-gah]', en:'stomach', enContext:'[stuh-muhk]' },
+    { de:'Hemd', pt:'camisa', ptContext:'[kah-mee-zah]', en:'shirt', enContext:'[shirt]' },
+    { de:'Hose', pt:'calça', ptContext:'[kahl-sah]', en:'pants', enContext:'[pants]' },
+    { de:'Kleid', pt:'vestido', ptContext:'[ves-chee-doo]', en:'dress', enContext:'[dres]' },
+    { de:'Schuhe', pt:'sapatos', ptContext:'[sah-pah-toos]', en:'shoes', enContext:'[shooz]' },
+    { de:'Jacke', pt:'jaqueta', ptContext:'[zhah-keh-tah]', en:'jacket', enContext:'[jak-it]' },
+    { de:'Mütze', pt:'boné', ptContext:'[boh-neh]', en:'cap', enContext:'[kap]' },
+    { de:'Brot', pt:'pão', ptContext:'[pow]', en:'bread', enContext:'[bred]' },
+    { de:'Wasser', pt:'água', ptContext:'[ah-gwah]', en:'water', enContext:'[waw-ter]' },
+    { de:'Kaffee', pt:'café', ptContext:'[kah-feh]', en:'coffee', enContext:'[kaw-fee]' },
+    { de:'Tee', pt:'chá', ptContext:'[shah]', en:'tea', enContext:'[tee]' },
+    { de:'Wein', pt:'vinho', ptContext:'[vee-nyoo]', en:'wine', enContext:'[wain]' },
+    { de:'Bier', pt:'cerveja', ptContext:'[ser-veh-zhah]', en:'beer', enContext:'[beer]' },
+    { de:'Fleisch', pt:'carne', ptContext:'[kar-nee]', en:'meat', enContext:'[meet]' },
+    { de:'Fisch', pt:'peixe', ptContext:'[pay-shee]', en:'fish', enContext:'[fish]' },
+    { de:'Obst', pt:'fruta', ptContext:'[froo-tah]', en:'fruit', enContext:'[froot]' },
+    { de:'Gemüse', pt:'legumes', ptContext:'[leh-goo-mees]', en:'vegetables', enContext:'[vej-tuh-bulz]' },
+    { de:'Reis', pt:'arroz', ptContext:'[ah-hoz]', en:'rice', enContext:'[rais]' },
+    { de:'Käse', pt:'queijo', ptContext:'[kay-zhoo]', en:'cheese', enContext:'[cheez]' },
+    { de:'Hund', pt:'cachorro', ptContext:'[kah-shoh-hoo]', en:'dog', enContext:'[dawg]' },
+    { de:'Katze', pt:'gato', ptContext:'[gah-too]', en:'cat', enContext:'[kat]' },
+    { de:'Vogel', pt:'pássaro', ptContext:'[pah-sah-roo]', en:'bird', enContext:'[burd]' },
+    { de:'Pferd', pt:'cavalo', ptContext:'[kah-vah-loo]', en:'horse', enContext:'[hors]' },
+    { de:'Kuh', pt:'vaca', ptContext:'[vah-kah]', en:'cow', enContext:'[kau]' },
+    { de:'Löwe', pt:'leão', ptContext:'[lay-owng]', en:'lion', enContext:'[lai-un]' },
+    { de:'Elefant', pt:'elefante', ptContext:'[eh-leh-fahn-chee]', en:'elephant', enContext:'[el-uh-fant]' },
+    { de:'Maus', pt:'rato', ptContext:'[hah-too]', en:'mouse', enContext:'[maus]' },
+    { de:'sein', pt:'ser', ptContext:'[sehr]', en:'to be', enContext:'[too bee]' },
+    { de:'haben', pt:'ter', ptContext:'[ter]', en:'to have', enContext:'[too hav]' },
+    { de:'gehen', pt:'ir', ptContext:'[eer]', en:'to go', enContext:'[too goh]' },
+    { de:'essen', pt:'comer', ptContext:'[koh-mer]', en:'to eat', enContext:'[too eet]' },
+    { de:'trinken', pt:'beber', ptContext:'[beh-ber]', en:'to drink', enContext:'[too drink]' },
+    { de:'schlafen', pt:'dormir', ptContext:'[dor-meer]', en:'to sleep', enContext:'[too sleep]' },
+    { de:'sprechen', pt:'falar', ptContext:'[fah-lar]', en:'to speak', enContext:'[too speek]' },
+    { de:'sehen', pt:'ver', ptContext:'[ver]', en:'to see', enContext:'[too see]' },
+    { de:'links', pt:'esquerda', ptContext:'[es-ker-dah]', en:'left', enContext:'[left]' },
+    { de:'rechts', pt:'direita', ptContext:'[dee-ray-tah]', en:'right', enContext:'[rait]' },
+    { de:'geradeaus', pt:'em frente', ptContext:'[eng fren-chee]', en:'straight ahead', enContext:'[streyt uh-hed]' },
+    { de:'Flughafen', pt:'aeroporto', ptContext:'[ah-eh-roh-por-too]', en:'airport', enContext:'[air-port]' },
+    { de:'Bahnhof', pt:'estação de trem', ptContext:'[es-tah-sowng jee treng]', en:'train station', enContext:'[trayn stay-shun]' },
+    { de:'Hotel', pt:'hotel', ptContext:'[oh-tel]', en:'hotel', enContext:'[hoh-tel]' },
+    { de:'Fahrkarte', pt:'bilhete', ptContext:'[bee-lyeh-chee]', en:'ticket', enContext:'[tik-it]' },
+    { de:'Gepäck', pt:'bagagem', ptContext:'[bah-gah-zheng]', en:'luggage', enContext:'[luhg-ij]' },
+    { de:'Reisepass', pt:'passaporte', ptContext:'[pah-sah-por-chee]', en:'passport', enContext:'[pas-port]' },
+    { de:'Ausgang', pt:'saída', ptContext:'[sah-ee-dah]', en:'exit', enContext:'[eg-zit]' },
+    { de:'glücklich', pt:'feliz', ptContext:'[feh-leez]', en:'happy', enContext:'[hap-ee]' },
+    { de:'traurig', pt:'triste', ptContext:'[trees-chee]', en:'sad', enContext:'[sad]' },
+    { de:'müde', pt:'cansado', ptContext:'[kahn-sah-doo]', en:'tired', enContext:'[tai-erd]' },
+    { de:'hungrig', pt:'faminto', ptContext:'[fah-meen-too]', en:'hungry', enContext:'[huhng-ree]' },
+    { de:'groß', pt:'grande', ptContext:'[grahn-jee]', en:'big', enContext:'[big]' },
+    { de:'klein', pt:'pequeno', ptContext:'[peh-keh-noo]', en:'small', enContext:'[smawl]' },
+  ];
+
+  const LEVEL_SIZE = 5;
+  const OPTION_COUNT = 4;
+  const MAX_BIO_LINES = 25;
+
+  const STAGES = [
+    { id: 0, startIndex: 0, count: 50, nameKey: 'stage1Name' },
+    { id: 1, startIndex: 50, count: 100, nameKey: 'stage2Name' },
+  ];
+  function stageTotalLevels(s) { return s.count / LEVEL_SIZE; }
+
+  // Stufe 1 (Grundwortschatz) in 5er-Blöcken, Stufe 2 (Aufbauwortschatz) in 10er-Blöcken
+  const FLASH_BLOCK_SIZES = [5, 10];
+  const FLASH_CHUNKS = [];
+  STAGES.forEach((s, stageIdx) => {
+    const blockSize = FLASH_BLOCK_SIZES[stageIdx];
+    for (let i = 0; i < s.count; i += blockSize) {
+      FLASH_CHUNKS.push({
+        start: s.startIndex + i,
+        end: Math.min(s.startIndex + i + blockSize, s.startIndex + s.count),
+        stageIdx,
+      });
+    }
+  });
+
+  const FLAG = { de: '🇩🇪', pt: '🇵🇹', en: '🇬🇧' };
+  const UPPER_LABEL = { de: 'DEUTSCH', pt: 'PORTUGUÊS', en: 'ENGLISH' };
+  const LANG_NAME = {
+    de: { de: 'Deutsch', pt: 'Português', en: 'Englisch' },
+    pt: { de: 'Alemão', pt: 'Português', en: 'Inglês' },
+    en: { de: 'German', pt: 'Portuguese', en: 'English' },
+  };
+  const TARGET_OPTIONS = { de: ['pt', 'en'], pt: ['de', 'en'], en: ['de', 'pt'] };
+
+  /* ================= SOUNDS ================= */
+  const SOUND_CORRECT = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3');
+  const SOUND_WRONG = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3');
+  function playSound(audio) {
+    try { audio.currentTime = 0; audio.play().catch(() => {}); } catch (e) {}
+  }
+
+  /* ================= TRANSLATIONS ================= */
+  const STR = {
+    de: {
+      appSubtitle: 'Sprachen lernen', uiLangLabel: 'Oberfläche', targetLangLabel: 'Ich möchte lernen',
+      modePhrasesDesc: 'Multiple-Choice — tippe für Stufen & Level',
+      modeFlashTitle: 'Karteikarten', modeFlashDesc: 'Stufe 1 in 5er-Blöcken, Stufe 2 in 10er-Blöcken lernen',
+      flashStageExplain: (n) => `${n}er-Blöcke`,
+      back: '← Menü',
+      settingsTitle: 'Einstellungen', appearanceLabel: 'Erscheinungsbild',
+      loginSubtitle: 'Wähle deinen Benutzernamen', loginNameLabel: 'Benutzername',
+      loginEmailLabel: 'E-Mail (optional)',
+      loginSubmit: "Los geht's →",
+      loginNote: 'Kein Passwort, keine E-Mail nötig — der Benutzername reicht. Dein Fortschritt wird lokal in diesem Chat gespeichert.',
+      greeting: (name) => `Hallo, ${name}! 👋`,
+      streakStat: (n) => `${n}`,
+      xpStat: (n) => `${n} XP`,
+      logoutBtn: 'Abmelden / Profil wechseln',
+      profileTitle: 'Profil',
+      profileEditTitle: 'Profil bearbeiten',
+      editProfileBtn: '✏️ Profil bearbeiten',
+      langXpLabel: 'XP je Sprache',
+      xpPageTitle: 'XP-Übersicht',
+      xpTotalLabel: 'Gesamt-XP',
+      xpByModeLabel: 'XP je Modus',
+      modeNamePhrases: '💬 Phrases',
+      modeNameTyping: '✍️ Tippen',
+      avatarLockedTooltip: (n) => `Für ${n} XP freischaltbar`,
+      xpWalletLabel: 'Verbleibende XP für Käufe',
+      xpWalletAffords: (n) => `Reicht noch für ${n} weitere${n === 1 ? 's' : ''} Profilbild${n === 1 ? '' : 'er'}`,
+      xpWalletNotEnough: (need) => `Noch ${need} XP bis zum nächsten Profilbild`,
+      avatarConfirmTitle: 'Profilbild freischalten?',
+      avatarConfirmText: (price) => `Für ${price} XP dauerhaft freischalten?`,
+      avatarConfirmYes: '🔓 Freischalten',
+      avatarConfirmCancel: 'Abbrechen',
+      notEnoughXpTitle: 'Nicht genug XP',
+      notEnoughXpText: (price, have) => `Du brauchst ${price} XP, hast aber nur ${have} verfügbar.`,
+      notEnoughXpOk: 'Alles klar',
+      profileStreakLabel: 'Tage-Streak', profileXpLabel: 'XP gesamt',
+      bioLabel: 'Bio (max. 25 Zeilen)', bioPlaceholder: 'Erzähl etwas über dich…',
+      bioSave: 'Bio speichern', bioSaved: '✓ Gespeichert!',
+      bioCounter: (n, max) => `${n} / ${max} Zeilen`,
+      followLabel: 'Per E-Mail folgen',
+      followBtn: '➕ Folgen',
+      followersLabel: 'Follower', followingLabel: 'Folge ich',
+      followOk: (name) => `✓ Du folgst jetzt ${name}!`,
+      followNotFound: 'Kein Profil mit dieser E-Mail gefunden.',
+      followSelf: 'Du kannst dir nicht selbst folgen. 😄',
+      followAlready: 'Du folgst diesem Profil bereits.',
+      followNeedEmail: 'Hinterlege zuerst eine eigene E-Mail beim Login, um anderen folgen zu können.',
+      followNoStorage: 'Follower sind nur in der Chat-Vorschau verfügbar.',
+      unfollowBtn: 'Entfolgen',
+      followPending: 'Lädt…',
+      xpGain: (n) => `+${n} XP`,
+      modeTypingTitle: 'Tippen',
+      modeTypingDesc: 'Schreibe die Vokabel selbst — Levels wie bei Phrases',
+      typingSubtitle: (a, b) => `Karte ${a} von ${b}`,
+      typingReplayXp: 'nur 10% XP',
+      typingPlaceholder: 'Antwort eintippen…',
+      typingCorrect: '✅ Richtig!',
+      typingTypo: '✅ Richtig (kleiner Tippfehler)!',
+      typingWrongIntro: '❌ Leider falsch:',
+      typingCorrectWas: 'Richtig wäre:',
+      overlayTypingFailTitle: 'Zu viele Fehler',
+      overlayTypingFailText: (c, t) => `${c} von ${t} richtig — mehr als 1 Fehler. Die Runde startet neu gemischt.`,
+      rankStat: (n) => `${n}`,
+      rankLabel: 'Rang',
+      avatarLabel: 'Profilbild wählen',
+      typingStageBadge: (a, b) => `${a}/${b}`,
+      stage1Name: 'Stufe 1 · Grundwortschatz', stage2Name: 'Stufe 2 · Aufbauwortschatz',
+      stageRange: (a, b) => `Vokabeln ${a}–${b}`,
+      stageLocked: 'Schließe zuerst Stufe 1 ab',
+      levelLine: (lvl, total) => `Level ${lvl} von ${total}`,
+      replayLine: (lvl) => `Level ${lvl} · Wiederholung`,
+      unlockedLine: (u, t) => `${u} von ${t} Vokabeln freigeschaltet`,
+      chooseTranslation: 'Wähle die richtige Übersetzung',
+      correct: '✅ Richtig!', wrong: (c) => `❌ Falsch — richtig wäre: ${c}`,
+      continueBtn: 'Weiter',
+      needAllLine: (total, next) => `Alle ${total} müssen in dieser Runde richtig sein für Level ${next}`,
+      lastLevelLine: 'Letztes Level dieser Stufe — alle 5 müssen richtig sein',
+      replayHint: 'Wiederholungsrunde — dein Fortschritt bleibt erhalten',
+      overlayLevelTitle: (lvl) => `Level ${lvl} freigeschaltet!`, overlayLevelText: '5 neue Vokabeln warten auf dich.', overlayLevelEmoji: '🚀',
+      overlayStageTitle: (s) => `${s} abgeschlossen!`, overlayStageText: (next) => `${next} ist jetzt freigeschaltet.`, overlayStageEmoji: '🎓',
+      overlayReplayTitle: 'Runde gemeistert!', overlayReplayText: 'Starke Wiederholung — weiter so!', overlayReplayEmoji: '✨',
+      overlayRepeatEmoji: '💪', overlayRepeatTitle: 'Fast geschafft!',
+      overlayRepeatText: (c, t) => `Du hattest ${c} von ${t} richtig. Alle ${t} müssen stimmen — die Runde beginnt neu.`,
+      overlayCompleteTitle: 'Alle Vokabeln gemeistert!', overlayCompleteText: 'Du hast alle 150 Vokabeln erfolgreich gelernt.', overlayCompleteEmoji: '👑',
+      overlayBtn: 'Weiter',
+      flashModeLabel: 'Karteikarten', flashChunkLabel: (a, b) => `Vokabeln ${a}–${b}`,
+      flashProgress: (i, t) => `${i} von ${t}`,
+      flashHintFront: 'Tippen zum Umdrehen →', flashHintBack: '← Zurückdrehen',
+      flashFlipBtn: '↻ Karte umdrehen', flashPrevBtn: '← Zurück', flashNextBtn: 'Weiter →', flashRestartBtn: 'Von vorn ↺',
+    },
+    pt: {
+      appSubtitle: 'Aprender idiomas', uiLangLabel: 'Interface', targetLangLabel: 'Quero aprender',
+      modePhrasesDesc: 'Múltipla escolha — toque para estágios e níveis',
+      modeFlashTitle: 'Cartões', modeFlashDesc: 'Estágio 1 em blocos de 5, Estágio 2 em blocos de 10',
+      flashStageExplain: (n) => `blocos de ${n}`,
+      back: '← Menu',
+      settingsTitle: 'Configurações', appearanceLabel: 'Aparência',
+      loginSubtitle: 'Escolha seu nome de usuário', loginNameLabel: 'Nome de usuário',
+      loginEmailLabel: 'E-mail (opcional)',
+      loginSubmit: 'Vamos lá →',
+      loginNote: 'Sem senha, sem e-mail — o nome de usuário basta. Seu progresso é salvo localmente neste chat.',
+      greeting: (name) => `Olá, ${name}! 👋`,
+      streakStat: (n) => `${n}`,
+      xpStat: (n) => `${n} XP`,
+      logoutBtn: 'Sair / Trocar de perfil',
+      profileTitle: 'Perfil',
+      profileEditTitle: 'Editar perfil',
+      editProfileBtn: '✏️ Editar perfil',
+      langXpLabel: 'XP por idioma',
+      xpPageTitle: 'Visão geral de XP',
+      xpTotalLabel: 'XP total',
+      xpByModeLabel: 'XP por modo',
+      modeNamePhrases: '💬 Phrases',
+      modeNameTyping: '✍️ Digitar',
+      avatarLockedTooltip: (n) => `Desbloqueável por ${n} XP`,
+      xpWalletLabel: 'XP restante para compras',
+      xpWalletAffords: (n) => `Dá para mais ${n} avatar${n === 1 ? '' : 'es'}`,
+      xpWalletNotEnough: (need) => `Faltam ${need} XP para o próximo avatar`,
+      avatarConfirmTitle: 'Desbloquear avatar?',
+      avatarConfirmText: (price) => `Desbloquear permanentemente por ${price} XP?`,
+      avatarConfirmYes: '🔓 Desbloquear',
+      avatarConfirmCancel: 'Cancelar',
+      notEnoughXpTitle: 'XP insuficiente',
+      notEnoughXpText: (price, have) => `Você precisa de ${price} XP, mas só tem ${have} disponíveis.`,
+      notEnoughXpOk: 'Entendi',
+      profileStreakLabel: 'Dias seguidos', profileXpLabel: 'XP total',
+      bioLabel: 'Bio (máx. 25 linhas)', bioPlaceholder: 'Conte algo sobre você…',
+      bioSave: 'Salvar bio', bioSaved: '✓ Salvo!',
+      bioCounter: (n, max) => `${n} / ${max} linhas`,
+      followLabel: 'Seguir por e-mail',
+      followBtn: '➕ Seguir',
+      followersLabel: 'Seguidores', followingLabel: 'Seguindo',
+      followOk: (name) => `✓ Agora você segue ${name}!`,
+      followNotFound: 'Nenhum perfil encontrado com este e-mail.',
+      followSelf: 'Você não pode seguir a si mesmo. 😄',
+      followAlready: 'Você já segue este perfil.',
+      followNeedEmail: 'Cadastre seu próprio e-mail no login para seguir outras pessoas.',
+      followNoStorage: 'Seguidores só estão disponíveis na visualização do chat.',
+      unfollowBtn: 'Deixar de seguir',
+      followPending: 'Carregando…',
+      xpGain: (n) => `+${n} XP`,
+      modeTypingTitle: 'Digitar',
+      modeTypingDesc: 'Escreva a palavra você mesmo — níveis como em Phrases',
+      typingSubtitle: (a, b) => `Cartão ${a} de ${b}`,
+      typingReplayXp: 'apenas 10% de XP',
+      typingPlaceholder: 'Digite a resposta…',
+      typingCorrect: '✅ Correto!',
+      typingTypo: '✅ Correto (pequeno erro de digitação)!',
+      typingWrongIntro: '❌ Infelizmente errado:',
+      typingCorrectWas: 'O certo seria:',
+      overlayTypingFailTitle: 'Erros demais',
+      overlayTypingFailText: (c, t) => `${c} de ${t} certas — mais de 1 erro. A rodada recomeça embaralhada.`,
+      rankStat: (n) => `${n}`,
+      rankLabel: 'Classificação',
+      avatarLabel: 'Escolher avatar',
+      typingStageBadge: (a, b) => `${a}/${b}`,
+      stage1Name: 'Estágio 1 · Vocabulário básico', stage2Name: 'Estágio 2 · Vocabulário avançado',
+      stageRange: (a, b) => `Palavras ${a}–${b}`,
+      stageLocked: 'Conclua primeiro o Estágio 1',
+      levelLine: (lvl, total) => `Nível ${lvl} de ${total}`,
+      replayLine: (lvl) => `Nível ${lvl} · Revisão`,
+      unlockedLine: (u, t) => `${u} de ${t} palavras desbloqueadas`,
+      chooseTranslation: 'Escolha a tradução correta',
+      correct: '✅ Correto!', wrong: (c) => `❌ Errado — o certo era: ${c}`,
+      continueBtn: 'Continuar',
+      needAllLine: (total, next) => `Todas as ${total} precisam estar certas nesta rodada para o nível ${next}`,
+      lastLevelLine: 'Último nível deste estágio — todas as 5 precisam estar certas',
+      replayHint: 'Rodada de revisão — seu progresso é mantido',
+      overlayLevelTitle: (lvl) => `Nível ${lvl} desbloqueado!`, overlayLevelText: '5 novas palavras esperam por você.', overlayLevelEmoji: '🚀',
+      overlayStageTitle: (s) => `${s} concluído!`, overlayStageText: (next) => `${next} está desbloqueado agora.`, overlayStageEmoji: '🎓',
+      overlayReplayTitle: 'Rodada dominada!', overlayReplayText: 'Ótima revisão — continue assim!', overlayReplayEmoji: '✨',
+      overlayRepeatEmoji: '💪', overlayRepeatTitle: 'Quase lá!',
+      overlayRepeatText: (c, t) => `Você acertou ${c} de ${t}. Todas as ${t} precisam estar certas — a rodada recomeça.`,
+      overlayCompleteTitle: 'Todas as palavras dominadas!', overlayCompleteText: 'Você aprendeu com sucesso as 150 palavras.', overlayCompleteEmoji: '👑',
+      overlayBtn: 'Continuar',
+      flashModeLabel: 'Cartões', flashChunkLabel: (a, b) => `Palavras ${a}–${b}`,
+      flashProgress: (i, t) => `${i} de ${t}`,
+      flashHintFront: 'Toque para virar →', flashHintBack: '← Virar de volta',
+      flashFlipBtn: '↻ Virar cartão', flashPrevBtn: '← Voltar', flashNextBtn: 'Próximo →', flashRestartBtn: 'Recomeçar ↺',
+    },
+    en: {
+      appSubtitle: 'Learn languages', uiLangLabel: 'Interface', targetLangLabel: 'I want to learn',
+      modePhrasesDesc: 'Multiple choice — tap for stages & levels',
+      modeFlashTitle: 'Flashcards', modeFlashDesc: 'Stage 1 in blocks of 5, Stage 2 in blocks of 10',
+      flashStageExplain: (n) => `blocks of ${n}`,
+      back: '← Menu',
+      settingsTitle: 'Settings', appearanceLabel: 'Appearance',
+      loginSubtitle: 'Choose your username', loginNameLabel: 'Username',
+      loginEmailLabel: 'Email (optional)',
+      loginSubmit: "Let's go →",
+      loginNote: 'No password, no email needed — a username is enough. Your progress is saved locally in this chat.',
+      greeting: (name) => `Hi, ${name}! 👋`,
+      streakStat: (n) => `${n}`,
+      xpStat: (n) => `${n} XP`,
+      logoutBtn: 'Sign out / Switch profile',
+      profileTitle: 'Profile',
+      profileEditTitle: 'Edit profile',
+      editProfileBtn: '✏️ Edit profile',
+      langXpLabel: 'XP by language',
+      xpPageTitle: 'XP overview',
+      xpTotalLabel: 'Total XP',
+      xpByModeLabel: 'XP by mode',
+      modeNamePhrases: '💬 Phrases',
+      modeNameTyping: '✍️ Typing',
+      avatarLockedTooltip: (n) => `Unlockable for ${n} XP`,
+      xpWalletLabel: 'Remaining XP for purchases',
+      xpWalletAffords: (n) => `Enough for ${n} more avatar${n === 1 ? '' : 's'}`,
+      xpWalletNotEnough: (need) => `${need} XP to go until the next avatar`,
+      avatarConfirmTitle: 'Unlock this avatar?',
+      avatarConfirmText: (price) => `Permanently unlock for ${price} XP?`,
+      avatarConfirmYes: '🔓 Unlock',
+      avatarConfirmCancel: 'Cancel',
+      notEnoughXpTitle: 'Not enough XP',
+      notEnoughXpText: (price, have) => `You need ${price} XP, but only have ${have} available.`,
+      notEnoughXpOk: 'Got it',
+      profileStreakLabel: 'Day streak', profileXpLabel: 'Total XP',
+      bioLabel: 'Bio (max. 25 lines)', bioPlaceholder: 'Tell us about yourself…',
+      bioSave: 'Save bio', bioSaved: '✓ Saved!',
+      bioCounter: (n, max) => `${n} / ${max} lines`,
+      followLabel: 'Follow by email',
+      followBtn: '➕ Follow',
+      followersLabel: 'Followers', followingLabel: 'Following',
+      followOk: (name) => `✓ You now follow ${name}!`,
+      followNotFound: 'No profile found with this email.',
+      followSelf: "You can't follow yourself. 😄",
+      followAlready: 'You already follow this profile.',
+      followNeedEmail: 'Add your own email at login to follow others.',
+      followNoStorage: 'Followers are only available in the chat preview.',
+      unfollowBtn: 'Unfollow',
+      followPending: 'Loading…',
+      xpGain: (n) => `+${n} XP`,
+      modeTypingTitle: 'Typing',
+      modeTypingDesc: 'Write the word yourself — levels just like Phrases',
+      typingSubtitle: (a, b) => `Card ${a} of ${b}`,
+      typingReplayXp: 'only 10% XP',
+      typingPlaceholder: 'Type your answer…',
+      typingCorrect: '✅ Correct!',
+      typingTypo: '✅ Correct (small typo)!',
+      typingWrongIntro: '❌ Unfortunately wrong:',
+      typingCorrectWas: 'The answer was:',
+      overlayTypingFailTitle: 'Too many mistakes',
+      overlayTypingFailText: (c, t) => `${c} of ${t} correct — more than 1 mistake. The round restarts reshuffled.`,
+      rankStat: (n) => `${n}`,
+      rankLabel: 'Rank',
+      avatarLabel: 'Choose avatar',
+      typingStageBadge: (a, b) => `${a}/${b}`,
+      stage1Name: 'Stage 1 · Core vocabulary', stage2Name: 'Stage 2 · Advanced vocabulary',
+      stageRange: (a, b) => `Words ${a}–${b}`,
+      stageLocked: 'Finish Stage 1 first',
+      levelLine: (lvl, total) => `Level ${lvl} of ${total}`,
+      replayLine: (lvl) => `Level ${lvl} · Replay`,
+      unlockedLine: (u, t) => `${u} of ${t} words unlocked`,
+      chooseTranslation: 'Choose the correct translation',
+      correct: '✅ Correct!', wrong: (c) => `❌ Wrong — the answer was: ${c}`,
+      continueBtn: 'Continue',
+      needAllLine: (total, next) => `All ${total} must be correct this round to unlock level ${next}`,
+      lastLevelLine: 'Last level of this stage — all 5 must be correct',
+      replayHint: 'Replay round — your progress is kept',
+      overlayLevelTitle: (lvl) => `Level ${lvl} unlocked!`, overlayLevelText: '5 new words are waiting for you.', overlayLevelEmoji: '🚀',
+      overlayStageTitle: (s) => `${s} completed!`, overlayStageText: (next) => `${next} is now unlocked.`, overlayStageEmoji: '🎓',
+      overlayReplayTitle: 'Round mastered!', overlayReplayText: 'Great replay — keep it up!', overlayReplayEmoji: '✨',
+      overlayRepeatEmoji: '💪', overlayRepeatTitle: 'So close!',
+      overlayRepeatText: (c, t) => `You got ${c} of ${t} right. All ${t} need to be correct — the round restarts.`,
+      overlayCompleteTitle: 'All words mastered!', overlayCompleteText: "You've successfully learned all 150 words.", overlayCompleteEmoji: '👑',
+      overlayBtn: 'Continue',
+      flashModeLabel: 'Flashcards', flashChunkLabel: (a, b) => `Words ${a}–${b}`,
+      flashProgress: (i, t) => `${i} of ${t}`,
+      flashHintFront: 'Tap to flip →', flashHintBack: '← Flip back',
+      flashFlipBtn: '↻ Flip card', flashPrevBtn: '← Back', flashNextBtn: 'Next →', flashRestartBtn: 'Start over ↺',
+    },
+  };
+
+  /* ================= GLOBALER ZUSTAND ================= */
+  let uiLanguage = 'de';
+  let targetLang = 'pt';
+  let currentProfile = null; // { name, email, bio, avatar, unlockedAvatars }
+  let xp = 0; // Gesamt-XP über alle Sprachen (Lebenszeit-Wert für Rang, Menü, Profil — sinkt nie)
+  let walletXp = 0; // aktuell verfügbare, ausgebbare XP (sinkt beim Freischalten von Profilbildern)
+  let langXp = { pt: 0, de: 0, en: 0 }; // XP je gelernter Sprache
+  let modeXp = { phrases: 0, typing: 0 }; // XP je Spielmodus
+  let streak = 0;
+  let lastActiveDate = null;
+
+  function gainXp(amount, mode) {
+    xp += amount;
+    walletXp += amount;
+    langXp[targetLang] = (langXp[targetLang] || 0) + amount;
+    if (mode) modeXp[mode] = (modeXp[mode] || 0) + amount;
+  }
+
+  function t(key, ...args) {
+    const entry = STR[uiLanguage][key];
+    return typeof entry === 'function' ? entry(...args) : entry;
+  }
+
+  /* =====================================================================
+     SPEICHER-ABSTRAKTION — einzige Stelle, die weiß, WOHIN gespeichert wird.
+     Der Rest der App ruft nur noch db.get/db.set/db.delete auf und merkt
+     nichts vom Unterschied zwischen Claude-Speicher und Firebase.
+
+     STORAGE_BACKEND umschalten:
+       'claude'   → nutzt window.storage (nur hier im Claude-Chat verfügbar)
+       'firebase' → nutzt Firestore (echtes Backend, funktioniert überall)
+
+     Für 'firebase' zuerst firebaseConfig unten ausfüllen (siehe Anleitung im Chat).
+     ===================================================================== */
+  const STORAGE_BACKEND = 'claude'; // 'claude' | 'firebase'
+
+  const firebaseConfig = {
+    apiKey: '',
+    authDomain: '',
+    projectId: '',
+    storageBucket: '',
+    messagingSenderId: '',
+    appId: '',
+  };
+
+  let firestoreDb = null;
+  if (STORAGE_BACKEND === 'firebase' && typeof firebase !== 'undefined' && firebaseConfig.apiKey) {
+    firebase.initializeApp(firebaseConfig);
+    firestoreDb = firebase.firestore();
+  }
+
+  // Persönliche Daten werden pro Profil (E-Mail, sonst Name) getrennt abgelegt,
+  // da Firebase — anders als der Claude-Speicher — keine automatische
+  // Nutzertrennung mitbringt.
+  function personalScopeId() {
+    const email = currentProfile && currentProfile.email ? normEmail(currentProfile.email) : '';
+    const raw = email || (currentProfile && currentProfile.name) || 'guest';
+    return raw.replace(/[^a-zA-Z0-9_-]/g, '_') || 'guest';
+  }
+
+  function hasStorage() {
+    if (STORAGE_BACKEND === 'firebase') return !!firestoreDb;
+    return typeof window !== 'undefined' && !!window.storage;
+  }
+
+  const db = {
+    async get(key, shared) {
+      if (!hasStorage()) return null;
+      try {
+        if (STORAGE_BACKEND === 'firebase') {
+          const collection = shared ? 'shared' : 'users_' + personalScopeId();
+          const snap = await firestoreDb.collection(collection).doc(key).get();
+          return snap.exists ? { key, value: snap.data().value, shared: !!shared } : null;
+        }
+        return await window.storage.get(key, shared);
+      } catch (e) { return null; }
+    },
+    async set(key, value, shared) {
+      if (!hasStorage()) return null;
+      try {
+        if (STORAGE_BACKEND === 'firebase') {
+          const collection = shared ? 'shared' : 'users_' + personalScopeId();
+          await firestoreDb.collection(collection).doc(key).set({ value, updatedAt: Date.now() });
+          return { key, value, shared: !!shared };
+        }
+        return await window.storage.set(key, value, shared);
+      } catch (e) { return null; }
+    },
+    async delete(key, shared) {
+      if (!hasStorage()) return null;
+      try {
+        if (STORAGE_BACKEND === 'firebase') {
+          const collection = shared ? 'shared' : 'users_' + personalScopeId();
+          await firestoreDb.collection(collection).doc(key).delete();
+          return { key, deleted: true, shared: !!shared };
+        }
+        return await window.storage.delete(key, shared);
+      } catch (e) { return null; }
+    },
+  };
+
+  /* ================= SPEICHERN ================= */
+
+  async function loadProfile() {
+    if (!hasStorage()) return null;
+    try {
+      const res = await db.get('profile');
+      const profile = res && res.value ? JSON.parse(res.value) : null;
+      migrateAvatarKey(profile);
+      return profile;
+    } catch (e) { return null; }
+  }
+  async function saveProfile() {
+    if (!hasStorage() || !currentProfile) return;
+    try { await db.set('profile', JSON.stringify(currentProfile)); } catch (e) {}
+  }
+  async function clearProfile() {
+    if (!hasStorage()) return;
+    try { await db.delete('profile'); } catch (e) {}
+  }
+  async function loadProgress() {
+    if (!hasStorage()) return;
+    try {
+      const res = await db.get('gameState');
+      if (res && res.value) {
+        const data = JSON.parse(res.value);
+
+        xp = data.xp || 0;
+        walletXp = (typeof data.walletXp === 'number') ? data.walletXp : xp;
+        streak = data.streak || 0;
+        lastActiveDate = data.lastActiveDate || null;
+        if (data.langXp) Object.assign(langXp, data.langXp);
+        if (data.modeXp) Object.assign(modeXp, data.modeXp);
+
+        if (data.stagesStateByLang) {
+          Object.keys(stagesStateByLang).forEach(lang => {
+            if (Array.isArray(data.stagesStateByLang[lang])) {
+              data.stagesStateByLang[lang].forEach((saved, i) => {
+                if (stagesStateByLang[lang][i]) Object.assign(stagesStateByLang[lang][i], saved);
+              });
+            }
+          });
+        } else if (Array.isArray(data.stagesState)) {
+          // Migration von einem alten, sprachunabhängigen Speicherstand
+          data.stagesState.forEach((saved, i) => {
+            if (stagesStateByLang.pt[i]) Object.assign(stagesStateByLang.pt[i], saved);
+          });
+        }
+
+        if (data.typingStagesStateByLang) {
+          Object.keys(typingStagesStateByLang).forEach(lang => {
+            if (Array.isArray(data.typingStagesStateByLang[lang])) {
+              data.typingStagesStateByLang[lang].forEach((saved, i) => {
+                if (typingStagesStateByLang[lang][i]) Object.assign(typingStagesStateByLang[lang][i], saved);
+              });
+            }
+          });
+        } else if (Array.isArray(data.typingStagesState)) {
+          data.typingStagesState.forEach((saved, i) => {
+            if (typingStagesStateByLang.pt[i]) Object.assign(typingStagesStateByLang.pt[i], saved);
+          });
+        }
+      }
+    } catch (e) { /* noch kein Fortschritt */ }
+  }
+  async function saveProgress() {
+    if (!hasStorage()) return;
+    try {
+      await db.set('gameState', JSON.stringify({
+        stagesStateByLang, typingStagesStateByLang, xp, walletXp, langXp, modeXp, streak, lastActiveDate,
+      }));
+    } catch (e) {}
+    syncSocialStats();
+  }
+
+  function todayString() { return new Date().toISOString().slice(0, 10); }
+
+  /* ================= SOCIAL (Follower über geteilten Speicher) ================= */
+  function normEmail(e) { return (e || '').trim().toLowerCase(); }
+  function socialKey(email) { return 'social:' + normEmail(email).replace(/[\s/\\'"]/g, '_'); }
+
+  async function getSocialRecord(email) {
+    if (!hasStorage() || !email) return null;
+    try {
+      const res = await db.get(socialKey(email), true);
+      return res && res.value ? JSON.parse(res.value) : null;
+    } catch (e) { return null; }
+  }
+
+  async function setSocialRecord(email, record) {
+    if (!hasStorage() || !email) return;
+    try { await db.set(socialKey(email), JSON.stringify(record), true); } catch (e) {}
+  }
+
+  // Eigenes Profil in der geteilten Registry anlegen/aktualisieren (nur mit E-Mail)
+  async function registerSelfSocial() {
+    if (!currentProfile || !currentProfile.email) return;
+    const email = normEmail(currentProfile.email);
+    const existing = await getSocialRecord(email) || { followers: [], following: [] };
+    existing.name = currentProfile.name;
+    existing.email = email;
+    existing.avatarKey = currentProfile.avatarKey != null ? currentProfile.avatarKey : null;
+    existing.xp = xp;
+    existing.streak = streak;
+    existing.rank = rankOf(xp);
+    existing.updatedAt = Date.now();
+    await setSocialRecord(email, existing);
+  }
+
+  // Leichte "Fire-and-forget"-Aktualisierung der Live-Stats, damit Freunde
+  // deinen aktuellen Fortschritt sehen — wird nach jedem Speichern aufgerufen.
+  function syncSocialStats() {
+    if (!currentProfile || !currentProfile.email || !hasStorage()) return;
+    registerSelfSocial().catch(() => {});
+  }
+
+  async function followByEmail(targetEmailRaw) {
+    const myEmail = normEmail(currentProfile && currentProfile.email);
+    const targetEmail = normEmail(targetEmailRaw);
+
+    if (!hasStorage()) return { ok: false, msg: t('followNoStorage') };
+    if (!myEmail) return { ok: false, msg: t('followNeedEmail') };
+    if (!targetEmail) return { ok: false, msg: t('followNotFound') };
+    if (targetEmail === myEmail) return { ok: false, msg: t('followSelf') };
+
+    const target = await getSocialRecord(targetEmail);
+    if (!target) return { ok: false, msg: t('followNotFound') };
+
+    const me = await getSocialRecord(myEmail) || { name: currentProfile.name, email: myEmail, followers: [], following: [] };
+    if ((me.following || []).includes(targetEmail)) return { ok: false, msg: t('followAlready') };
+
+    me.following = [...(me.following || []), targetEmail];
+    target.followers = [...new Set([...(target.followers || []), myEmail])];
+    await setSocialRecord(myEmail, me);
+    await setSocialRecord(targetEmail, target);
+    return { ok: true, msg: t('followOk', target.name || targetEmail) };
+  }
+
+  async function unfollowByEmail(targetEmailRaw) {
+    const myEmail = normEmail(currentProfile && currentProfile.email);
+    const targetEmail = normEmail(targetEmailRaw);
+    if (!hasStorage() || !myEmail) return;
+
+    const me = await getSocialRecord(myEmail);
+    if (me) {
+      me.following = (me.following || []).filter(e => e !== targetEmail);
+      await setSocialRecord(myEmail, me);
+    }
+    const target = await getSocialRecord(targetEmail);
+    if (target) {
+      target.followers = (target.followers || []).filter(e => e !== myEmail);
+      await setSocialRecord(targetEmail, target);
+    }
+  }
+
+  function updateStreakOnOpen() {
+    const today = todayString();
+    if (lastActiveDate !== today) {
+      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+      streak = (lastActiveDate === yesterday) ? streak + 1 : 1;
+      lastActiveDate = today;
+    }
+    saveProgress();
+  }
+
+  function wordOf(vocab, lang) { return vocab[lang]; }
+  function contextOf(vocab, lang) {
+    if (lang === 'pt') return vocab.ptContext;
+    if (lang === 'en') return vocab.enContext;
+    return '';
+  }
+  function questionText(vocab) { return wordOf(vocab, targetLang); }
+  function answerText(vocab) { return wordOf(vocab, uiLanguage); }
+  function questionLabel() { return UPPER_LABEL[targetLang]; }
+  function answerLabel() { return UPPER_LABEL[uiLanguage]; }
+
+  // --- Phrases state (pro gelernter Sprache getrennt) ---
+  let currentStageId = 0;
+  let playingLevel = 0; // welches Level gerade gespielt wird (kann < activeLevel sein = Wiederholung)
+  function freshStagesState() {
+    return [{ activeLevel: 0, completed: false }, { activeLevel: 0, completed: false }];
+  }
+  const stagesStateByLang = { pt: freshStagesState(), de: freshStagesState(), en: freshStagesState() };
+  function stagesState() { return stagesStateByLang[targetLang]; }
+  let roundQueue = [];
+  let roundPos = 0;
+  let roundResults = [];
+  let currentIndex = 0;
+  let currentOptions = [];
+  let answered = false;
+
+  // --- Flashcards state ---
+  let flashChunkIndex = 0;
+  let flashIndex = 0;
+  let flashFlipped = false;
+
+  // --- Typing state (Level-Struktur wie Phrases) ---
+  const RANK_STEP = 250; // Rang 1 ab 250 XP, Rang 2 ab 500 XP, …
+  const BONUS_AVATAR_COUNT = 5; // letzte 5 Profilbilder sind kaufbar
+  const AVATAR_PRICE = 250; // Preis je Profilbild in XP
+
+  /* =====================================================================
+     ASSET-REGISTER — einzige Quelle für alle Icons/Emojis der App.
+     Jeder Eintrag hat die Form { type: 'emoji' | 'image' | 'video', value }.
+     - 'emoji': value ist ein Emoji-Zeichen (aktueller Zustand).
+     - 'image': value ist eine Bild-URL (z. B. von Higgsfield) → wird als <img> gerendert.
+     - 'video': value ist eine Video-URL (z. B. Higgsfield-Animation) → <video> (loop, autoplay).
+     Um ein Emoji später durch ein Higgsfield-Bild/eine Animation zu ersetzen,
+     genügt es, hier den Eintrag zu ändern — der Rest der App passt sich automatisch an.
+     ===================================================================== */
+  const ASSETS = {
+    brand: {
+      mic: { type: 'emoji', value: '🗣️' },
+      globe: { type: 'emoji', value: '🌎' },
+    },
+    modes: {
+      phrases: { type: 'emoji', value: '💬' },
+      typing: { type: 'emoji', value: '✍️' },
+      flashcards: { type: 'emoji', value: '🗂️' },
+    },
+    stats: {
+      rank: { type: 'emoji', value: '⚔️' },
+      streak: { type: 'emoji', value: '🔥' },
+      xp: { type: 'emoji', value: '⭐' },
+      wallet: { type: 'emoji', value: '💎' },
+      profileDefault: { type: 'emoji', value: '👤' },
+      followers: { type: 'emoji', value: '👥' },
+      following: { type: 'emoji', value: '➡️' },
+    },
+    levelState: {
+      done: { type: 'emoji', value: '✅' },
+      current: { type: 'emoji', value: '▶️' },
+      locked: { type: 'emoji', value: '🔒' },
+      trophy: { type: 'emoji', value: '🏆' },
+      chunk: { type: 'emoji', value: '🔋' },
+    },
+    overlays: {
+      levelup: { type: 'emoji', value: '🚀' },
+      stagecomplete: { type: 'emoji', value: '🎓' },
+      repeat: { type: 'emoji', value: '💪' },
+      complete: { type: 'emoji', value: '👑' },
+      replaydone: { type: 'emoji', value: '✨' },
+      lockConfirm: { type: 'emoji', value: '🔒' },
+      warning: { type: 'emoji', value: '⚠️' },
+      gift: { type: 'emoji', value: '🎁' },
+    },
+    // 15 Profilbilder — die letzten BONUS_AVATAR_COUNT sind kostenpflichtig (siehe AVATAR_PRICE)
+    avatars: [
+      { type: 'emoji', value: '🔋' }, { type: 'emoji', value: '🌎' }, { type: 'emoji', value: '♥️' },
+      { type: 'emoji', value: '🗣️' }, { type: 'emoji', value: '🎂' }, { type: 'emoji', value: '🍑' },
+      { type: 'emoji', value: '🗡️' }, { type: 'emoji', value: '⚽️' }, { type: 'emoji', value: '🇧🇷' },
+      { type: 'emoji', value: '🇵🇹' }, { type: 'emoji', value: '🇩🇪' }, { type: 'emoji', value: '🎧' },
+      { type: 'emoji', value: '🇺🇸' }, { type: 'emoji', value: '☕️' }, { type: 'emoji', value: '🎮' },
+    ],
+  };
+
+  // Legacy-Emoji-Liste (nur für die Migration alter Speicherstände, siehe migrateAvatarKey)
+  const LEGACY_AVATAR_EMOJIS = ASSETS.avatars.map(a => a.value);
+
+  function getAsset(path) {
+    const parts = path.split('.');
+    let node = ASSETS;
+    for (const p of parts) node = node && node[p];
+    return node || { type: 'emoji', value: '❓' };
+  }
+
+  // Rendert ein Asset als HTML-Fragment (für innerHTML-Kontexte). Bilder/Videos
+  // bekommen automatisch die passende Größe über die Klasse .asset-icon.
+  function assetHTML(path) {
+    const a = getAsset(path);
+    if (a.type === 'image') return `<img class="asset-icon" src="${a.value}" alt="" />`;
+    if (a.type === 'video') return `<video class="asset-icon" src="${a.value}" autoplay loop muted playsinline></video>`;
+    return a.value;
+  }
+
+  function avatarHTML(idx) {
+    if (idx == null || idx < 0 || idx >= ASSETS.avatars.length) return assetHTML('stats.profileDefault');
+    const a = ASSETS.avatars[idx];
+    if (a.type === 'image') return `<img class="asset-icon" src="${a.value}" alt="" />`;
+    if (a.type === 'video') return `<video class="asset-icon" src="${a.value}" autoplay loop muted playsinline></video>`;
+    return a.value;
+  }
+
+  // Migriert einen alten, direkt gespeicherten Emoji-String auf den neuen Index-basierten Schlüssel.
+  // So bleiben bestehende Profile gültig, auch wenn ein Emoji später durch ein Bild ersetzt wird.
+  function migrateAvatarKey(profile) {
+    if (!profile) return;
+    if (typeof profile.avatarKey === 'number') return;
+    if (typeof profile.avatar === 'string') {
+      const idx = LEGACY_AVATAR_EMOJIS.indexOf(profile.avatar);
+      profile.avatarKey = idx >= 0 ? idx : null;
+    } else {
+      profile.avatarKey = null;
+    }
+    if (Array.isArray(profile.unlockedAvatars) && typeof profile.unlockedAvatars[0] === 'string') {
+      profile.unlockedAvatars = profile.unlockedAvatars
+        .map(e => LEGACY_AVATAR_EMOJIS.indexOf(e))
+        .filter(i => i >= 0);
+    }
+    delete profile.avatar;
+  }
+
+  let currentTypingStage = 0;
+  let typingPlayingLevel = 0;
+  const typingStagesStateByLang = { pt: freshStagesState(), de: freshStagesState(), en: freshStagesState() };
+  function typingStagesState() { return typingStagesStateByLang[targetLang]; }
+  let typingQueue = [];
+  let typingPos = 0;
+  let typingResults = [];
+  let typingAnswered = false;
+
+  function rankOf(points) { return Math.floor(points / RANK_STEP); }
+
+
+  /* ================= ELEMENTE ================= */
+  const $ = (id) => document.getElementById(id);
+
+  const appTitleLogin = $('appTitleLogin'), appTitleMenu = $('appTitleMenu');
+  const loginSubtitle = $('loginSubtitle'), loginNameLabel = $('loginNameLabel'), loginEmailLabel = $('loginEmailLabel');
+  const loginName = $('loginName'), loginEmail = $('loginEmail'), loginSubmit = $('loginSubmit'), loginNote = $('loginNote');
+  const loginLangSelect = $('loginLangSelect');
+  const profileFollowersValue = $('profileFollowersValue'), profileFollowersLabel = $('profileFollowersLabel');
+  const profileFollowingValue = $('profileFollowingValue'), profileFollowingLabel = $('profileFollowingLabel');
+  const followLabel = $('followLabel'), followEmailInput = $('followEmailInput'), followBtn = $('followBtn');
+  const followMsg = $('followMsg'), followingList = $('followingList');
+  const profileXpStat = $('profileXpStat');
+  const backFromXp = $('backFromXp'), xpPageTitle = $('xpPageTitle');
+  const xpTotalValue = $('xpTotalValue'), xpTotalLabel = $('xpTotalLabel');
+  const xpByModeLabel = $('xpByModeLabel'), xpModeList = $('xpModeList');
+  const xpWalletValue = $('xpWalletValue'), xpWalletLabel = $('xpWalletLabel');
+  const confirmOverlay = $('confirmOverlay'), confirmEmoji = $('confirmEmoji');
+  const confirmTitle = $('confirmTitle'), confirmText = $('confirmText');
+  const confirmYesBtn = $('confirmYesBtn'), confirmCancelBtn = $('confirmCancelBtn');
+  const xpByLangLabel = $('xpByLangLabel'), xpLangList = $('xpLangList');
+  const appSubtitle = $('appSubtitle');
+  const pillProfile = $('pillProfile'), pillStreak = $('pillStreak'), pillXp = $('pillXp');
+  const openSettingsBtn = $('openSettingsBtn');
+  const uiLangLabel = $('uiLangLabel'), targetLangLabel = $('targetLangLabel');
+  const uiLangSelect = $('uiLangSelect'), targetToggle = $('targetToggle');
+  const modePhrasesDesc = $('modePhrasesDesc'), modeFlashTitle = $('modeFlashTitle'), modeFlashDesc = $('modeFlashDesc');
+  const modePhrasesToggle = $('modePhrasesToggle'), modeFlashToggle = $('modeFlashToggle');
+  const phrasesArrow = $('phrasesArrow'), phrasesStagePanel = $('phrasesStagePanel');
+  const flashArrow = $('flashArrow'), flashStagePanel = $('flashStagePanel');
+
+  const profileTitle = $('profileTitle'), profileAvatar = $('profileAvatar'), profileName = $('profileName'), profileEmail = $('profileEmail');
+  const profileBioText = $('profileBioText');  const profileStreakValue = $('profileStreakValue'), profileStreakLabel = $('profileStreakLabel');
+  const profileXpValue = $('profileXpValue'), profileXpLabel = $('profileXpLabel');
+  const bioLabel = $('bioLabel'), bioInput = $('bioInput'), bioCounter = $('bioCounter'), bioSaveBtn = $('bioSaveBtn'), bioSavedMsg = $('bioSavedMsg');
+  const backFromProfile = $('backFromProfile');
+  const editProfileBtn = $('editProfileBtn'), profileEditTitle = $('profileEditTitle'), backFromProfileEdit = $('backFromProfileEdit');
+
+  const settingsTitle = $('settingsTitle'), appearanceLabel = $('appearanceLabel');
+  const themeSwitch = $('themeSwitch'), logoutBtn = $('logoutBtn');
+  const backFromSettings = $('backFromSettings');
+
+  const cardEl = $('card'), cardIndicator = $('cardIndicator'), mainWord = $('mainWord'), phonetics = $('phonetics');
+  const chooseLabel = $('chooseLabel'), optionsEl = $('options'), feedbackEl = $('feedback'), footer = $('footer');
+  const phrasesStageLabel = $('phrasesStageLabel'), subtitle = $('subtitle'), progressCounter = $('progressCounter');
+  const streakRow = $('streakRow'), streakLabel = $('streakLabel');
+  const backFromPhrases = $('backFromPhrases');
+
+  const flashModeLabel = $('flashModeLabel'), flashSubtitle = $('flashSubtitle'), flashProgress = $('flashProgress');
+  const chunkTabs = $('chunkTabs');
+  const flipCard = $('flipCard');
+  const flashFrontLabel = $('flashFrontLabel'), flashFrontWord = $('flashFrontWord'), flashFrontPhonetics = $('flashFrontPhonetics'), flashFrontHint = $('flashFrontHint');
+  const flashBackLabel = $('flashBackLabel'), flashBackWord = $('flashBackWord'), flashBackPhonetics = $('flashBackPhonetics'), flashBackHint = $('flashBackHint');
+  const flashFlipBtn = $('flashFlipBtn'), flashPrev = $('flashPrev'), flashNext = $('flashNext');
+  const backFromFlashcards = $('backFromFlashcards');
+
+  const overlay = $('overlay'), overlayCard = $('overlayCard'), overlayEmoji = $('overlayEmoji');
+  const overlayTitle = $('overlayTitle'), overlayText = $('overlayText'), overlayButton = $('overlayButton');
+
+  const modeTypingToggle = $('modeTypingToggle'), modeTypingTitle = $('modeTypingTitle'), modeTypingDesc = $('modeTypingDesc');
+  const typingArrow = $('typingArrow'), typingStagePanel = $('typingStagePanel');
+  const pillRank = $('pillRank');
+  const profileRankValue = $('profileRankValue'), profileRankLabel = $('profileRankLabel');
+  const avatarLabel = $('avatarLabel'), avatarGrid = $('avatarGrid');
+  const typingModeLabel = $('typingModeLabel'), typingSubtitle = $('typingSubtitle'), typingIntroCounter = $('typingIntroCounter');
+  const typingDots = $('typingDots'), typingHint = $('typingHint');
+  const typingCard = $('typingCard'), typingIndicator = $('typingIndicator'), typingWord = $('typingWord');
+  const typingPhonetics = $('typingPhonetics');
+  const typingInput = $('typingInput'), typingCheckBtn = $('typingCheckBtn');
+  const typingFeedback = $('typingFeedback'), typingFooter = $('typingFooter');
+  const backFromTyping = $('backFromTyping');
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  /* ================= THEME ================= */
+  themeSwitch.addEventListener('click', () => document.body.classList.toggle('dark'));
+
+  /* ================= NAVIGATION ================= */
+  const SCREENS = ['login', 'menu', 'profile', 'profile-edit', 'xp', 'settings', 'phrases', 'flashcards', 'typing'];
+  function showScreen(name) {
+    SCREENS.forEach(s => $('screen-' + s).classList.toggle('hidden', s !== name));
+    if (name === 'phrases') loadCard();
+    if (name === 'flashcards') { flashFlipped = false; renderFlash(); }
+    if (name === 'typing') { startTypingRound(); loadTypingCard(); }
+    if (name === 'profile') renderProfile();
+    if (name === 'profile-edit') renderProfileEdit();
+    if (name === 'xp') renderXpPage();
+    if (name === 'menu') renderMenu();
+  }
+
+  /* ================= LOGIN ================= */
+  function brandTitleHTML() {
+    return `${assetHTML('brand.mic')}Yes!${assetHTML('brand.globe')}`;
+  }
+
+  function renderLogin() {
+    appTitleLogin.innerHTML = brandTitleHTML();
+    loginSubtitle.textContent = t('loginSubtitle');
+    loginNameLabel.textContent = t('loginNameLabel');
+    loginEmailLabel.textContent = t('loginEmailLabel');
+    loginSubmit.textContent = t('loginSubmit');
+    loginNote.textContent = t('loginNote');
+    bioInput.placeholder = t('bioPlaceholder');
+  }
+
+  async function completeLogin(profile) {
+    currentProfile = profile;
+    await saveProfile();
+    await registerSelfSocial();
+    updateStreakOnOpen();
+    showScreen('menu');
+  }
+
+  loginLangSelect.addEventListener('change', () => {
+    uiLanguage = loginLangSelect.value;
+    uiLangSelect.value = uiLanguage;
+    renderLogin();
+  });
+
+  loginSubmit.addEventListener('click', () => {
+    const name = loginName.value.trim();
+    if (!name) { loginName.focus(); return; }
+    completeLogin({ name, email: loginEmail.value.trim(), bio: '' });
+  });
+  loginName.addEventListener('keydown', (e) => { if (e.key === 'Enter') loginSubmit.click(); });
+
+  logoutBtn.addEventListener('click', async () => {
+    await clearProfile();
+    currentProfile = null;
+    loginName.value = '';
+    loginEmail.value = '';
+    renderLogin();
+    showScreen('login');
+  });
+
+  /* ================= MENU ================= */
+  function renderTargetToggle() {
+    const options = TARGET_OPTIONS[uiLanguage];
+    if (!options.includes(targetLang)) targetLang = options[0];
+    targetToggle.innerHTML = '';
+    options.forEach(code => {
+      const btn = document.createElement('button');
+      btn.className = 'target-btn' + (code === targetLang ? ' active' : '');
+      btn.textContent = `${FLAG[code]} ${LANG_NAME[uiLanguage][code]}`;
+      btn.addEventListener('click', () => {
+        targetLang = code;
+        renderTargetToggle();
+        renderPhrasesStagePanel();
+        renderTypingStagePanel();
+      });
+      targetToggle.appendChild(btn);
+    });
+  }
+
+  // Level-Chip-Status: ✅ geschafft (wiederholbar), ▶️ aktuelles Level, 🔒 gesperrt
+  // Auf-/Zuklapp-Zustand je Modus & Stufe (Stufe 1 startet offen)
+  const stageOpen = {
+    phrases: { 0: true, 1: false },
+    typing: { 0: true, 1: false },
+    flash: { 0: true, 1: false },
+  };
+
+  function buildStagePanel(panelEl, mode, getStates, onLevelClick) {
+    panelEl.innerHTML = '';
+    STAGES.forEach((s, idx) => {
+      const states = getStates();
+      const state = states[idx];
+      const locked = idx > 0 && !states[idx - 1].completed;
+      const total = stageTotalLevels(s);
+      const isOpen = !!stageOpen[mode][idx];
+
+      const group = document.createElement('div');
+      group.className = 'stage-group' + (locked ? ' locked' : '');
+
+      const head = document.createElement('div');
+      head.className = 'stage-group-head';
+      head.style.cursor = 'pointer';
+      head.innerHTML = `
+        <div>
+          <div class="stage-group-title">${t(s.nameKey)}</div>
+          <div class="stage-group-sub">${locked ? t('stageLocked') : t('stageRange', s.startIndex + 1, s.startIndex + s.count)}</div>
+        </div>
+        <div class="stage-group-badge">
+          ${locked ? assetHTML('levelState.locked') : (state.completed ? assetHTML('levelState.trophy') : `${state.activeLevel + 1}/${total}`)}
+          <span class="stage-caret${isOpen ? ' open' : ''}">▾</span>
+        </div>
+      `;
+      head.addEventListener('click', () => {
+        stageOpen[mode][idx] = !stageOpen[mode][idx];
+        buildStagePanel(panelEl, mode, getStates, onLevelClick);
+      });
+      group.appendChild(head);
+
+      // Level-Raster immer bauen — bei gesperrter Stufe komplett gesperrt
+      const grid = document.createElement('div');
+      grid.className = 'level-grid';
+      grid.style.display = isOpen ? '' : 'none';
+      for (let lvl = 0; lvl < total; lvl++) {
+        const chip = document.createElement('button');
+        const done = !locked && (state.completed || lvl < state.activeLevel);
+        const isCurrent = !locked && !state.completed && lvl === state.activeLevel;
+        const chipLocked = locked || (!done && !isCurrent);
+
+        chip.className = 'level-chip' + (chipLocked ? ' locked' : '') + (isCurrent ? ' current' : '');
+        const iconPath = done ? 'levelState.done' : (isCurrent ? 'levelState.current' : 'levelState.locked');
+        chip.innerHTML = `<span class="chip-emoji">${assetHTML(iconPath)}</span><span>${lvl + 1}</span>`;
+
+        if (!chipLocked) {
+          chip.addEventListener('click', () => onLevelClick(idx, lvl));
+        }
+        grid.appendChild(chip);
+      }
+      group.appendChild(grid);
+      panelEl.appendChild(group);
+    });
+  }
+
+  function renderPhrasesStagePanel() {
+    buildStagePanel(phrasesStagePanel, 'phrases', () => stagesState(), (stageIdx, lvl) => {
+      currentStageId = stageIdx;
+      playingLevel = lvl;
+      startRound();
+      showScreen('phrases');
+    });
+  }
+
+  // Karteikarten: keine Sperren — reine Lern-Navigation in 5er- (Stufe 1) / 10er-Blöcken (Stufe 2)
+  function renderFlashStagePanel() {
+    flashStagePanel.innerHTML = '';
+    STAGES.forEach((s, stageIdx) => {
+      const blockSize = FLASH_BLOCK_SIZES[stageIdx];
+      const chunksOfStage = FLASH_CHUNKS
+        .map((c, globalIdx) => ({ ...c, globalIdx }))
+        .filter(c => c.stageIdx === stageIdx);
+      const isOpen = !!stageOpen.flash[stageIdx];
+
+      const group = document.createElement('div');
+      group.className = 'stage-group';
+
+      const head = document.createElement('div');
+      head.className = 'stage-group-head';
+      head.style.cursor = 'pointer';
+      head.innerHTML = `
+        <div>
+          <div class="stage-group-title">${t(s.nameKey)}</div>
+          <div class="stage-group-sub">${t('stageRange', s.startIndex + 1, s.startIndex + s.count)} · ${t('flashStageExplain', blockSize)}</div>
+        </div>
+        <div class="stage-group-badge">
+          ${chunksOfStage.length}
+          <span class="stage-caret${isOpen ? ' open' : ''}">▾</span>
+        </div>
+      `;
+      head.addEventListener('click', () => {
+        stageOpen.flash[stageIdx] = !stageOpen.flash[stageIdx];
+        renderFlashStagePanel();
+      });
+      group.appendChild(head);
+
+      const grid = document.createElement('div');
+      grid.className = 'level-grid';
+      grid.style.display = isOpen ? '' : 'none';
+      chunksOfStage.forEach((chunk, i) => {
+        const chip = document.createElement('button');
+        chip.className = 'level-chip';
+        chip.innerHTML = `<span class="chip-emoji">${assetHTML('levelState.chunk')}</span><span>${i + 1}</span>`;
+        chip.title = t('flashChunkLabel', chunk.start + 1, chunk.end);
+        chip.addEventListener('click', () => {
+          flashChunkIndex = chunk.globalIdx;
+          flashIndex = chunk.start;
+          flashFlipped = false;
+          showScreen('flashcards');
+        });
+        grid.appendChild(chip);
+      });
+      group.appendChild(grid);
+      flashStagePanel.appendChild(group);
+    });
+  }
+
+  function renderMenu() {
+    appTitleMenu.innerHTML = brandTitleHTML();
+    appSubtitle.textContent = currentProfile ? t('greeting', currentProfile.name) : t('appSubtitle');
+    pillProfile.innerHTML = currentProfile && currentProfile.avatarKey != null
+      ? avatarHTML(currentProfile.avatarKey)
+      : assetHTML('stats.profileDefault');
+    pillRank.innerHTML = `${assetHTML('stats.rank')} ${t('rankStat', rankOf(xp))}`;
+    pillStreak.innerHTML = `${assetHTML('stats.streak')} ${t('streakStat', streak)}`;
+    pillXp.innerHTML = `${assetHTML('stats.xp')} ${t('xpStat', xp)}`;
+    const iconModePhrases = $('iconModePhrases'), iconModeTyping = $('iconModeTyping'), iconModeFlash = $('iconModeFlash');
+    if (iconModePhrases) iconModePhrases.innerHTML = assetHTML('modes.phrases');
+    if (iconModeTyping) iconModeTyping.innerHTML = assetHTML('modes.typing');
+    if (iconModeFlash) iconModeFlash.innerHTML = assetHTML('modes.flashcards');
+    uiLangLabel.textContent = t('uiLangLabel');
+    targetLangLabel.textContent = t('targetLangLabel');
+    modePhrasesDesc.textContent = t('modePhrasesDesc');
+    modeFlashTitle.textContent = t('modeFlashTitle');
+    modeFlashDesc.textContent = t('modeFlashDesc');
+    modeTypingTitle.textContent = t('modeTypingTitle');
+    modeTypingDesc.textContent = t('modeTypingDesc');
+    backFromPhrases.textContent = t('back');
+    backFromFlashcards.textContent = t('back');
+    backFromTyping.textContent = t('back');
+    backFromSettings.textContent = t('back');
+    backFromProfile.textContent = t('back');
+    settingsTitle.textContent = t('settingsTitle');
+    appearanceLabel.textContent = t('appearanceLabel');
+    logoutBtn.textContent = t('logoutBtn');
+    renderTargetToggle();
+    renderPhrasesStagePanel();
+    renderTypingStagePanel();
+    renderFlashStagePanel();
+  }
+
+  function renderTypingStagePanel() {
+    buildStagePanel(typingStagePanel, 'typing', () => typingStagesState(), (stageIdx, lvl) => {
+      currentTypingStage = stageIdx;
+      typingPlayingLevel = lvl;
+      showScreen('typing');
+    });
+  }
+
+  uiLangSelect.addEventListener('change', () => {
+    uiLanguage = uiLangSelect.value;
+    renderMenu();
+    renderLogin();
+  });
+
+  modePhrasesToggle.addEventListener('click', () => {
+    renderPhrasesStagePanel();
+    const willOpen = !phrasesStagePanel.classList.contains('open');
+    phrasesStagePanel.classList.toggle('open', willOpen);
+    phrasesArrow.classList.toggle('open', willOpen);
+  });
+  modeFlashToggle.addEventListener('click', () => {
+    renderFlashStagePanel();
+    const willOpen = !flashStagePanel.classList.contains('open');
+    flashStagePanel.classList.toggle('open', willOpen);
+    flashArrow.classList.toggle('open', willOpen);
+  });
+  modeTypingToggle.addEventListener('click', () => {
+    renderTypingStagePanel();
+    const willOpen = !typingStagePanel.classList.contains('open');
+    typingStagePanel.classList.toggle('open', willOpen);
+    typingArrow.classList.toggle('open', willOpen);
+  });
+
+  // Alle Anzeigen führen zum Profil — außer XP, das führt zur XP-Seite
+  [pillProfile, pillRank, pillStreak].forEach(el =>
+    el.addEventListener('click', () => showScreen('profile'))
+  );
+  pillXp.addEventListener('click', () => showScreen('xp'));
+  profileXpStat.addEventListener('click', () => showScreen('xp'));
+  backFromXp.addEventListener('click', () => showScreen('menu'));
+  openSettingsBtn.addEventListener('click', () => showScreen('settings'));
+  backFromProfile.addEventListener('click', () => showScreen('menu'));
+  backFromSettings.addEventListener('click', () => showScreen('menu'));
+  backFromPhrases.addEventListener('click', () => showScreen('menu'));
+  backFromFlashcards.addEventListener('click', () => showScreen('menu'));
+  backFromTyping.addEventListener('click', () => showScreen('menu'));
+
+  /* ================= PROFIL ================= */
+  function limitBioLines(text) {
+    return text.split('\n').slice(0, MAX_BIO_LINES).join('\n');
+  }
+
+  function renderProfile() {
+    if (!currentProfile) return;
+    profileTitle.textContent = t('profileTitle');
+    profileAvatar.innerHTML = currentProfile.avatarKey != null
+      ? avatarHTML(currentProfile.avatarKey)
+      : (currentProfile.name || '?').charAt(0).toUpperCase();
+    profileName.textContent = currentProfile.name;
+    profileEmail.textContent = currentProfile.email || '';
+    profileEmail.style.display = currentProfile.email ? 'block' : 'none';
+    const bio = (currentProfile.bio || '').trim();
+    profileBioText.textContent = bio;
+    profileBioText.style.display = bio ? 'block' : 'none';
+    profileRankValue.innerHTML = `${assetHTML('stats.rank')} ${rankOf(xp)}`;
+    profileRankLabel.textContent = t('rankLabel');
+    profileStreakValue.innerHTML = `${assetHTML('stats.streak')} ${streak}`;
+    profileStreakLabel.textContent = t('profileStreakLabel');
+    profileXpValue.innerHTML = `${assetHTML('stats.xp')} ${xp}`;
+    profileXpLabel.textContent = t('profileXpLabel');
+    editProfileBtn.textContent = t('editProfileBtn');
+    profileFollowersLabel.textContent = t('followersLabel');
+    profileFollowingLabel.textContent = t('followingLabel');
+    followLabel.textContent = t('followLabel');
+    followBtn.textContent = t('followBtn');
+    followMsg.textContent = '';
+    refreshSocialUI();
+  }
+
+  function renderProfileEdit() {
+    if (!currentProfile) return;
+    profileEditTitle.textContent = t('profileEditTitle');
+    backFromProfileEdit.textContent = `← ${t('profileTitle')}`;
+    avatarLabel.textContent = t('avatarLabel');
+    renderAvatarGrid();
+    bioLabel.textContent = t('bioLabel');
+    bioInput.placeholder = t('bioPlaceholder');
+    bioInput.value = currentProfile.bio || '';
+    bioSaveBtn.textContent = t('bioSave');
+    bioSavedMsg.textContent = '';
+    updateBioCounter();
+  }
+
+  /* ================= XP-SEITE ================= */
+  function renderLangXpList(container) {
+    container.innerHTML = '';
+    const learned = ['pt', 'de', 'en'].filter(lang => (langXp[lang] || 0) > 0);
+    learned.forEach(lang => {
+      const row = document.createElement('div');
+      row.className = 'lang-xp-item';
+      row.innerHTML = `
+        <div class="lang-xp-name">${FLAG[lang]} ${LANG_NAME[uiLanguage][lang]}</div>
+        <div class="lang-xp-value">${assetHTML('stats.xp')} ${langXp[lang] || 0} XP</div>
+      `;
+      container.appendChild(row);
+    });
+  }
+
+  function renderXpPage() {
+    xpPageTitle.textContent = t('xpPageTitle');
+    backFromXp.textContent = t('back');
+    xpTotalValue.innerHTML = `${assetHTML('stats.xp')} ${xp}`;
+    xpTotalLabel.textContent = t('xpTotalLabel');
+    xpWalletValue.innerHTML = `${assetHTML('stats.wallet')} ${walletXp}`;
+    xpWalletLabel.textContent = t('xpWalletLabel');
+    xpByModeLabel.textContent = t('xpByModeLabel');
+    xpByLangLabel.textContent = t('langXpLabel');
+
+    renderModeXpList();
+    renderLangXpList(xpLangList);
+  }
+
+  function renderModeXpList() {
+    xpModeList.innerHTML = '';
+    const modes = [
+      { key: 'phrases', name: t('modeNamePhrases') },
+      { key: 'typing', name: t('modeNameTyping') },
+    ].filter(m => (modeXp[m.key] || 0) > 0);
+
+    modes.forEach(m => {
+      const row = document.createElement('div');
+      row.className = 'lang-xp-item';
+      row.innerHTML = `
+        <div class="lang-xp-name">${m.name}</div>
+        <div class="lang-xp-value">${assetHTML('stats.xp')} ${modeXp[m.key] || 0} XP</div>
+      `;
+      xpModeList.appendChild(row);
+    });
+  }
+
+  function showConfirm({ emoji, title, text, confirmLabel, cancelLabel, singleButton }) {
+    return new Promise(resolve => {
+      confirmEmoji.innerHTML = emoji;
+      confirmTitle.textContent = title;
+      confirmText.textContent = text;
+      confirmYesBtn.textContent = confirmLabel;
+      confirmCancelBtn.style.display = singleButton ? 'none' : '';
+      confirmCancelBtn.textContent = cancelLabel || '';
+
+      function cleanup(result) {
+        confirmOverlay.classList.remove('visible');
+        confirmYesBtn.removeEventListener('click', onYes);
+        confirmCancelBtn.removeEventListener('click', onNo);
+        resolve(result);
+      }
+      function onYes() { cleanup(true); }
+      function onNo() { cleanup(false); }
+      confirmYesBtn.addEventListener('click', onYes);
+      confirmCancelBtn.addEventListener('click', onNo);
+      confirmOverlay.classList.add('visible');
+    });
+  }
+
+  async function tryUnlockAvatar(idx) {
+    const confirmed = await showConfirm({
+      emoji: assetHTML('overlays.lockConfirm'),
+      title: t('avatarConfirmTitle'),
+      text: t('avatarConfirmText', AVATAR_PRICE),
+      confirmLabel: t('avatarConfirmYes'),
+      cancelLabel: t('avatarConfirmCancel'),
+    });
+    if (!confirmed) return;
+
+    if (walletXp < AVATAR_PRICE) {
+      await showConfirm({
+        emoji: assetHTML('overlays.warning'),
+        title: t('notEnoughXpTitle'),
+        text: t('notEnoughXpText', AVATAR_PRICE, walletXp),
+        confirmLabel: t('notEnoughXpOk'),
+        singleButton: true,
+      });
+      return;
+    }
+
+    walletXp -= AVATAR_PRICE;
+    currentProfile.unlockedAvatars = currentProfile.unlockedAvatars || [];
+    currentProfile.unlockedAvatars.push(idx);
+    currentProfile.avatarKey = idx;
+    await saveProfile();
+    await saveProgress();
+    profileAvatar.innerHTML = avatarHTML(idx);
+    renderAvatarGrid();
+  }
+
+  editProfileBtn.addEventListener('click', () => showScreen('profile-edit'));
+  backFromProfileEdit.addEventListener('click', () => showScreen('profile'));
+
+  function renderAvatarGrid() {
+    avatarGrid.innerHTML = '';
+    const bonusStart = ASSETS.avatars.length - BONUS_AVATAR_COUNT;
+    const owned = (currentProfile.unlockedAvatars) || [];
+
+    ASSETS.avatars.forEach((_, idx) => {
+      const isBonus = idx >= bonusStart;
+      const locked = isBonus && !owned.includes(idx);
+
+      const btn = document.createElement('button');
+      btn.className = 'avatar-option' + (currentProfile.avatarKey === idx ? ' selected' : '') + (locked ? ' locked' : '');
+
+      if (locked) {
+        btn.innerHTML = `<span class="avatar-preview">${avatarHTML(idx)}</span><span class="avatar-lock-overlay">${assetHTML('levelState.locked')}</span><span class="avatar-lock-badge">${AVATAR_PRICE}</span>`;
+        btn.title = t('avatarLockedTooltip', AVATAR_PRICE);
+        btn.addEventListener('click', () => tryUnlockAvatar(idx));
+      } else {
+        btn.innerHTML = avatarHTML(idx);
+        btn.addEventListener('click', async () => {
+          currentProfile.avatarKey = idx;
+          await saveProfile();
+          profileAvatar.innerHTML = avatarHTML(idx);
+          renderAvatarGrid();
+        });
+      }
+      avatarGrid.appendChild(btn);
+    });
+  }
+
+  async function refreshSocialUI() {
+    profileFollowersValue.innerHTML = `${assetHTML('stats.followers')} 0`;
+    profileFollowingValue.innerHTML = `${assetHTML('stats.following')} 0`;
+    followingList.innerHTML = '';
+    const myEmail = normEmail(currentProfile && currentProfile.email);
+    if (!myEmail || !hasStorage()) return;
+
+    const me = await getSocialRecord(myEmail);
+    if (!me) return;
+
+    const followers = me.followers || [];
+    const following = me.following || [];
+    profileFollowersValue.innerHTML = `${assetHTML('stats.followers')} ${followers.length}`;
+    profileFollowingValue.innerHTML = `${assetHTML('stats.following')} ${following.length}`;
+
+    const friendRecords = [];
+    for (const email of following) {
+      const rec = await getSocialRecord(email);
+      friendRecords.push({ email, rec });
+    }
+    // Freunde nach XP sortieren — kleines Wettrennen inklusive
+    friendRecords.sort((a, b) => ((b.rec && b.rec.xp) || 0) - ((a.rec && a.rec.xp) || 0));
+
+    friendRecords.forEach(({ email, rec }) => {
+      const item = document.createElement('div');
+      item.className = 'follow-item';
+
+      const avatarSpan = document.createElement('div');
+      avatarSpan.className = 'follow-item-avatar';
+      avatarSpan.innerHTML = rec && rec.avatarKey != null ? avatarHTML(rec.avatarKey) : assetHTML('stats.profileDefault');
+
+      const info = document.createElement('div');
+      info.className = 'follow-item-info';
+      const label = document.createElement('div');
+      label.className = 'follow-item-name';
+      label.textContent = rec && rec.name ? rec.name : email;
+      const stats = document.createElement('div');
+      stats.className = 'follow-item-stats';
+      stats.innerHTML = rec
+        ? `${assetHTML('stats.rank')} ${rec.rank || 0} · ${assetHTML('stats.streak')} ${rec.streak || 0} · ${assetHTML('stats.xp')} ${rec.xp || 0}`
+        : t('followPending');
+      info.appendChild(label);
+      info.appendChild(stats);
+
+      const btn = document.createElement('button');
+      btn.className = 'unfollow-btn';
+      btn.textContent = t('unfollowBtn');
+      btn.addEventListener('click', async () => {
+        await unfollowByEmail(email);
+        refreshSocialUI();
+      });
+
+      item.appendChild(avatarSpan);
+      item.appendChild(info);
+      item.appendChild(btn);
+      followingList.appendChild(item);
+    });
+  }
+
+  followBtn.addEventListener('click', async () => {
+    followMsg.textContent = '…';
+    const result = await followByEmail(followEmailInput.value);
+    followMsg.textContent = result.msg;
+    if (result.ok) {
+      followEmailInput.value = '';
+      refreshSocialUI();
+    }
+  });
+
+  function updateBioCounter() {
+    const lines = bioInput.value ? bioInput.value.split('\n').length : 0;
+    bioCounter.textContent = t('bioCounter', lines, MAX_BIO_LINES);
+  }
+
+  bioInput.addEventListener('input', () => {
+    const limited = limitBioLines(bioInput.value);
+    if (limited !== bioInput.value) bioInput.value = limited;
+    updateBioCounter();
+    bioSavedMsg.textContent = '';
+  });
+
+  bioSaveBtn.addEventListener('click', async () => {
+    if (!currentProfile) return;
+    currentProfile.bio = limitBioLines(bioInput.value.trim());
+    await saveProfile();
+    bioSavedMsg.textContent = t('bioSaved');
+  });
+
+  /* ================= PHRASES (Best-of-5 mit klickbaren Leveln) ================= */
+  function stage() { return STAGES[currentStageId]; }
+  function stageState() { return stagesState()[currentStageId]; }
+  function isReplay() { return stageState().completed || playingLevel < stageState().activeLevel; }
+
+  function levelWordIndices(level) {
+    const s = stage();
+    const start = s.startIndex + level * LEVEL_SIZE;
+    return Array.from({ length: LEVEL_SIZE }, (_, i) => start + i).filter(i => i < s.startIndex + s.count);
+  }
+
+  function isLastLevelOfStage() {
+    return playingLevel >= stageTotalLevels(stage()) - 1;
+  }
+
+  function startRound() {
+    roundQueue = shuffle(levelWordIndices(playingLevel));
+    roundPos = 0;
+    roundResults = new Array(roundQueue.length).fill(null);
+    currentIndex = roundQueue[0];
+  }
+
+  function buildOptions() {
+    const correct = answerText(VOCABS[currentIndex]);
+    const distractorPool = VOCABS.filter((_, i) => i !== currentIndex).map(v => answerText(v));
+    const distractors = shuffle(distractorPool).slice(0, OPTION_COUNT - 1);
+    return shuffle([correct, ...distractors]);
+  }
+
+  function loadCard() {
+    answered = false;
+    currentOptions = buildOptions();
+    cardEl.classList.remove('correct', 'wrong');
+    feedbackEl.textContent = '';
+    feedbackEl.className = 'feedback';
+    renderPhrases();
+  }
+
+  function renderRoundDots() {
+    streakRow.innerHTML = '';
+    roundResults.forEach((result) => {
+      const dot = document.createElement('div');
+      let cls = 'streak-dot';
+      if (result === true) cls += ' correct';
+      if (result === false) cls += ' wrong';
+      dot.className = cls;
+      streakRow.appendChild(dot);
+    });
+  }
+
+  function renderPhrases() {
+    const vocab = VOCABS[currentIndex];
+    const s = stage();
+    const st = stageState();
+    const total = stageTotalLevels(s);
+    const unlockedWords = st.completed ? s.count : Math.min((st.activeLevel + 1) * LEVEL_SIZE, s.count);
+
+    phrasesStageLabel.textContent = `Phrases · ${t(s.nameKey)}`;
+    subtitle.textContent = isReplay() ? t('replayLine', playingLevel + 1) : t('levelLine', playingLevel + 1, total);
+    progressCounter.textContent = t('unlockedLine', unlockedWords, s.count);
+
+    cardIndicator.textContent = questionLabel();
+    mainWord.textContent = questionText(vocab);
+    phonetics.textContent = contextOf(vocab, targetLang) || '';
+    chooseLabel.textContent = t('chooseTranslation');
+
+    renderRoundDots();
+
+    if (isReplay()) {
+      streakLabel.textContent = t('replayHint');
+    } else {
+      streakLabel.textContent = isLastLevelOfStage()
+        ? t('lastLevelLine')
+        : t('needAllLine', roundQueue.length, playingLevel + 2);
+    }
+
+    optionsEl.innerHTML = '';
+    currentOptions.forEach(option => {
+      const btn = document.createElement('button');
+      btn.className = 'option-button';
+      btn.textContent = option;
+      btn.addEventListener('click', () => handleAnswer(option));
+      optionsEl.appendChild(btn);
+    });
+
+    footer.innerHTML = '';
+  }
+
+  function handleAnswer(selected) {
+    if (answered) return;
+    answered = true;
+
+    const vocab = VOCABS[currentIndex];
+    const correct = answerText(vocab);
+    const isCorrect = selected === correct;
+
+    Array.from(optionsEl.children).forEach(btn => {
+      btn.classList.add('disabled');
+      btn.disabled = true;
+      if (btn.textContent === correct) btn.classList.add('correct-answer');
+      else if (btn.textContent === selected) btn.classList.add('wrong-answer');
+      else btn.classList.add('faded');
+    });
+
+    cardEl.classList.add(isCorrect ? 'correct' : 'wrong');
+    let gained = 0;
+    if (isCorrect) { gained = isReplay() ? 5 : 10; gainXp(gained, 'phrases'); }
+    feedbackEl.textContent = isCorrect
+      ? `${t('correct')} ${t('xpGain', gained)}`
+      : t('wrong', correct);
+    feedbackEl.classList.add(isCorrect ? 'correct' : 'wrong');
+    playSound(isCorrect ? SOUND_CORRECT : SOUND_WRONG);
+    saveProgress();
+
+    roundResults[roundPos] = isCorrect;
+    renderRoundDots();
+
+    footer.innerHTML = `<button class="primary-button" id="btnContinue">${t('continueBtn')}</button>`;
+    $('btnContinue').addEventListener('click', handleContinue);
+  }
+
+  function handleContinue() {
+    if (roundPos < roundQueue.length - 1) {
+      roundPos += 1;
+      currentIndex = roundQueue[roundPos];
+      loadCard();
+      return;
+    }
+
+    const allCorrect = roundResults.every(r => r === true);
+    const correctCount = roundResults.filter(r => r === true).length;
+    const total = roundResults.length;
+    const st = stageState();
+
+    if (allCorrect) {
+      if (isReplay()) {
+        // Wiederholung geschafft — kein Fortschrittssprung, kleine Belohnung
+        gainXp(20, 'phrases');
+        startRound();
+        loadCard();
+        saveProgress();
+        showOverlay('replaydone', null, null, null, 20);
+      } else if (!isLastLevelOfStage()) {
+        st.activeLevel += 1;
+        playingLevel = st.activeLevel;
+        gainXp(50, 'phrases');
+        startRound();
+        loadCard();
+        saveProgress();
+        showOverlay('levelup', null, null, null, 50);
+      } else {
+        st.completed = true;
+        const isLastStage = currentStageId === STAGES.length - 1;
+        const bonus = isLastStage ? 500 : 200;
+        gainXp(bonus, 'phrases');
+        startRound();
+        loadCard();
+        saveProgress();
+        showOverlay(isLastStage ? 'complete' : 'stagecomplete', null, null,
+          isLastStage ? null : t(STAGES[currentStageId + 1].nameKey), bonus);
+      }
+    } else {
+      startRound();
+      loadCard();
+      saveProgress();
+      showOverlay('repeat', correctCount, total);
+    }
+  }
+
+  function showOverlay(type, correctCount, total, nextStageName, bonusXp) {
+    overlayCard.classList.toggle('repeat', type === 'repeat');
+    if (type === 'complete') {
+      overlayEmoji.innerHTML = assetHTML('overlays.complete');
+      overlayTitle.textContent = t('overlayCompleteTitle');
+      overlayText.textContent = t('overlayCompleteText');
+    } else if (type === 'stagecomplete') {
+      overlayEmoji.innerHTML = assetHTML('overlays.stagecomplete');
+      overlayTitle.textContent = t('overlayStageTitle', t(stage().nameKey));
+      overlayText.textContent = t('overlayStageText', nextStageName);
+    } else if (type === 'replaydone') {
+      overlayEmoji.innerHTML = assetHTML('overlays.replaydone');
+      overlayTitle.textContent = t('overlayReplayTitle');
+      overlayText.textContent = t('overlayReplayText');
+    } else if (type === 'repeat') {
+      overlayEmoji.innerHTML = assetHTML('overlays.repeat');
+      overlayTitle.textContent = t('overlayRepeatTitle');
+      overlayText.textContent = t('overlayRepeatText', correctCount, total);
+    } else {
+      overlayEmoji.innerHTML = assetHTML('overlays.levelup');
+      overlayTitle.textContent = t('overlayLevelTitle', playingLevel + 1);
+      overlayText.textContent = t('overlayLevelText');
+    }
+    if (bonusXp) {
+      overlayText.innerHTML += ` ${assetHTML('overlays.gift')} ${t('xpGain', bonusXp)}`;
+    }
+    overlayButton.textContent = t('overlayBtn');
+    overlay.classList.add('visible');
+  }
+  overlayButton.addEventListener('click', () => overlay.classList.remove('visible'));
+
+  /* ================= FLASHCARDS (3D-Flip) ================= */
+  function flashChunk() { return FLASH_CHUNKS[flashChunkIndex]; }
+
+  function renderChunkTabs() {
+    chunkTabs.innerHTML = '';
+    FLASH_CHUNKS.forEach((chunk, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'chunk-tab' + (idx === flashChunkIndex ? ' active' : '');
+      btn.innerHTML = `${assetHTML('levelState.chunk')}${idx + 1}`;
+      btn.title = t('flashChunkLabel', chunk.start + 1, chunk.end);
+      btn.addEventListener('click', () => {
+        if (idx === flashChunkIndex) return;
+        flashChunkIndex = idx;
+        flashIndex = FLASH_CHUNKS[idx].start;
+        flashFlipped = false;
+        renderFlash();
+      });
+      chunkTabs.appendChild(btn);
+    });
+  }
+
+  function renderFlash() {
+    const chunk = flashChunk();
+    const vocab = VOCABS[flashIndex];
+    const relative = flashIndex - chunk.start + 1;
+    const relTotal = chunk.end - chunk.start;
+
+    flashModeLabel.textContent = t('flashModeLabel');
+    renderChunkTabs();
+    flashSubtitle.textContent = t('flashChunkLabel', chunk.start + 1, chunk.end);
+    flashProgress.textContent = t('flashProgress', relative, relTotal);
+
+    // Vorderseite = Zielsprache, Rückseite = Oberflächensprache
+    flashFrontLabel.textContent = questionLabel();
+    flashFrontWord.textContent = questionText(vocab);
+    flashFrontPhonetics.textContent = contextOf(vocab, targetLang) || '';
+    flashFrontHint.textContent = t('flashHintFront');
+
+    flashBackLabel.textContent = answerLabel();
+    flashBackWord.textContent = answerText(vocab);
+    flashBackPhonetics.textContent = contextOf(vocab, uiLanguage) || '';
+    flashBackHint.textContent = t('flashHintBack');
+
+    flipCard.classList.toggle('flipped', flashFlipped);
+    flashFlipBtn.textContent = t('flashFlipBtn');
+
+    flashPrev.textContent = t('flashPrevBtn');
+    flashPrev.disabled = flashIndex === chunk.start;
+    flashPrev.style.opacity = flashIndex === chunk.start ? 0.4 : 1;
+    flashNext.textContent = flashIndex === chunk.end - 1 ? t('flashRestartBtn') : t('flashNextBtn');
+  }
+
+  function toggleFlash() {
+    flashFlipped = !flashFlipped;
+    flipCard.classList.toggle('flipped', flashFlipped);
+  }
+  flipCard.addEventListener('click', toggleFlash);
+  flashFlipBtn.addEventListener('click', toggleFlash);
+
+  flashPrev.addEventListener('click', () => {
+    const chunk = flashChunk();
+    if (flashIndex === chunk.start) return;
+    flashIndex -= 1;
+    flashFlipped = false;
+    renderFlash();
+  });
+  flashNext.addEventListener('click', () => {
+    const chunk = flashChunk();
+    flashIndex = flashIndex === chunk.end - 1 ? chunk.start : flashIndex + 1;
+    flashFlipped = false;
+    renderFlash();
+  });
+
+  /* ================= TIPP-MODUS ================= */
+  // Normalisierung: Kleinschreibung, Akzente weg, alle Sonderzeichen ignorieren
+  function normAnswer(s) {
+    return (s || '').toLowerCase().normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]/g, '');
+  }
+
+  function levenshtein(a, b) {
+    if (a === b) return 0;
+    const m = a.length, n = b.length;
+    if (!m) return n; if (!n) return m;
+    let prev = Array.from({ length: n + 1 }, (_, i) => i);
+    for (let i = 1; i <= m; i++) {
+      const curr = [i];
+      for (let j = 1; j <= n; j++) {
+        curr[j] = Math.min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      }
+      prev = curr;
+    }
+    return prev[n];
+  }
+
+  // Antwort im Tipp-Modus: Frage = eigene Sprache, getippt wird die Lernsprache
+  function typingAnswerCandidates(vocab) {
+    const raw = questionText(vocab);
+    const parts = raw.split('/').map(p => p.trim()).filter(Boolean);
+    return [raw, ...parts];
+  }
+
+  // Rückgabe: { correct: bool, typo: bool, best: string }
+  function checkTypedAnswer(input, vocab) {
+    const normInput = normAnswer(input);
+    let best = typingAnswerCandidates(vocab)[0];
+    let bestDist = Infinity;
+    for (const cand of typingAnswerCandidates(vocab)) {
+      const d = levenshtein(normInput, normAnswer(cand));
+      if (d < bestDist) { bestDist = d; best = cand; }
+    }
+    return { correct: bestDist <= 1, typo: bestDist === 1, best };
+  }
+
+  // Fehlerzeichen rot & fett markieren (Vergleich gegen beste Kandidaten-Antwort)
+  function markTypedErrors(input, correct) {
+    const inp = input.split('');
+    const cor = correct.split('');
+    let html = '';
+    for (let i = 0; i < inp.length; i++) {
+      const a = normAnswer(inp[i]);
+      const b = i < cor.length ? normAnswer(cor[i]) : null;
+      const isErr = a !== '' && a !== b;
+      const ch = inp[i].replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      html += isErr ? `<span class="typo-err">${ch}</span>` : ch;
+    }
+    return html || '—';
+  }
+
+  function typingStage() { return STAGES[currentTypingStage]; }
+  function typingStageState() { return typingStagesState()[currentTypingStage]; }
+  function typingIsReplay() { return typingStageState().completed || typingPlayingLevel < typingStageState().activeLevel; }
+
+  function typingIsLastLevelOfStage() {
+    return typingPlayingLevel >= stageTotalLevels(typingStage()) - 1;
+  }
+
+  function startTypingRound() {
+    const s = typingStage();
+    const words = Array.from({ length: LEVEL_SIZE }, (_, i) => s.startIndex + typingPlayingLevel * LEVEL_SIZE + i)
+      .filter(i => i < s.startIndex + s.count);
+    typingQueue = shuffle(words);
+    typingPos = 0;
+    typingResults = new Array(typingQueue.length).fill(null);
+  }
+
+  function renderTypingDots() {
+    typingDots.innerHTML = '';
+    typingResults.forEach((result) => {
+      const dot = document.createElement('div');
+      let cls = 'streak-dot';
+      if (result === true) cls += ' correct';
+      if (result === false) cls += ' wrong';
+      dot.className = cls;
+      typingDots.appendChild(dot);
+    });
+  }
+
+  function loadTypingCard() {
+    typingAnswered = false;
+    const vocabIdx = typingQueue[typingPos];
+    const vocab = VOCABS[vocabIdx];
+    const total = stageTotalLevels(typingStage());
+
+    typingModeLabel.textContent = `${t('modeTypingTitle')} · ${t(typingStage().nameKey)}`;
+    typingSubtitle.textContent = typingIsReplay()
+      ? t('replayLine', typingPlayingLevel + 1)
+      : t('levelLine', typingPlayingLevel + 1, total);
+    typingIntroCounter.textContent = t('typingSubtitle', typingPos + 1, typingQueue.length);
+    typingHint.textContent = typingIsReplay()
+      ? `${t('replayHint')} — ${t('typingReplayXp')}`
+      : t('needAllLine', typingQueue.length, typingPlayingLevel + 2);
+
+    typingCard.classList.remove('correct', 'wrong');
+    // Frage in der eigenen Sprache — getippt wird die Lernsprache
+    typingIndicator.textContent = answerLabel();
+    typingWord.textContent = answerText(vocab);
+    typingPhonetics.textContent = '';
+
+    typingInput.value = '';
+    typingInput.disabled = false;
+    typingInput.placeholder = t('typingPlaceholder');
+    typingCheckBtn.disabled = false;
+    typingFeedback.innerHTML = '';
+    typingFeedback.className = 'feedback';
+    typingFooter.innerHTML = '';
+    renderTypingDots();
+    typingInput.focus();
+  }
+
+  function handleTypingCheck() {
+    if (typingAnswered) return;
+    const input = typingInput.value.trim();
+    if (!input) { typingInput.focus(); return; }
+    typingAnswered = true;
+
+    const vocabIdx = typingQueue[typingPos];
+    const vocab = VOCABS[vocabIdx];
+    const result = checkTypedAnswer(input, vocab);
+
+    typingInput.disabled = true;
+    typingCheckBtn.disabled = true;
+
+    if (result.correct) {
+      // Grüner Rand + Karte wird aufgedeckt
+      typingCard.classList.add('correct');
+      typingIndicator.textContent = questionLabel();
+      typingWord.textContent = questionText(vocab);
+      typingPhonetics.textContent = contextOf(vocab, targetLang) || '';
+      const gained = typingIsReplay() ? Math.max(1, Math.round(10 * 0.1)) : 10;
+      gainXp(gained, 'typing');
+      typingFeedback.innerHTML = `${result.typo ? t('typingTypo') : t('typingCorrect')} ${t('xpGain', gained)}`;
+      typingFeedback.classList.add('correct');
+      playSound(SOUND_CORRECT);
+    } else {
+      // Roter, dicker Fehler bei nicht bestandener Eingabe
+      typingCard.classList.add('wrong');
+      typingFeedback.innerHTML =
+        `${t('typingWrongIntro')}<div class="typed-line">${markTypedErrors(input, result.best)}</div>` +
+        `<div class="correct-line">${t('typingCorrectWas')} <b>${result.best}</b></div>`;
+      typingFeedback.classList.add('wrong');
+      playSound(SOUND_WRONG);
+    }
+
+    typingResults[typingPos] = result.correct;
+    saveProgress();
+    renderTypingDots();
+
+    typingFooter.innerHTML = `<button class="primary-button" id="btnTypingContinue">${t('continueBtn')}</button>`;
+    $('btnTypingContinue').addEventListener('click', handleTypingContinue);
+    $('btnTypingContinue').focus();
+  }
+
+  function handleTypingContinue() {
+    if (typingPos < typingQueue.length - 1) {
+      typingPos += 1;
+      loadTypingCard();
+      return;
+    }
+
+    const allCorrect = typingResults.every(r => r === true);
+    const correctCount = typingResults.filter(r => r === true).length;
+    const total = typingResults.length;
+    const st = typingStageState();
+
+    if (typingIsReplay()) {
+      startTypingRound();
+      loadTypingCard();
+      if (allCorrect) {
+        const bonus = Math.max(1, Math.round(50 * 0.1));
+        gainXp(bonus, 'typing');
+        saveProgress();
+        showTypingOverlay('replaydone', null, null, bonus);
+      } else {
+        saveProgress();
+        showTypingOverlay('repeat', correctCount, total);
+      }
+      return;
+    }
+
+    if (allCorrect) {
+      if (!typingIsLastLevelOfStage()) {
+        st.activeLevel += 1;
+        typingPlayingLevel = st.activeLevel;
+        gainXp(50, 'typing');
+        startTypingRound();
+        loadTypingCard();
+        saveProgress();
+        showTypingOverlay('levelup', null, null, 50);
+      } else {
+        st.completed = true;
+        const isLastStage = currentTypingStage === STAGES.length - 1;
+        const bonus = isLastStage ? 500 : 200;
+        gainXp(bonus, 'typing');
+        startTypingRound();
+        loadTypingCard();
+        saveProgress();
+        showTypingOverlay(isLastStage ? 'complete' : 'stagecomplete', null,
+          isLastStage ? null : t(STAGES[currentTypingStage + 1].nameKey), bonus);
+      }
+    } else {
+      startTypingRound();
+      loadTypingCard();
+      saveProgress();
+      showTypingOverlay('repeat', correctCount, total);
+    }
+  }
+
+  function showTypingOverlay(type, correctCount, totalOrNextStage, bonusXp) {
+    overlayCard.classList.toggle('repeat', type === 'repeat');
+    if (type === 'complete') {
+      overlayEmoji.innerHTML = assetHTML('overlays.complete');
+      overlayTitle.textContent = t('overlayCompleteTitle');
+      overlayText.textContent = t('overlayCompleteText');
+    } else if (type === 'stagecomplete') {
+      overlayEmoji.innerHTML = assetHTML('overlays.stagecomplete');
+      overlayTitle.textContent = t('overlayStageTitle', t(typingStage().nameKey));
+      overlayText.textContent = t('overlayStageText', totalOrNextStage);
+    } else if (type === 'replaydone') {
+      overlayEmoji.innerHTML = assetHTML('overlays.replaydone');
+      overlayTitle.textContent = t('overlayReplayTitle');
+      overlayText.textContent = t('overlayReplayText');
+    } else if (type === 'repeat') {
+      overlayEmoji.innerHTML = assetHTML('overlays.repeat');
+      overlayTitle.textContent = t('overlayRepeatTitle');
+      overlayText.textContent = t('overlayRepeatText', correctCount, totalOrNextStage);
+    } else {
+      overlayEmoji.innerHTML = assetHTML('overlays.levelup');
+      overlayTitle.textContent = t('overlayLevelTitle', typingPlayingLevel + 1);
+      overlayText.textContent = t('overlayLevelText');
+    }
+    if (bonusXp) overlayText.innerHTML += ` ${assetHTML('overlays.gift')} ${t('xpGain', bonusXp)}`;
+    overlayButton.textContent = t('overlayBtn');
+    overlay.classList.add('visible');
+  }
+
+  typingCheckBtn.addEventListener('click', handleTypingCheck);
+  typingInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      if (!typingAnswered) handleTypingCheck();
+      else { const btn = $('btnTypingContinue'); if (btn) btn.click(); }
+    }
+  });
+
+  /* ================= INIT ================= */
+  async function init() {
+    await loadProgress();
+    playingLevel = stagesState()[0].activeLevel;
+    startRound();
+    typingPlayingLevel = typingStagesState()[0].activeLevel;
+    startTypingRound();
+
+    loginLangSelect.value = uiLanguage;
+    renderLogin();
+
+    const profile = await loadProfile();
+    if (profile) {
+      currentProfile = profile;
+      await registerSelfSocial();
+      updateStreakOnOpen();
+      showScreen('menu');
+    } else {
+      showScreen('login');
+    }
+  }
+
+  init();
+</script>
+
+</body>
+</html>
