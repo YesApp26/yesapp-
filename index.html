@@ -959,6 +959,43 @@
 
     <div class="toggle-group-label" id="followingListLabel" style="margin-top: 20px;">Ich folge</div>
     <div id="followingList" style="width: 100%; margin-top: 6px;"></div>
+
+    <div class="toggle-group-label" id="followersListLabel" style="margin-top: 20px;">Follower</div>
+    <div id="followersList" style="width: 100%; margin-top: 6px;"></div>
+  </section>
+
+  <!-- ============ FREUND-PROFIL (Ansicht) ============ -->
+  <section class="screen hidden" id="screen-friend-profile">
+    <button class="back-button" id="backFromFriendProfile">← Zurück</button>
+
+    <div class="header">
+      <div class="mode-label" id="friendProfileTitle">Profil</div>
+    </div>
+
+    <div class="profile-card">
+      <div class="avatar" id="friendProfileAvatar">?</div>
+      <div class="profile-name" id="friendProfileName">—</div>
+
+      <div id="friendProfilePrivateNote" class="profile-private-note" style="display:none;"></div>
+
+      <div class="profile-stats" id="friendProfileStatsRow">
+        <div class="profile-stat">
+          <div class="profile-stat-value" id="friendProfileRankValue">⚔️ 0</div>
+          <div class="profile-stat-label" id="friendProfileRankLabel">Rang</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-value" id="friendProfileStreakValue">🔥 0</div>
+          <div class="profile-stat-label" id="friendProfileStreakLabel">Streak</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-value" id="friendProfileXpValue">⭐ 0</div>
+          <div class="profile-stat-label" id="friendProfileXpLabel">XP</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toggle-group-label" id="friendHeroesLabel" style="display:none;">Helden</div>
+    <div class="hero-grid" id="friendHeroesGrid" style="display:none;"></div>
   </section>
 
   <!-- ============ XP-ÜBERSICHT ============ -->
@@ -1414,11 +1451,12 @@
       back: '← Menü',
       settingsTitle: 'Einstellungen', appearanceLabel: 'Erscheinungsbild',
       loginSubtitle: 'Melde dich an oder registriere dich', loginNameLabel: 'Benutzername',
-      loginEmailLabel: 'E-Mail',
+      loginEmailLabel: 'E-Mail (optional bei bestehendem Profil)',
       loginPasswordLabel: 'Passwort',
       loginSubmit: "Los geht's →",
-      loginNote: 'Neue E-Mail = neues Profil wird angelegt. Bekannte E-Mail = Passwort wird geprüft.',
+      loginNote: 'Neu hier? E-Mail + Passwort vergeben. Schon registriert? Benutzername (oder E-Mail) + Passwort reicht.',
       loginNeedEmail: 'Bitte gib eine E-Mail-Adresse ein.',
+      loginUnknownUsername: 'Kein bestehendes Profil mit diesem Namen gefunden. Bitte gib deine E-Mail ein.',
       loginNeedPassword: 'Bitte gib ein Passwort ein.',
       loginWrongPassword: '❌ Falsches Passwort für diese E-Mail.',
       greeting: (name) => `Hallo, ${name}! 👋`,
@@ -1480,6 +1518,10 @@
       statXpTotal: 'XP gesamt',
       followersPageTitle: 'Follower & Folge ich',
       followingListLabel: 'Ich folge',
+      followersListLabel: 'Follower',
+      followBackBtn: '➕ Zurückfolgen',
+      friendHeroesLabel: '🃏 Helden',
+      friendNoHeroes: 'Noch keine Helden freigeschaltet',
       profilePrivateNote: '🔒 Dieses Profil ist privat.',
       privacyTitle: 'Privates Profil',
       privacyDesc: 'Andere sehen deine Statistiken und Followerliste nicht',
@@ -1539,11 +1581,12 @@
       back: '← Menu',
       settingsTitle: 'Configurações', appearanceLabel: 'Aparência',
       loginSubtitle: 'Entre ou registre-se', loginNameLabel: 'Nome de usuário',
-      loginEmailLabel: 'E-mail',
+      loginEmailLabel: 'E-mail (opcional se já tiver perfil)',
       loginPasswordLabel: 'Senha',
       loginSubmit: 'Vamos lá →',
-      loginNote: 'E-mail novo = novo perfil é criado. E-mail conhecido = a senha é verificada.',
+      loginNote: 'Novo por aqui? Defina e-mail + senha. Já registrado? Nome de usuário (ou e-mail) + senha bastam.',
       loginNeedEmail: 'Digite um endereço de e-mail.',
+      loginUnknownUsername: 'Nenhum perfil encontrado com este nome. Digite seu e-mail.',
       loginNeedPassword: 'Digite uma senha.',
       loginWrongPassword: '❌ Senha incorreta para este e-mail.',
       greeting: (name) => `Olá, ${name}! 👋`,
@@ -1605,6 +1648,10 @@
       statXpTotal: 'XP total',
       followersPageTitle: 'Seguidores & Seguindo',
       followingListLabel: 'Seguindo',
+      followersListLabel: 'Seguidores',
+      followBackBtn: '➕ Seguir de volta',
+      friendHeroesLabel: '🃏 Heróis',
+      friendNoHeroes: 'Nenhum herói desbloqueado ainda',
       profilePrivateNote: '🔒 Este perfil é privado.',
       privacyTitle: 'Perfil privado',
       privacyDesc: 'Outros não veem suas estatísticas nem sua lista de seguidores',
@@ -1664,11 +1711,12 @@
       back: '← Menu',
       settingsTitle: 'Settings', appearanceLabel: 'Appearance',
       loginSubtitle: 'Sign in or register', loginNameLabel: 'Username',
-      loginEmailLabel: 'Email',
+      loginEmailLabel: 'Email (optional if you already have a profile)',
       loginPasswordLabel: 'Password',
       loginSubmit: "Let's go →",
-      loginNote: 'New email = a new profile is created. Known email = the password is checked.',
+      loginNote: 'New here? Set an email + password. Already registered? Username (or email) + password is enough.',
       loginNeedEmail: 'Please enter an email address.',
+      loginUnknownUsername: 'No existing profile found with this name. Please enter your email.',
       loginNeedPassword: 'Please enter a password.',
       loginWrongPassword: '❌ Wrong password for this email.',
       greeting: (name) => `Hi, ${name}! 👋`,
@@ -1730,6 +1778,10 @@
       statXpTotal: 'Total XP',
       followersPageTitle: 'Followers & Following',
       followingListLabel: 'Following',
+      followersListLabel: 'Followers',
+      followBackBtn: '➕ Follow back',
+      friendHeroesLabel: '🃏 Heroes',
+      friendNoHeroes: 'No heroes unlocked yet',
       profilePrivateNote: '🔒 This profile is private.',
       privacyTitle: 'Private profile',
       privacyDesc: 'Others cannot see your stats or followers list',
@@ -2041,6 +2093,30 @@
     try { await db.set(socialKey(email), JSON.stringify(record), true); } catch (e) {}
   }
 
+  // Benutzername → E-Mail-Zuordnung (geteilt), damit man sich bei einem
+  // bestehenden Profil auch nur mit dem Benutzernamen anmelden kann.
+  // "Wer zuerst kommt, mahlt zuerst": ein Name wird nur verknüpft, wenn er
+  // noch nicht von einer anderen E-Mail belegt ist — so kann niemand aus
+  // Versehen das Konto eines anderen "kapern".
+  function usernameKey(name) { return 'username:' + sanitizeScopeKey((name || '').trim().toLowerCase()); }
+
+  async function getEmailForUsername(name) {
+    if (!hasStorage() || !name) return null;
+    try {
+      const res = await db.get(usernameKey(name), true);
+      return res && res.value ? JSON.parse(res.value).email : null;
+    } catch (e) { return null; }
+  }
+
+  async function registerUsernameMapping(name, email) {
+    if (!hasStorage() || !name || !email) return;
+    try {
+      const existingEmail = await getEmailForUsername(name);
+      if (existingEmail && existingEmail !== email) return; // Name gehört bereits jemand anderem
+      await db.set(usernameKey(name), JSON.stringify({ email }), true);
+    } catch (e) {}
+  }
+
   // Eigenes Profil in der geteilten Registry anlegen/aktualisieren (nur mit E-Mail)
   async function registerSelfSocial() {
     if (!currentProfile || !currentProfile.email) return;
@@ -2050,6 +2126,7 @@
     existing.email = email;
     existing.avatarKey = currentProfile.avatarKey != null ? currentProfile.avatarKey : null;
     existing.heroKey = currentProfile.heroKey != null ? currentProfile.heroKey : null;
+    existing.unlockedHeroes = Array.isArray(currentProfile.unlockedHeroes) ? currentProfile.unlockedHeroes : [];
     existing.isPrivate = !!currentProfile.isPrivate;
     existing.xp = xp;
     existing.streak = streak;
@@ -2323,6 +2400,14 @@
   const profileFollowersBtn = $('profileFollowersBtn'), profileFollowingBtn = $('profileFollowingBtn');
   const profileStatsLabel = $('profileStatsLabel'), profileStatsList = $('profileStatsList');
   const backFromFollowers = $('backFromFollowers'), followersPageTitle = $('followersPageTitle'), followingListLabel = $('followingListLabel');
+  const followersListLabel = $('followersListLabel'), followersList = $('followersList');
+  const backFromFriendProfile = $('backFromFriendProfile'), friendProfileTitle = $('friendProfileTitle');
+  const friendProfileAvatar = $('friendProfileAvatar'), friendProfileName = $('friendProfileName');
+  const friendProfilePrivateNote = $('friendProfilePrivateNote'), friendProfileStatsRow = $('friendProfileStatsRow');
+  const friendProfileRankValue = $('friendProfileRankValue'), friendProfileRankLabel = $('friendProfileRankLabel');
+  const friendProfileStreakValue = $('friendProfileStreakValue'), friendProfileStreakLabel = $('friendProfileStreakLabel');
+  const friendProfileXpValue = $('friendProfileXpValue'), friendProfileXpLabel = $('friendProfileXpLabel');
+  const friendHeroesLabel = $('friendHeroesLabel'), friendHeroesGrid = $('friendHeroesGrid');
   const privacyTitle = $('privacyTitle'), privacyDesc = $('privacyDesc'), privacyToggle = $('privacyToggle');
   const followLabel = $('followLabel'), followEmailInput = $('followEmailInput'), followBtn = $('followBtn');
   const followMsg = $('followMsg'), followingList = $('followingList');
@@ -2404,7 +2489,8 @@
   themeSwitch.addEventListener('click', () => document.body.classList.toggle('dark'));
 
   /* ================= NAVIGATION ================= */
-  const SCREENS = ['login', 'menu', 'profile', 'profile-edit', 'followers', 'xp', 'settings', 'phrases', 'flashcards', 'typing'];
+  const SCREENS = ['login', 'menu', 'profile', 'profile-edit', 'followers', 'friend-profile', 'xp', 'settings', 'phrases', 'flashcards', 'typing'];
+  let viewingFriendEmail = null; // welcher Freund gerade in der Profil-Ansicht angezeigt wird
   function showScreen(name) {
     SCREENS.forEach(s => $('screen-' + s).classList.toggle('hidden', s !== name));
     if (name === 'phrases') loadCard();
@@ -2413,8 +2499,14 @@
     if (name === 'profile') renderProfile();
     if (name === 'profile-edit') renderProfileEdit();
     if (name === 'followers') renderFollowersPage();
+    if (name === 'friend-profile') renderFriendProfile();
     if (name === 'xp') renderXpPage();
     if (name === 'menu') renderMenu();
+  }
+
+  function openFriendProfile(email) {
+    viewingFriendEmail = normEmail(email);
+    showScreen('friend-profile');
   }
 
   /* ================= LOGIN ================= */
@@ -2460,21 +2552,31 @@
   async function handleLoginSubmit() {
     clearLoginError();
     const name = loginName.value.trim();
-    const email = normEmail(loginEmail.value.trim());
+    let email = normEmail(loginEmail.value.trim());
     const password = loginPassword.value;
 
     if (!name) { loginName.focus(); return; }
-    if (!email) { showLoginError(t('loginNeedEmail')); loginEmail.focus(); return; }
-    if (!password) { showLoginError(t('loginNeedPassword')); loginPassword.focus(); return; }
 
     loginSubmit.disabled = true;
-    loginScopeOverride = sanitizeScopeKey(email);
-
     try {
+      if (!email) {
+        // Keine E-Mail angegeben — versuchen, sie über den Benutzernamen
+        // eines bestehenden Profils aufzulösen.
+        const foundEmail = await getEmailForUsername(name);
+        if (!foundEmail) {
+          showLoginError(t('loginUnknownUsername'));
+          loginEmail.focus();
+          return;
+        }
+        email = foundEmail;
+      }
+      if (!password) { showLoginError(t('loginNeedPassword')); loginPassword.focus(); return; }
+
+      loginScopeOverride = sanitizeScopeKey(email);
       const existing = await loadProfile();
 
       if (existing) {
-        // Bekannte E-Mail — Passwort prüfen
+        // Bekanntes Profil — Passwort prüfen
         if (!existing.pwHash) {
           // Altes Profil ohne Passwort (vor diesem Update angelegt) —
           // das eingegebene Passwort wird jetzt einmalig übernommen.
@@ -2490,10 +2592,12 @@
         }
         existing.name = name || existing.name;
         existing.email = email;
+        await registerUsernameMapping(existing.name, email);
         await completeLogin(existing);
       } else {
         // Neue E-Mail — neues Profil anlegen
         const pwHash = await hashPassword(password, email);
+        await registerUsernameMapping(name, email);
         await completeLogin({
           name, email, bio: '', pwHash,
           unlockedAvatars: [], unlockedHeroes: [], heroKey: null, isPrivate: false,
@@ -2849,6 +2953,7 @@
   profileFollowersBtn.addEventListener('click', () => showScreen('followers'));
   profileFollowingBtn.addEventListener('click', () => showScreen('followers'));
   backFromFollowers.addEventListener('click', () => showScreen('profile'));
+  backFromFriendProfile.addEventListener('click', () => showScreen('followers'));
 
   function renderFollowersPage() {
     followersPageTitle.textContent = t('followersPageTitle');
@@ -2856,8 +2961,54 @@
     followLabel.textContent = t('followLabel');
     followBtn.textContent = t('followBtn');
     followingListLabel.textContent = t('followingListLabel');
+    followersListLabel.textContent = t('followersListLabel');
     followMsg.textContent = '';
     refreshSocialUI();
+  }
+
+  // Klick auf einen Freund in Follower-/Folge-ich-Liste öffnet dessen Profil-Ansicht
+  async function renderFriendProfile() {
+    const email = viewingFriendEmail;
+    friendProfileTitle.textContent = t('profileTitle');
+    backFromFriendProfile.textContent = `← ${t('followersPageTitle')}`;
+    if (!email) return;
+
+    const rec = await getSocialRecord(email);
+    friendProfileName.textContent = (rec && rec.name) ? rec.name : email;
+    friendProfileAvatar.innerHTML = rec ? profilePicHTML(rec) : assetHTML('stats.profileDefault');
+    friendProfileAvatar.classList.toggle('is-hero', !!(rec && rec.heroKey != null));
+
+    const isPrivate = !!(rec && rec.isPrivate);
+    friendProfilePrivateNote.style.display = isPrivate ? 'block' : 'none';
+    friendProfilePrivateNote.textContent = t('profilePrivateNote');
+    friendProfileStatsRow.style.display = isPrivate ? 'none' : 'flex';
+    friendHeroesLabel.style.display = isPrivate ? 'none' : '';
+    friendHeroesGrid.style.display = isPrivate ? 'none' : 'grid';
+
+    if (!isPrivate) {
+      friendProfileRankValue.innerHTML = `${assetHTML('stats.rank')} ${(rec && rec.rank) || 0}`;
+      friendProfileRankLabel.textContent = t('rankLabel');
+      friendProfileStreakValue.innerHTML = `${assetHTML('stats.streak')} ${(rec && rec.streak) || 0}`;
+      friendProfileStreakLabel.textContent = t('profileStreakLabel');
+      friendProfileXpValue.innerHTML = `${assetHTML('stats.xp')} ${(rec && rec.xp) || 0}`;
+      friendProfileXpLabel.textContent = t('profileXpLabel');
+
+      friendHeroesLabel.textContent = t('friendHeroesLabel');
+      friendHeroesGrid.innerHTML = '';
+      const owned = (rec && rec.unlockedHeroes) || [];
+      if (owned.length === 0) {
+        friendHeroesGrid.innerHTML = `<div class="streak-label">${t('friendNoHeroes')}</div>`;
+      } else {
+        owned.forEach(idx => {
+          const hero = ASSETS.heroes[idx];
+          if (!hero) return;
+          const card = document.createElement('div');
+          card.className = 'hero-card';
+          card.innerHTML = `<img class="hero-thumb-img" src="${hero.value}" alt="" /><span class="hero-card-boost">×${hero.boost}</span>`;
+          friendHeroesGrid.appendChild(card);
+        });
+      }
+    }
   }
 
   /* ================= XP-SEITE ================= */
@@ -3141,8 +3292,45 @@
     profileFollowingValue.innerHTML = `${assetHTML('stats.following')} ${(me.following || []).length}`;
   }
 
+  // Baut eine klickbare Freundes-Zeile (Avatar + Name öffnen die Profil-Ansicht)
+  function buildFriendRow(email, rec, actionBtn) {
+    const item = document.createElement('div');
+    item.className = 'follow-item';
+
+    const avatarSpan = document.createElement('div');
+    avatarSpan.className = 'follow-item-avatar';
+    avatarSpan.innerHTML = rec ? profilePicHTML(rec) : assetHTML('stats.profileDefault');
+    avatarSpan.style.cursor = 'pointer';
+    avatarSpan.addEventListener('click', () => openFriendProfile(email));
+
+    const info = document.createElement('div');
+    info.className = 'follow-item-info';
+    info.style.cursor = 'pointer';
+    info.addEventListener('click', () => openFriendProfile(email));
+    const label = document.createElement('div');
+    label.className = 'follow-item-name';
+    label.textContent = rec && rec.name ? rec.name : email;
+    const stats = document.createElement('div');
+    stats.className = 'follow-item-stats';
+    if (rec && rec.isPrivate) {
+      stats.textContent = t('profilePrivateNote');
+    } else if (rec) {
+      stats.innerHTML = `${assetHTML('stats.rank')} ${rec.rank || 0} · ${assetHTML('stats.streak')} ${rec.streak || 0} · ${assetHTML('stats.xp')} ${rec.xp || 0}`;
+    } else {
+      stats.textContent = t('followPending');
+    }
+    info.appendChild(label);
+    info.appendChild(stats);
+
+    item.appendChild(avatarSpan);
+    item.appendChild(info);
+    if (actionBtn) item.appendChild(actionBtn);
+    return item;
+  }
+
   async function refreshSocialUI() {
     followingList.innerHTML = '';
+    followersList.innerHTML = '';
     const myEmail = normEmail(currentProfile && currentProfile.email);
     if (!myEmail || !hasStorage()) return;
 
@@ -3150,52 +3338,48 @@
     if (!me) return;
 
     const following = me.following || [];
+    const followers = me.followers || [];
 
-    const friendRecords = [];
+    // ---- Ich folge ----
+    const followingRecords = [];
     for (const email of following) {
-      const rec = await getSocialRecord(email);
-      friendRecords.push({ email, rec });
+      followingRecords.push({ email, rec: await getSocialRecord(email) });
     }
-    // Freunde nach XP sortieren — kleines Wettrennen inklusive
-    friendRecords.sort((a, b) => ((b.rec && b.rec.xp) || 0) - ((a.rec && a.rec.xp) || 0));
+    followingRecords.sort((a, b) => ((b.rec && b.rec.xp) || 0) - ((a.rec && a.rec.xp) || 0));
 
-    friendRecords.forEach(({ email, rec }) => {
-      const item = document.createElement('div');
-      item.className = 'follow-item';
-
-      const avatarSpan = document.createElement('div');
-      avatarSpan.className = 'follow-item-avatar';
-      avatarSpan.innerHTML = rec ? profilePicHTML(rec) : assetHTML('stats.profileDefault');
-
-      const info = document.createElement('div');
-      info.className = 'follow-item-info';
-      const label = document.createElement('div');
-      label.className = 'follow-item-name';
-      label.textContent = rec && rec.name ? rec.name : email;
-      const stats = document.createElement('div');
-      stats.className = 'follow-item-stats';
-      if (rec && rec.isPrivate) {
-        stats.textContent = t('profilePrivateNote');
-      } else if (rec) {
-        stats.innerHTML = `${assetHTML('stats.rank')} ${rec.rank || 0} · ${assetHTML('stats.streak')} ${rec.streak || 0} · ${assetHTML('stats.xp')} ${rec.xp || 0}`;
-      } else {
-        stats.textContent = t('followPending');
-      }
-      info.appendChild(label);
-      info.appendChild(stats);
-
+    followingRecords.forEach(({ email, rec }) => {
       const btn = document.createElement('button');
       btn.className = 'unfollow-btn';
       btn.textContent = t('unfollowBtn');
-      btn.addEventListener('click', async () => {
+      btn.addEventListener('click', async (ev) => {
+        ev.stopPropagation();
         await unfollowByEmail(email);
         refreshSocialUI();
       });
+      followingList.appendChild(buildFriendRow(email, rec, btn));
+    });
 
-      item.appendChild(avatarSpan);
-      item.appendChild(info);
-      item.appendChild(btn);
-      followingList.appendChild(item);
+    // ---- Follower ----
+    const followerRecords = [];
+    for (const email of followers) {
+      followerRecords.push({ email, rec: await getSocialRecord(email) });
+    }
+    followerRecords.sort((a, b) => ((b.rec && b.rec.xp) || 0) - ((a.rec && a.rec.xp) || 0));
+
+    followerRecords.forEach(({ email, rec }) => {
+      let btn = null;
+      if (!following.includes(email)) {
+        btn = document.createElement('button');
+        btn.className = 'unfollow-btn';
+        btn.textContent = t('followBackBtn');
+        btn.addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          await followByEmail(email);
+          refreshSocialUI();
+          refreshSocialCounts();
+        });
+      }
+      followersList.appendChild(buildFriendRow(email, rec, btn));
     });
   }
 
