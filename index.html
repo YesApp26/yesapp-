@@ -297,6 +297,11 @@
     box-shadow: var(--shadow-soft);
   }
   .stage-group.locked { opacity: 0.55; }
+  .stage-super-group {
+    border: 1px solid var(--accent); background: var(--accent-soft);
+    padding: 14px;
+  }
+  .stage-super-group .stage-group-title { color: var(--accent-deep); }
   .stage-group-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .stage-group-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--ink); letter-spacing: 0.2px; }
   .stage-group-sub { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim); margin-top: 2px; }
@@ -937,7 +942,7 @@
         </button>
       </div>
 
-      <button class="primary-button" id="editProfileBtn" style="margin-top: 18px;">✏️ Profil bearbeiten</button>
+      <button class="primary-button" id="editProfileBtn" style="margin-top: 18px; padding: 10px 18px; font-size: 12px; width: auto;">✏️ Profil bearbeiten</button>
     </div>
 
     <div class="toggle-group-label" id="profileStatsLabel">Statistiken</div>
@@ -994,8 +999,17 @@
       </div>
     </div>
 
+    <div class="toggle-group-label" id="friendProfileStatsLabel" style="display:none;">Statistiken</div>
+    <div id="friendProfileStatsList" style="width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 8px;"></div>
+
     <div class="toggle-group-label" id="friendHeroesLabel" style="display:none;">Helden</div>
     <div class="hero-grid" id="friendHeroesGrid" style="display:none;"></div>
+
+    <div class="toggle-group-label" id="friendNetworkFollowingLabel" style="display:none; margin-top: 20px;">Folgt</div>
+    <div id="friendNetworkFollowingList" style="width: 100%; margin-top: 6px;"></div>
+
+    <div class="toggle-group-label" id="friendNetworkFollowersLabel" style="display:none; margin-top: 20px;">Follower</div>
+    <div id="friendNetworkFollowersList" style="width: 100%; margin-top: 6px;"></div>
   </section>
 
   <!-- ============ XP-ÜBERSICHT ============ -->
@@ -1412,18 +1426,13 @@
     return a;
   }
 
-  // Karteikarten: jede Stufe in 5er-Blöcken durchblättern
-  const FLASH_BLOCK_SIZE = 5;
+  // Karteikarten: einfache, feste 50er-Blöcke über den gesamten Wortschatz
+  // (unabhängig vom 10-Stufen-System von Phrases/Tippen — bewusst simpel gehalten)
+  const FLASH_BLOCK_SIZE = 50;
   const FLASH_CHUNKS = [];
-  STAGES.forEach((s, stageIdx) => {
-    for (let i = 0; i < s.count; i += FLASH_BLOCK_SIZE) {
-      FLASH_CHUNKS.push({
-        start: s.startIndex + i,
-        end: Math.min(s.startIndex + i + FLASH_BLOCK_SIZE, s.startIndex + s.count),
-        stageIdx,
-      });
-    }
-  });
+  for (let i = 0; i < VOCABS.length; i += FLASH_BLOCK_SIZE) {
+    FLASH_CHUNKS.push({ start: i, end: Math.min(i + FLASH_BLOCK_SIZE, VOCABS.length) });
+  }
 
   const FLAG = { de: '🇩🇪', pt: '🇵🇹', en: '🇬🇧' };
   const UPPER_LABEL = { de: 'DEUTSCH', pt: 'PORTUGUÊS', en: 'ENGLISH' };
@@ -1446,7 +1455,7 @@
     de: {
       appSubtitle: 'Sprachen lernen', uiLangLabel: 'Oberfläche', targetLangLabel: 'Ich möchte lernen',
       modePhrasesDesc: 'Multiple-Choice — tippe für Stufen & Level',
-      modeFlashTitle: 'Karteikarten', modeFlashDesc: 'Stufe 1 in 5er-Blöcken, Stufe 2 in 10er-Blöcken lernen',
+      modeFlashTitle: 'Karteikarten', modeFlashDesc: 'Alle Vokabeln in 3 Blöcken à 50 durchblättern',
       flashStageExplain: (n) => `${n}er-Blöcke`,
       back: '← Menü',
       settingsTitle: 'Einstellungen', appearanceLabel: 'Erscheinungsbild',
@@ -1522,6 +1531,8 @@
       followBackBtn: '➕ Zurückfolgen',
       friendHeroesLabel: '🃏 Helden',
       friendNoHeroes: 'Noch keine Helden freigeschaltet',
+      friendNetworkFollowingLabel: (name) => `${name} folgt`,
+      friendNetworkFollowersLabel: (name) => `Follower von ${name}`,
       profilePrivateNote: '🔒 Dieses Profil ist privat.',
       privacyTitle: 'Privates Profil',
       privacyDesc: 'Andere sehen deine Statistiken und Followerliste nicht',
@@ -1552,6 +1563,8 @@
       stageNum: (n) => `Stufe ${n}`,
       stageRange: (a, b) => `Vokabeln ${a}–${b}`,
       stageLocked: 'Schließe zuerst die vorige Stufe ab',
+      stageSuperLabel: (a, b) => `Stufen ${a}–${b}`,
+      stageSuperSub: (done, total) => `${done} von ${total} Stufen abgeschlossen`,
       levelLine: (lvl, total) => `Level ${lvl} von ${total}`,
       replayLine: (lvl) => `Level ${lvl} · Wiederholung`,
       unlockedLine: (u, t) => `${u} von ${t} Vokabeln freigeschaltet`,
@@ -1576,7 +1589,7 @@
     pt: {
       appSubtitle: 'Aprender idiomas', uiLangLabel: 'Interface', targetLangLabel: 'Quero aprender',
       modePhrasesDesc: 'Múltipla escolha — toque para estágios e níveis',
-      modeFlashTitle: 'Cartões', modeFlashDesc: 'Estágio 1 em blocos de 5, Estágio 2 em blocos de 10',
+      modeFlashTitle: 'Cartões', modeFlashDesc: 'Percorra todas as palavras em 3 blocos de 50',
       flashStageExplain: (n) => `blocos de ${n}`,
       back: '← Menu',
       settingsTitle: 'Configurações', appearanceLabel: 'Aparência',
@@ -1652,6 +1665,8 @@
       followBackBtn: '➕ Seguir de volta',
       friendHeroesLabel: '🃏 Heróis',
       friendNoHeroes: 'Nenhum herói desbloqueado ainda',
+      friendNetworkFollowingLabel: (name) => `${name} segue`,
+      friendNetworkFollowersLabel: (name) => `Seguidores de ${name}`,
       profilePrivateNote: '🔒 Este perfil é privado.',
       privacyTitle: 'Perfil privado',
       privacyDesc: 'Outros não veem suas estatísticas nem sua lista de seguidores',
@@ -1682,6 +1697,8 @@
       stageNum: (n) => `Estágio ${n}`,
       stageRange: (a, b) => `Palavras ${a}–${b}`,
       stageLocked: 'Conclua primeiro o estágio anterior',
+      stageSuperLabel: (a, b) => `Estágios ${a}–${b}`,
+      stageSuperSub: (done, total) => `${done} de ${total} estágios concluídos`,
       levelLine: (lvl, total) => `Nível ${lvl} de ${total}`,
       replayLine: (lvl) => `Nível ${lvl} · Revisão`,
       unlockedLine: (u, t) => `${u} de ${t} palavras desbloqueadas`,
@@ -1706,7 +1723,7 @@
     en: {
       appSubtitle: 'Learn languages', uiLangLabel: 'Interface', targetLangLabel: 'I want to learn',
       modePhrasesDesc: 'Multiple choice — tap for stages & levels',
-      modeFlashTitle: 'Flashcards', modeFlashDesc: 'Stage 1 in blocks of 5, Stage 2 in blocks of 10',
+      modeFlashTitle: 'Flashcards', modeFlashDesc: 'Browse all words in 3 blocks of 50',
       flashStageExplain: (n) => `blocks of ${n}`,
       back: '← Menu',
       settingsTitle: 'Settings', appearanceLabel: 'Appearance',
@@ -1782,6 +1799,8 @@
       followBackBtn: '➕ Follow back',
       friendHeroesLabel: '🃏 Heroes',
       friendNoHeroes: 'No heroes unlocked yet',
+      friendNetworkFollowingLabel: (name) => `${name} follows`,
+      friendNetworkFollowersLabel: (name) => `${name}'s followers`,
       profilePrivateNote: '🔒 This profile is private.',
       privacyTitle: 'Private profile',
       privacyDesc: 'Others cannot see your stats or followers list',
@@ -1812,6 +1831,8 @@
       stageNum: (n) => `Stage ${n}`,
       stageRange: (a, b) => `Words ${a}–${b}`,
       stageLocked: 'Finish the previous stage first',
+      stageSuperLabel: (a, b) => `Stages ${a}–${b}`,
+      stageSuperSub: (done, total) => `${done} of ${total} stages complete`,
       levelLine: (lvl, total) => `Level ${lvl} of ${total}`,
       replayLine: (lvl) => `Level ${lvl} · Replay`,
       unlockedLine: (u, t) => `${u} of ${t} words unlocked`,
@@ -2131,6 +2152,14 @@
     existing.xp = xp;
     existing.streak = streak;
     existing.rank = rankOf(xp);
+    // Zusätzliche Statistik-Werte, damit Freunde beim Profilbesuch dieselbe
+    // Statistik-Liste sehen wie ich selbst (Momentaufnahme bei jedem Speichern).
+    existing.langXp = { ...langXp };
+    existing.modeXp = { ...modeXp };
+    existing.avgXpPerDay = avgXpPerDay();
+    existing.boostMultiplier = totalBoostMultiplier();
+    existing.vocabLearned = learnedVocabCount();
+    existing.vocabTotal = totalVocabCount();
     existing.updatedAt = Date.now();
     await setSocialRecord(email, existing);
   }
@@ -2408,6 +2437,9 @@
   const friendProfileStreakValue = $('friendProfileStreakValue'), friendProfileStreakLabel = $('friendProfileStreakLabel');
   const friendProfileXpValue = $('friendProfileXpValue'), friendProfileXpLabel = $('friendProfileXpLabel');
   const friendHeroesLabel = $('friendHeroesLabel'), friendHeroesGrid = $('friendHeroesGrid');
+  const friendProfileStatsLabel = $('friendProfileStatsLabel'), friendProfileStatsList = $('friendProfileStatsList');
+  const friendNetworkFollowingLabel = $('friendNetworkFollowingLabel'), friendNetworkFollowingList = $('friendNetworkFollowingList');
+  const friendNetworkFollowersLabel = $('friendNetworkFollowersLabel'), friendNetworkFollowersList = $('friendNetworkFollowersList');
   const privacyTitle = $('privacyTitle'), privacyDesc = $('privacyDesc'), privacyToggle = $('privacyToggle');
   const followLabel = $('followLabel'), followEmailInput = $('followEmailInput'), followBtn = $('followBtn');
   const followMsg = $('followMsg'), followingList = $('followingList');
@@ -2646,70 +2678,113 @@
   }
 
   // Level-Chip-Status: ✅ geschafft (wiederholbar), ▶️ aktuelles Level, 🔒 gesperrt
-  // Auf-/Zuklapp-Zustand je Modus & Stufe (Stufe 1 startet offen)
+  // Auf-/Zuklapp-Zustand je Modus & Stufe — startet komplett zugeklappt,
+  // damit das Menü nach dem Öffnen von Phrases/Tippen übersichtlich bleibt.
   function freshStageOpen() {
-    const o = {}; for (let i = 0; i < STAGE_COUNT; i++) o[i] = (i === 0);
+    const o = { super: { 0: false, 1: false } };
+    for (let i = 0; i < STAGE_COUNT; i++) o[i] = false;
     return o;
   }
   const stageOpen = {
     phrases: freshStageOpen(),
     typing: freshStageOpen(),
-    flash: freshStageOpen(),
   };
+
+  const SUPER_GROUP_SIZE = 5; // fasst je 5 Stufen zu einer übergeordneten Schaltfläche zusammen
 
   function buildStagePanel(panelEl, mode, getStates, onLevelClick) {
     panelEl.innerHTML = '';
-    STAGES.forEach((s, idx) => {
-      const states = getStates();
-      const state = states[idx];
-      const locked = idx > 0 && !states[idx - 1].completed;
-      const total = stageTotalLevels(s);
-      const isOpen = !!stageOpen[mode][idx];
+    const states = getStates();
+    const superCount = Math.ceil(STAGES.length / SUPER_GROUP_SIZE);
 
-      const group = document.createElement('div');
-      group.className = 'stage-group' + (locked ? ' locked' : '');
+    for (let superIdx = 0; superIdx < superCount; superIdx++) {
+      const from = superIdx * SUPER_GROUP_SIZE;
+      const to = Math.min(from + SUPER_GROUP_SIZE, STAGES.length);
+      const stagesInGroup = STAGES.slice(from, to);
+      const completedCount = stagesInGroup.filter((s, i) => states[from + i].completed).length;
+      const isSuperOpen = !!stageOpen[mode].super[superIdx];
 
-      const head = document.createElement('div');
-      head.className = 'stage-group-head';
-      head.style.cursor = 'pointer';
-      head.innerHTML = `
+      const superGroup = document.createElement('div');
+      superGroup.className = 'stage-group stage-super-group';
+
+      const superHead = document.createElement('div');
+      superHead.className = 'stage-group-head';
+      superHead.style.cursor = 'pointer';
+      superHead.innerHTML = `
         <div>
-          <div class="stage-group-title">${stageName(s)}</div>
-          <div class="stage-group-sub">${locked ? t('stageLocked') : t('stageRange', s.startIndex + 1, s.startIndex + s.count)}</div>
+          <div class="stage-group-title">${t('stageSuperLabel', from + 1, to)}</div>
+          <div class="stage-group-sub">${t('stageSuperSub', completedCount, stagesInGroup.length)}</div>
         </div>
         <div class="stage-group-badge">
-          ${locked ? assetHTML('levelState.locked') : (state.completed ? assetHTML('levelState.trophy') : `${state.activeLevel + 1}/${total}`)}
-          <span class="stage-caret${isOpen ? ' open' : ''}">▾</span>
+          <span class="stage-caret${isSuperOpen ? ' open' : ''}">▾</span>
         </div>
       `;
-      head.addEventListener('click', () => {
-        stageOpen[mode][idx] = !stageOpen[mode][idx];
+      superHead.addEventListener('click', () => {
+        stageOpen[mode].super[superIdx] = !stageOpen[mode].super[superIdx];
         buildStagePanel(panelEl, mode, getStates, onLevelClick);
       });
-      group.appendChild(head);
+      superGroup.appendChild(superHead);
 
-      // Level-Raster immer bauen — bei gesperrter Stufe komplett gesperrt
-      const grid = document.createElement('div');
-      grid.className = 'level-grid';
-      grid.style.display = isOpen ? '' : 'none';
-      for (let lvl = 0; lvl < total; lvl++) {
-        const chip = document.createElement('button');
-        const done = !locked && (state.completed || lvl < state.activeLevel);
-        const isCurrent = !locked && !state.completed && lvl === state.activeLevel;
-        const chipLocked = locked || (!done && !isCurrent);
+      const superBody = document.createElement('div');
+      superBody.style.display = isSuperOpen ? '' : 'none';
+      superBody.style.marginTop = '10px';
 
-        chip.className = 'level-chip' + (chipLocked ? ' locked' : '') + (isCurrent ? ' current' : '');
-        const iconPath = done ? 'levelState.done' : (isCurrent ? 'levelState.current' : 'levelState.locked');
-        chip.innerHTML = `<span class="chip-emoji">${assetHTML(iconPath)}</span><span>${lvl + 1}</span>`;
+      stagesInGroup.forEach((s, i) => {
+        const idx = from + i;
+        const state = states[idx];
+        const locked = idx > 0 && !states[idx - 1].completed;
+        const total = stageTotalLevels(s);
+        const isOpen = !!stageOpen[mode][idx];
 
-        if (!chipLocked) {
-          chip.addEventListener('click', () => onLevelClick(idx, lvl));
+        const group = document.createElement('div');
+        group.className = 'stage-group' + (locked ? ' locked' : '');
+        group.style.marginTop = i === 0 ? '0' : '10px';
+
+        const head = document.createElement('div');
+        head.className = 'stage-group-head';
+        head.style.cursor = 'pointer';
+        head.innerHTML = `
+          <div>
+            <div class="stage-group-title">${stageName(s)}</div>
+            <div class="stage-group-sub">${locked ? t('stageLocked') : t('stageRange', s.startIndex + 1, s.startIndex + s.count)}</div>
+          </div>
+          <div class="stage-group-badge">
+            ${locked ? assetHTML('levelState.locked') : (state.completed ? assetHTML('levelState.trophy') : `${state.activeLevel + 1}/${total}`)}
+            <span class="stage-caret${isOpen ? ' open' : ''}">▾</span>
+          </div>
+        `;
+        head.addEventListener('click', () => {
+          stageOpen[mode][idx] = !stageOpen[mode][idx];
+          buildStagePanel(panelEl, mode, getStates, onLevelClick);
+        });
+        group.appendChild(head);
+
+        // Level-Raster immer bauen — bei gesperrter Stufe komplett gesperrt
+        const grid = document.createElement('div');
+        grid.className = 'level-grid';
+        grid.style.display = isOpen ? '' : 'none';
+        for (let lvl = 0; lvl < total; lvl++) {
+          const chip = document.createElement('button');
+          const done = !locked && (state.completed || lvl < state.activeLevel);
+          const isCurrent = !locked && !state.completed && lvl === state.activeLevel;
+          const chipLocked = locked || (!done && !isCurrent);
+
+          chip.className = 'level-chip' + (chipLocked ? ' locked' : '') + (isCurrent ? ' current' : '');
+          const iconPath = done ? 'levelState.done' : (isCurrent ? 'levelState.current' : 'levelState.locked');
+          chip.innerHTML = `<span class="chip-emoji">${assetHTML(iconPath)}</span><span>${lvl + 1}</span>`;
+
+          if (!chipLocked) {
+            chip.addEventListener('click', () => onLevelClick(idx, lvl));
+          }
+          grid.appendChild(chip);
         }
-        grid.appendChild(chip);
-      }
-      group.appendChild(grid);
-      panelEl.appendChild(group);
-    });
+        group.appendChild(grid);
+        superBody.appendChild(group);
+      });
+
+      superGroup.appendChild(superBody);
+      panelEl.appendChild(superGroup);
+    }
   }
 
   function renderPhrasesStagePanel() {
@@ -2721,57 +2796,25 @@
     });
   }
 
-  // Karteikarten: keine Sperren — reine Lern-Navigation in 5er- (Stufe 1) / 10er-Blöcken (Stufe 2)
+  // Karteikarten: einfache Navigation über 3 feste 50er-Blöcke, keine Sperren
   function renderFlashStagePanel() {
     flashStagePanel.innerHTML = '';
-    STAGES.forEach((s, stageIdx) => {
-      const blockSize = FLASH_BLOCK_SIZE;
-      const chunksOfStage = FLASH_CHUNKS
-        .map((c, globalIdx) => ({ ...c, globalIdx }))
-        .filter(c => c.stageIdx === stageIdx);
-      const isOpen = !!stageOpen.flash[stageIdx];
-
-      const group = document.createElement('div');
-      group.className = 'stage-group';
-
-      const head = document.createElement('div');
-      head.className = 'stage-group-head';
-      head.style.cursor = 'pointer';
-      head.innerHTML = `
-        <div>
-          <div class="stage-group-title">${stageName(s)}</div>
-          <div class="stage-group-sub">${t('stageRange', s.startIndex + 1, s.startIndex + s.count)} · ${t('flashStageExplain', blockSize)}</div>
-        </div>
-        <div class="stage-group-badge">
-          ${chunksOfStage.length}
-          <span class="stage-caret${isOpen ? ' open' : ''}">▾</span>
-        </div>
-      `;
-      head.addEventListener('click', () => {
-        stageOpen.flash[stageIdx] = !stageOpen.flash[stageIdx];
-        renderFlashStagePanel();
+    const grid = document.createElement('div');
+    grid.className = 'level-grid';
+    FLASH_CHUNKS.forEach((chunk, idx) => {
+      const chip = document.createElement('button');
+      chip.className = 'level-chip';
+      chip.innerHTML = `<span class="chip-emoji">${assetHTML('levelState.chunk')}</span><span>${idx + 1}</span>`;
+      chip.title = t('flashChunkLabel', chunk.start + 1, chunk.end);
+      chip.addEventListener('click', () => {
+        flashChunkIndex = idx;
+        flashIndex = chunk.start;
+        flashFlipped = false;
+        showScreen('flashcards');
       });
-      group.appendChild(head);
-
-      const grid = document.createElement('div');
-      grid.className = 'level-grid';
-      grid.style.display = isOpen ? '' : 'none';
-      chunksOfStage.forEach((chunk, i) => {
-        const chip = document.createElement('button');
-        chip.className = 'level-chip';
-        chip.innerHTML = `<span class="chip-emoji">${assetHTML('levelState.chunk')}</span><span>${i + 1}</span>`;
-        chip.title = t('flashChunkLabel', chunk.start + 1, chunk.end);
-        chip.addEventListener('click', () => {
-          flashChunkIndex = chunk.globalIdx;
-          flashIndex = chunk.start;
-          flashFlipped = false;
-          showScreen('flashcards');
-        });
-        grid.appendChild(chip);
-      });
-      group.appendChild(grid);
-      flashStagePanel.appendChild(group);
+      grid.appendChild(chip);
     });
+    flashStagePanel.appendChild(grid);
   }
 
   function renderMenu() {
@@ -2900,15 +2943,27 @@
   function totalVocabCount() { return VOCABS.length; }
 
   // Kleine, für andere sichtbare Statistik-Liste im Profil —
-  // zeigt dieselben XP-Werte wie die XP-Übersicht (statt Rang/Streak).
+  // Wallet-XP bleibt exklusiv auf der XP-Seite. Hier stattdessen XP je
+  // Sprache und je Modus; Wortschatz-Zähler ganz unten.
   function profileStatsData() {
     const list = [
-      { name: t('statVocab'), value: `${learnedVocabCount()} / ${totalVocabCount()}` },
       { name: t('xpTotalLabel'), value: `${assetHTML('stats.xp')} ${xp}` },
-      { name: t('xpWalletLabel'), value: `${assetHTML('stats.wallet')} ${walletXp}` },
       { name: t('xpAvgPerDayLabel'), value: `📊 ${avgXpPerDay()}` },
     ];
     if (xpBoostActive()) list.push({ name: t('statBoost'), value: `🎮 ×${totalBoostMultiplier()}` });
+
+    ['pt', 'de', 'en'].filter(lang => (langXp[lang] || 0) > 0).forEach(lang => {
+      list.push({ name: `${FLAG[lang]} ${LANG_NAME[uiLanguage][lang]}`, value: `${assetHTML('stats.xp')} ${langXp[lang] || 0} XP` });
+    });
+
+    [
+      { key: 'phrases', name: t('modeNamePhrases') },
+      { key: 'typing', name: t('modeNameTyping') },
+    ].filter(m => (modeXp[m.key] || 0) > 0).forEach(m => {
+      list.push({ name: m.name, value: `${assetHTML('stats.xp')} ${modeXp[m.key] || 0} XP` });
+    });
+
+    list.push({ name: t('statVocab'), value: `${learnedVocabCount()} / ${totalVocabCount()}` });
     return list;
   }
   function renderProfileStatsList() {
@@ -2967,6 +3022,32 @@
   }
 
   // Klick auf einen Freund in Follower-/Folge-ich-Liste öffnet dessen Profil-Ansicht
+  // Baut dieselbe Statistik-Liste wie im eigenen Profil, aber aus einem
+  // synchronisierten Freundes-Datensatz (rec) statt aus den eigenen, live
+  // laufenden Werten — damit Besucher genau das sehen, was ich selbst sehe.
+  function friendProfileStatsData(rec) {
+    const list = [
+      { name: t('xpTotalLabel'), value: `${assetHTML('stats.xp')} ${rec.xp || 0}` },
+      { name: t('xpAvgPerDayLabel'), value: `📊 ${rec.avgXpPerDay || 0}` },
+    ];
+    if (rec.boostMultiplier && rec.boostMultiplier > 1) {
+      list.push({ name: t('statBoost'), value: `🎮 ×${rec.boostMultiplier}` });
+    }
+    const langXpRec = rec.langXp || {};
+    ['pt', 'de', 'en'].filter(lang => (langXpRec[lang] || 0) > 0).forEach(lang => {
+      list.push({ name: `${FLAG[lang]} ${LANG_NAME[uiLanguage][lang]}`, value: `${assetHTML('stats.xp')} ${langXpRec[lang] || 0} XP` });
+    });
+    const modeXpRec = rec.modeXp || {};
+    [
+      { key: 'phrases', name: t('modeNamePhrases') },
+      { key: 'typing', name: t('modeNameTyping') },
+    ].filter(m => (modeXpRec[m.key] || 0) > 0).forEach(m => {
+      list.push({ name: m.name, value: `${assetHTML('stats.xp')} ${modeXpRec[m.key] || 0} XP` });
+    });
+    list.push({ name: t('statVocab'), value: `${rec.vocabLearned || 0} / ${rec.vocabTotal || totalVocabCount()}` });
+    return list;
+  }
+
   async function renderFriendProfile() {
     const email = viewingFriendEmail;
     friendProfileTitle.textContent = t('profileTitle');
@@ -2981,34 +3062,71 @@
     const isPrivate = !!(rec && rec.isPrivate);
     friendProfilePrivateNote.style.display = isPrivate ? 'block' : 'none';
     friendProfilePrivateNote.textContent = t('profilePrivateNote');
-    friendProfileStatsRow.style.display = isPrivate ? 'none' : 'flex';
+    friendProfileStatsRow.style.display = 'none'; // ersetzt durch die vollständige Statistik-Liste unten
+    friendProfileStatsLabel.style.display = isPrivate ? 'none' : '';
     friendHeroesLabel.style.display = isPrivate ? 'none' : '';
     friendHeroesGrid.style.display = isPrivate ? 'none' : 'grid';
+    friendNetworkFollowingLabel.style.display = isPrivate ? 'none' : '';
+    friendNetworkFollowersLabel.style.display = isPrivate ? 'none' : '';
+    friendProfileStatsList.innerHTML = '';
+    friendNetworkFollowingList.innerHTML = '';
+    friendNetworkFollowersList.innerHTML = '';
 
-    if (!isPrivate) {
-      friendProfileRankValue.innerHTML = `${assetHTML('stats.rank')} ${(rec && rec.rank) || 0}`;
-      friendProfileRankLabel.textContent = t('rankLabel');
-      friendProfileStreakValue.innerHTML = `${assetHTML('stats.streak')} ${(rec && rec.streak) || 0}`;
-      friendProfileStreakLabel.textContent = t('profileStreakLabel');
-      friendProfileXpValue.innerHTML = `${assetHTML('stats.xp')} ${(rec && rec.xp) || 0}`;
-      friendProfileXpLabel.textContent = t('profileXpLabel');
+    if (isPrivate || !rec) return;
 
-      friendHeroesLabel.textContent = t('friendHeroesLabel');
-      friendHeroesGrid.innerHTML = '';
-      const owned = (rec && rec.unlockedHeroes) || [];
-      if (owned.length === 0) {
-        friendHeroesGrid.innerHTML = `<div class="streak-label">${t('friendNoHeroes')}</div>`;
-      } else {
-        owned.forEach(idx => {
-          const hero = ASSETS.heroes[idx];
-          if (!hero) return;
-          const card = document.createElement('div');
-          card.className = 'hero-card';
-          card.innerHTML = `<img class="hero-thumb-img" src="${hero.value}" alt="" /><span class="hero-card-boost">×${hero.boost}</span>`;
-          friendHeroesGrid.appendChild(card);
-        });
+    friendProfileStatsLabel.textContent = t('profileStatsLabel');
+    friendProfileStatsData(rec).forEach(s => {
+      const row = document.createElement('div');
+      row.className = 'stat-list-item';
+      row.innerHTML = `<div class="stat-list-name">${s.name}</div><div class="stat-list-value">${s.value}</div>`;
+      friendProfileStatsList.appendChild(row);
+    });
+
+    friendHeroesLabel.textContent = t('friendHeroesLabel');
+    friendHeroesGrid.innerHTML = '';
+    const owned = rec.unlockedHeroes || [];
+    if (owned.length === 0) {
+      friendHeroesGrid.innerHTML = `<div class="streak-label">${t('friendNoHeroes')}</div>`;
+    } else {
+      owned.forEach(idx => {
+        const hero = ASSETS.heroes[idx];
+        if (!hero) return;
+        const card = document.createElement('div');
+        card.className = 'hero-card';
+        card.innerHTML = `<img class="hero-thumb-img" src="${hero.value}" alt="" /><span class="hero-card-boost">×${hero.boost}</span>`;
+        friendHeroesGrid.appendChild(card);
+      });
+    }
+
+    // Netzwerk-Entdeckung: Follower/Folgt dieses Freundes anzeigen und direkt
+    // folgen können, ganz ohne die E-Mail-Adresse der Person zu kennen.
+    friendNetworkFollowingLabel.textContent = t('friendNetworkFollowingLabel', rec.name || email);
+    friendNetworkFollowersLabel.textContent = t('friendNetworkFollowersLabel', rec.name || email);
+
+    const myEmail = normEmail(currentProfile && currentProfile.email);
+    const myFollowing = (await getSocialRecord(myEmail)) || { following: [] };
+
+    async function renderNetworkList(container, emails) {
+      for (const otherEmail of emails) {
+        if (normEmail(otherEmail) === myEmail) continue; // sich selbst nicht anzeigen
+        const otherRec = await getSocialRecord(otherEmail);
+        let btn = null;
+        if (!(myFollowing.following || []).includes(normEmail(otherEmail))) {
+          btn = document.createElement('button');
+          btn.className = 'unfollow-btn';
+          btn.textContent = t('followBackBtn');
+          btn.addEventListener('click', async (ev) => {
+            ev.stopPropagation();
+            await followByEmail(otherEmail);
+            renderFriendProfile();
+            refreshSocialCounts();
+          });
+        }
+        container.appendChild(buildFriendRow(otherEmail, otherRec, btn));
       }
     }
+    await renderNetworkList(friendNetworkFollowingList, rec.following || []);
+    await renderNetworkList(friendNetworkFollowersList, rec.followers || []);
   }
 
   /* ================= XP-SEITE ================= */
