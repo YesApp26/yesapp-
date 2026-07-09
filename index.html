@@ -1153,6 +1153,51 @@
   .avatar-lock-overlay { position: absolute; top: 4px; right: 6px; font-size: 11px; }
   .avatar-option.selected { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 14px rgba(14,165,233,0.35); }
   .avatar-lock-badge { display: block; font-family: var(--font-mono); font-size: 9.5px; margin-top: 2px; font-weight: 700; color: var(--accent); }
+
+  /* --- Streak-Seite --- */
+  .streak-hero { display: flex; flex-direction: column; align-items: center; margin-top: 8px; width: 100%; }
+  .streak-hero-value {
+    font-family: var(--font-display); font-size: 42px; font-weight: 800; color: var(--ink);
+    filter: drop-shadow(0 0 16px rgba(234, 88, 12, 0.4));
+  }
+  .streak-hero-label { font-family: var(--font-mono); font-size: 12px; color: var(--text-dim); margin-top: 4px; letter-spacing: 0.3px; }
+
+  .streak-bar {
+    display: flex; gap: 4px; overflow-x: auto; padding: 4px 2px 10px; margin-top: 20px; width: 100%;
+    scrollbar-width: none;
+  }
+  .streak-bar::-webkit-scrollbar { display: none; }
+  .streak-bar-chip {
+    flex-shrink: 0; width: 25px; height: 32px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center; font-size: 13px;
+    background: var(--card-glass); border: 1px solid var(--page-border);
+  }
+  .streak-bar-chip.active {
+    background: linear-gradient(160deg, #fb923c, #ea580c); border-color: #ea580c;
+    box-shadow: 0 0 10px rgba(234, 88, 12, 0.5);
+  }
+  .streak-bar-chip.more {
+    width: auto; padding: 0 10px; font-family: var(--font-mono); font-weight: 700; font-size: 11px; color: #fff;
+  }
+
+  .streak-weekday-row {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 100%; margin-top: 10px;
+  }
+  .streak-weekday-cell { text-align: center; font-family: var(--font-mono); font-size: 9.5px; color: var(--text-dim); }
+
+  .streak-calendar {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 100%; margin-top: 6px;
+  }
+  .streak-day {
+    aspect-ratio: 1 / 1; border-radius: 6px; background: var(--card-glass); border: 1px solid var(--page-border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 9.5px; color: var(--text-dim);
+  }
+  .streak-day.active {
+    background: linear-gradient(160deg, #fb923c, #ea580c); border-color: #ea580c; color: #fff; font-weight: 700;
+    box-shadow: 0 0 8px rgba(234, 88, 12, 0.4);
+  }
+  .streak-day.today { border-color: var(--accent); border-width: 2px; }
   .avatar-owned-check {
     position: absolute; bottom: 3px; right: 3px;
     width: 16px; height: 16px; border-radius: 50%;
@@ -1548,10 +1593,10 @@
           <div class="profile-stat-value" id="profileRankValue">⚔️ 0</div>
           <div class="profile-stat-label" id="profileRankLabel">Rang</div>
         </div>
-        <div class="profile-stat">
+        <button class="profile-stat profile-stat-link" id="profileStreakStat">
           <div class="profile-stat-value" id="profileStreakValue">🔥 0</div>
           <div class="profile-stat-label" id="profileStreakLabel">Streak</div>
-        </div>
+        </button>
         <button class="profile-stat profile-stat-link" id="profileXpStat">
           <div class="profile-stat-value" id="profileXpValue">⭐ 0</div>
           <div class="profile-stat-label" id="profileXpLabel">XP</div>
@@ -1675,6 +1720,34 @@
 
     <div class="toggle-group-label" id="marketHeroesLabel" style="margin-top: 26px;">Helden</div>
     <div class="hero-grid" id="marketHeroGrid"></div>
+  </section>
+
+  <!-- ============ STREAK ============ -->
+  <section class="screen hidden" id="screen-streak">
+    <button class="back-button" id="backFromStreak">← Menü</button>
+
+    <div class="header">
+      <div class="mode-label" id="streakPageTitle">Streak</div>
+    </div>
+
+    <div class="streak-hero">
+      <div class="streak-hero-value" id="streakHeroValue">🔥 0</div>
+      <div class="streak-hero-label" id="streakHeroLabel">Tage in Folge</div>
+    </div>
+
+    <div class="streak-bar" id="streakBar"></div>
+
+    <div class="toggle-group-label" id="streakCalendarLabel">Kalender</div>
+    <div class="streak-weekday-row" id="streakWeekdayRow"></div>
+    <div class="streak-calendar" id="streakCalendar"></div>
+
+    <div class="toggle-group-label" id="friendStreakLabel" style="margin-top: 26px;">Freundes-Streak</div>
+    <button class="career-button" id="friendStreakUnlockBtn">
+      <span class="career-icon">🔥🤝</span>
+      <span class="career-label" id="friendStreakUnlockLabel">Für 5000 Coins freischalten</span>
+      <span class="career-arrow">🔒</span>
+    </button>
+    <div id="friendStreakList" style="width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 8px;"></div>
   </section>
 
   <!-- ============ PROFIL BEARBEITEN ============ -->
@@ -2157,6 +2230,18 @@
       heroLockedTooltip: (price) => `Für ${price} XP freischaltbar`,
       heroViewClose: 'Schließen',
       boostConfirmTitle: '🎮 Controller freischalten?',
+      friendStreakUnlockTitle: '🔥🤝 Freundes-Streak freischalten?',
+      friendStreakUnlockText: (price) => `Für ${price} Coins dauerhaft freischalten und gemeinsame Streaks mit deinen Freunden sehen?`,
+      friendStreakLabel: '🔥🤝 Freundes-Streak',
+      friendStreakUnlockLabel: (price) => `Für ${price} Coins freischalten`,
+      friendStreakNoFriends: 'Folge zuerst ein paar Freunden, um gemeinsame Streaks zu sehen.',
+      friendStreakMutualDays: (n) => `${n} Tage gemeinsam aktiv`,
+      friendStreakNoMutual: 'Noch kein gemeinsamer Streak',
+      streakPageTitle: 'Streak',
+      streakHeroLabel: 'Tage in Folge',
+      streakCalendarLabel: 'Kalender',
+      streakBarEmpty: 'Noch kein aktiver Streak — leg heute los!',
+      weekdayShort: ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'],
       boostConfirmText: (price) => `Für ${price} XP freischalten und dauerhaft mehr XP verdienen?`,
       boostUnlockedTitle: '🎮 Boost aktiv!',
       boostUnlockedText: (f) => `Du erhältst ab jetzt ${f}× XP auf alle Aufgaben. Viel Spaß beim schnelleren Aufsteigen!`,
@@ -2303,6 +2388,18 @@
       heroLockedTooltip: (price) => `Desbloqueável por ${price} XP`,
       heroViewClose: 'Fechar',
       boostConfirmTitle: '🎮 Desbloquear controle?',
+      friendStreakUnlockTitle: '🔥🤝 Desbloquear sequência com amigos?',
+      friendStreakUnlockText: (price) => `Desbloquear permanentemente por ${price} coins e ver sequências em comum com seus amigos?`,
+      friendStreakLabel: '🔥🤝 Sequência com amigos',
+      friendStreakUnlockLabel: (price) => `Desbloquear por ${price} coins`,
+      friendStreakNoFriends: 'Siga alguns amigos primeiro para ver sequências em comum.',
+      friendStreakMutualDays: (n) => `${n} dias ativos juntos`,
+      friendStreakNoMutual: 'Ainda sem sequência em comum',
+      streakPageTitle: 'Sequência',
+      streakHeroLabel: 'Dias seguidos',
+      streakCalendarLabel: 'Calendário',
+      streakBarEmpty: 'Nenhuma sequência ativa ainda — comece hoje!',
+      weekdayShort: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
       boostConfirmText: (price) => `Desbloquear por ${price} XP e ganhar mais XP para sempre?`,
       boostUnlockedTitle: '🎮 Boost ativo!',
       boostUnlockedText: (f) => `A partir de agora você ganha ${f}× XP em todas as tarefas. Bom aproveito!`,
@@ -2449,6 +2546,18 @@
       heroLockedTooltip: (price) => `Unlockable for ${price} XP`,
       heroViewClose: 'Close',
       boostConfirmTitle: '🎮 Unlock controller?',
+      friendStreakUnlockTitle: '🔥🤝 Unlock friend streaks?',
+      friendStreakUnlockText: (price) => `Permanently unlock for ${price} coins and see shared streaks with your friends?`,
+      friendStreakLabel: '🔥🤝 Friend streaks',
+      friendStreakUnlockLabel: (price) => `Unlock for ${price} coins`,
+      friendStreakNoFriends: 'Follow some friends first to see shared streaks.',
+      friendStreakMutualDays: (n) => `${n} days active together`,
+      friendStreakNoMutual: 'No shared streak yet',
+      streakPageTitle: 'Streak',
+      streakHeroLabel: 'Days in a row',
+      streakCalendarLabel: 'Calendar',
+      streakBarEmpty: 'No active streak yet — start today!',
+      weekdayShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       boostConfirmText: (price) => `Unlock for ${price} XP and earn more XP forever?`,
       boostUnlockedTitle: '🎮 Boost active!',
       boostUnlockedText: (f) => `From now on you earn ${f}× XP on all tasks. Enjoy leveling up faster!`,
@@ -2547,6 +2656,10 @@
   let streak = 0;
   let lastActiveDate = null;
   let firstActiveDate = null; // für die "Ø XP pro Tag"-Statistik auf der XP-Seite
+  let activeDates = []; // Liste der letzten aktiven Tage ('YYYY-MM-DD'), für den Streak-Kalender
+  const ACTIVE_DATES_KEEP = 120; // etwas Puffer über die 90 im Kalender gezeigten Tage hinaus
+  const STREAK_CALENDAR_DAYS = 84; // 12 Wochen à 7 Tage
+  const FRIEND_STREAK_UNLOCK_PRICE = 5000; // Freischaltung der Freundes-Streak-Anzeige (Streak-Seite selbst ist kostenlos)
 
   // Aktive XP-Boosts — mehrere Quellen möglich (Controller-Profilbild, Helden-Karten, …).
   // Jede freigeschaltete Boost-Quelle multipliziert sich in den Gesamt-Boost hinein.
@@ -2731,6 +2844,7 @@
         streak = data.streak || 0;
         lastActiveDate = data.lastActiveDate || null;
         firstActiveDate = data.firstActiveDate || null;
+        activeDates = Array.isArray(data.activeDates) ? data.activeDates : [];
         if (data.langXp) Object.assign(langXp, data.langXp);
         if (data.modeXp) Object.assign(modeXp, data.modeXp);
 
@@ -2769,7 +2883,7 @@
     if (!hasStorage()) return;
     try {
       await db.set('gameState', JSON.stringify({
-        stagesStateByLang, typingStagesStateByLang, xp, walletXp, langXp, modeXp, streak, lastActiveDate, firstActiveDate,
+        stagesStateByLang, typingStagesStateByLang, xp, walletXp, langXp, modeXp, streak, lastActiveDate, firstActiveDate, activeDates,
       }));
     } catch (e) {}
     syncSocialStats();
@@ -2821,6 +2935,7 @@
     existing.boostMultiplier = totalBoostMultiplier();
     existing.vocabLearned = learnedVocabCount();
     existing.vocabTotal = totalVocabCount();
+    existing.activeDates = activeDates;
     existing.updatedAt = Date.now();
     await setSocialRecord(email, existing);
   }
@@ -2879,6 +2994,13 @@
       const yesterday = formatLocalDate(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1));
       streak = (lastActiveDate === yesterday) ? streak + 1 : 1;
       lastActiveDate = today;
+    }
+    if (!activeDates.includes(today)) {
+      activeDates.push(today);
+      activeDates.sort();
+      if (activeDates.length > ACTIVE_DATES_KEEP) {
+        activeDates = activeDates.slice(activeDates.length - ACTIVE_DATES_KEEP);
+      }
     }
     saveProgress();
   }
@@ -3084,6 +3206,7 @@
     if (!Array.isArray(profile.unlockedHeroes)) profile.unlockedHeroes = [];
     if (typeof profile.heroKey !== 'number') profile.heroKey = null;
     if (typeof profile.isPrivate !== 'boolean') profile.isPrivate = false;
+    if (typeof profile.friendStreakUnlocked !== 'boolean') profile.friendStreakUnlocked = false;
     delete profile.avatar;
   }
 
@@ -3137,6 +3260,13 @@
   const marketCoinsValue = $('marketCoinsValue'), marketCoinsLabel = $('marketCoinsLabel');
   const marketAvatarLabel = $('marketAvatarLabel'), marketAvatarGrid = $('marketAvatarGrid');
   const marketHeroesLabel = $('marketHeroesLabel'), marketHeroGrid = $('marketHeroGrid');
+  const backFromStreak = $('backFromStreak'), streakPageTitle = $('streakPageTitle');
+  const streakHeroValue = $('streakHeroValue'), streakHeroLabel = $('streakHeroLabel');
+  const streakBar = $('streakBar'), streakCalendarLabel = $('streakCalendarLabel');
+  const streakWeekdayRow = $('streakWeekdayRow'), streakCalendar = $('streakCalendar');
+  const friendStreakLabel = $('friendStreakLabel'), friendStreakUnlockBtn = $('friendStreakUnlockBtn');
+  const friendStreakUnlockLabel = $('friendStreakUnlockLabel'), friendStreakList = $('friendStreakList');
+  const profileStreakStat = $('profileStreakStat');
   const xpAvgPerDayValue = $('xpAvgPerDayValue'), xpAvgPerDayLabel = $('xpAvgPerDayLabel');
   const xpBoostStat = $('xpBoostStat'), xpBoostValue = $('xpBoostValue'), xpBoostLabel = $('xpBoostLabel');
   const confirmOverlay = $('confirmOverlay'), confirmEmoji = $('confirmEmoji');
@@ -3215,7 +3345,7 @@
   themeSwitch.addEventListener('click', () => document.body.classList.toggle('dark'));
 
   /* ================= NAVIGATION ================= */
-  const SCREENS = ['login', 'menu', 'career', 'profile', 'profile-edit', 'marketplace', 'followers', 'friend-profile', 'xp', 'settings', 'phrases', 'flashcards', 'typing'];
+  const SCREENS = ['login', 'menu', 'career', 'profile', 'profile-edit', 'marketplace', 'streak', 'followers', 'friend-profile', 'xp', 'settings', 'phrases', 'flashcards', 'typing'];
   let viewingFriendEmail = null; // welcher Freund gerade in der Profil-Ansicht angezeigt wird
   function showScreen(name) {
     SCREENS.forEach(s => $('screen-' + s).classList.toggle('hidden', s !== name));
@@ -3225,6 +3355,7 @@
     if (name === 'profile') renderProfile();
     if (name === 'profile-edit') renderProfileEdit();
     if (name === 'marketplace') renderMarketplace();
+    if (name === 'streak') renderStreakPage();
     if (name === 'followers') renderFollowersPage();
     if (name === 'friend-profile') renderFriendProfile();
     if (name === 'xp') renderXpPage();
@@ -3348,7 +3479,7 @@
         await loadGameStateForCurrentScope(); // frischer Scope, lädt saubere Default-Werte
         await completeLogin({
           name: defaultNameFromEmail(email), email, bio: '', pwHash,
-          unlockedAvatars: [], unlockedHeroes: [], heroKey: null, isPrivate: false,
+          unlockedAvatars: [], unlockedHeroes: [], heroKey: null, isPrivate: false, friendStreakUnlocked: false,
         });
       }
     } finally {
@@ -3647,12 +3778,13 @@
     typingArrow.classList.toggle('open', willOpen);
   });
 
-  // Alle Anzeigen führen zum Profil — außer XP, das führt zur XP-Seite
-  [pillProfile, pillRank, pillStreak].forEach(el =>
+  // Alle Anzeigen führen zum Profil — außer XP/Coins/Streak, die eigene Seiten öffnen
+  [pillProfile, pillRank].forEach(el =>
     el.addEventListener('click', () => showScreen('profile'))
   );
   pillXp.addEventListener('click', () => showScreen('xp'));
   pillCoins.addEventListener('click', () => showScreen('marketplace'));
+  pillStreak.addEventListener('click', openStreakPage);
   profileXpStat.addEventListener('click', () => showScreen('xp'));
   backFromXp.addEventListener('click', () => showScreen('menu'));
   openSettingsBtn.addEventListener('click', () => showScreen('settings'));
@@ -3956,6 +4088,194 @@
     marketHeroesLabel.textContent = t('marketHeroesLabel');
     renderAvatarGrid('shop');
     renderHeroGrid('shop');
+  }
+
+  /* ================= STREAK-SEITE ================= */
+  // Erreichbar über 🔥 im Menü und Profil — beim ersten Mal Freischalt-Kauf (4000 Coins)
+  function openStreakPage() {
+    showScreen('streak');
+  }
+
+  // Baut die Liste der Kalendertage (auf volle Wochen aufgerundet, Montag als Wochenstart)
+  function buildStreakCalendarDays() {
+    const days = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const start = new Date(today);
+    start.setDate(start.getDate() - (STREAK_CALENDAR_DAYS - 1));
+    const startDow = (start.getDay() + 6) % 7; // 0 = Montag
+    start.setDate(start.getDate() - startDow);
+
+    const cursor = new Date(start);
+    while (cursor <= today) {
+      days.push(formatLocalDate(cursor));
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    return days;
+  }
+
+  function renderStreakBar() {
+    streakBar.innerHTML = '';
+    if (streak === 0) {
+      streakBar.innerHTML = `<div class="streak-label">${t('streakBarEmpty')}</div>`;
+      return;
+    }
+    const shown = Math.min(streak, 30);
+    for (let i = 0; i < shown; i++) {
+      const chip = document.createElement('div');
+      chip.className = 'streak-bar-chip active';
+      chip.innerHTML = assetHTML('stats.streak');
+      streakBar.appendChild(chip);
+    }
+    if (streak > 30) {
+      const more = document.createElement('div');
+      more.className = 'streak-bar-chip active more';
+      more.textContent = `+${streak - 30}`;
+      streakBar.appendChild(more);
+    }
+  }
+
+  function renderStreakCalendar() {
+    streakWeekdayRow.innerHTML = '';
+    t('weekdayShort').forEach(label => {
+      const cell = document.createElement('div');
+      cell.className = 'streak-weekday-cell';
+      cell.textContent = label;
+      streakWeekdayRow.appendChild(cell);
+    });
+
+    streakCalendar.innerHTML = '';
+    const today = todayString();
+    buildStreakCalendarDays().forEach(dateStr => {
+      const cell = document.createElement('div');
+      const isActive = activeDates.includes(dateStr);
+      const isToday = dateStr === today;
+      cell.className = 'streak-day' + (isActive ? ' active' : '') + (isToday ? ' today' : '');
+      cell.textContent = String(parseInt(dateStr.split('-')[2], 10));
+      cell.title = dateStr;
+      streakCalendar.appendChild(cell);
+    });
+  }
+
+  function renderStreakPage() {
+    streakPageTitle.textContent = t('streakPageTitle');
+    backFromStreak.textContent = t('back');
+    streakHeroValue.innerHTML = `${assetHTML('stats.streak')} ${streak}`;
+    streakHeroLabel.textContent = t('streakHeroLabel');
+    streakCalendarLabel.textContent = t('streakCalendarLabel');
+    renderStreakBar();
+    renderStreakCalendar();
+    renderFriendStreakSection();
+  }
+
+  backFromStreak.addEventListener('click', () => showScreen('menu'));
+  profileStreakStat.addEventListener('click', openStreakPage);
+
+  // Zählt, an wie vielen aufeinanderfolgenden Tagen (rückwärts ab heute) beide
+  // Seiten gleichzeitig aktiv waren — bricht beim ersten "verpassten" Tag ab.
+  function computeMutualStreak(myDates, friendDates) {
+    const mySet = new Set(myDates || []);
+    const friendSet = new Set(friendDates || []);
+    let count = 0;
+    const cursor = new Date();
+    cursor.setHours(0, 0, 0, 0);
+    while (true) {
+      const dateStr = formatLocalDate(cursor);
+      if (mySet.has(dateStr) && friendSet.has(dateStr)) {
+        count++;
+        cursor.setDate(cursor.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+    return count;
+  }
+
+  async function tryUnlockFriendStreak() {
+    const confirmed = await showConfirm({
+      emoji: '🔥🤝',
+      title: t('friendStreakUnlockTitle'),
+      text: t('friendStreakUnlockText', FRIEND_STREAK_UNLOCK_PRICE),
+      confirmLabel: t('avatarConfirmYes'),
+      cancelLabel: t('avatarConfirmCancel'),
+    });
+    if (!confirmed) return;
+
+    if (walletXp < FRIEND_STREAK_UNLOCK_PRICE) {
+      await showConfirm({
+        emoji: assetHTML('overlays.warning'),
+        title: t('notEnoughXpTitle'),
+        text: t('notEnoughXpText', FRIEND_STREAK_UNLOCK_PRICE, walletXp),
+        confirmLabel: t('notEnoughXpOk'),
+        singleButton: true,
+      });
+      return;
+    }
+
+    walletXp -= FRIEND_STREAK_UNLOCK_PRICE;
+    currentProfile.friendStreakUnlocked = true;
+    await saveProfile();
+    await saveProgress();
+    renderFriendStreakSection();
+  }
+  friendStreakUnlockBtn.addEventListener('click', tryUnlockFriendStreak);
+
+  async function renderFriendStreakSection() {
+    friendStreakLabel.textContent = t('friendStreakLabel');
+    friendStreakList.innerHTML = '';
+
+    if (!currentProfile.friendStreakUnlocked) {
+      friendStreakUnlockBtn.style.display = 'flex';
+      friendStreakUnlockLabel.textContent = t('friendStreakUnlockLabel', FRIEND_STREAK_UNLOCK_PRICE);
+      return;
+    }
+    friendStreakUnlockBtn.style.display = 'none';
+
+    const myEmail = normEmail(currentProfile && currentProfile.email);
+    if (!myEmail || !hasStorage()) return;
+    const me = await getSocialRecord(myEmail);
+    const following = (me && me.following) || [];
+
+    if (following.length === 0) {
+      friendStreakList.innerHTML = `<div class="streak-label">${t('friendStreakNoFriends')}</div>`;
+      return;
+    }
+
+    const rows = [];
+    for (const email of following) {
+      const rec = await getSocialRecord(email);
+      const mutual = computeMutualStreak(activeDates, rec && rec.activeDates);
+      rows.push({ email, rec, mutual });
+    }
+    rows.sort((a, b) => b.mutual - a.mutual);
+
+    rows.forEach(({ email, rec, mutual }) => {
+      const item = document.createElement('div');
+      item.className = 'follow-item';
+      item.style.cursor = 'pointer';
+      item.addEventListener('click', () => openFriendProfile(email));
+
+      const avatarSpan = document.createElement('div');
+      avatarSpan.className = 'follow-item-avatar';
+      avatarSpan.innerHTML = rec ? profilePicHTML(rec) : assetHTML('stats.profileDefault');
+
+      const info = document.createElement('div');
+      info.className = 'follow-item-info';
+      const label = document.createElement('div');
+      label.className = 'follow-item-name';
+      label.textContent = rec && rec.name ? rec.name : email;
+      const stats = document.createElement('div');
+      stats.className = 'follow-item-stats';
+      stats.innerHTML = mutual > 0
+        ? `${assetHTML('stats.streak')} ${t('friendStreakMutualDays', mutual)}`
+        : t('friendStreakNoMutual');
+      info.appendChild(label);
+      info.appendChild(stats);
+
+      item.appendChild(avatarSpan);
+      item.appendChild(info);
+      friendStreakList.appendChild(item);
+    });
   }
 
   function renderModeXpList() {
