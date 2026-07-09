@@ -858,6 +858,8 @@
   .career-icon { font-size: 16px; flex-shrink: 0; }
   .career-label { flex: 1; font-family: var(--font-display); font-weight: 700; font-size: 13.5px; color: var(--ink); letter-spacing: 0.2px; }
   .career-arrow { color: var(--accent); font-size: 16px; font-weight: 700; flex-shrink: 0; }
+  .career-button.icon-only { justify-content: center; padding: 8px 16px; }
+  .career-button.icon-only .career-icon { font-size: 17px; }
 
   .mode-icon {
     font-size: 23px; width: 46px; height: 46px; border-radius: 14px;
@@ -1435,7 +1437,7 @@
   }
 </style>
 </head>
-<body class="dark">
+<body>
 
 <div class="app">
 
@@ -1511,10 +1513,8 @@
         </button>
       </div>
 
-      <button class="career-button" id="careerBtn">
+      <button class="career-button icon-only" id="careerBtn">
         <span class="career-icon" id="careerBtnIcon">🎯</span>
-        <span class="career-label" id="careerBtnLabel">Karriere</span>
-        <span class="career-arrow">›</span>
       </button>
 
       <div class="mode-block">
@@ -1530,13 +1530,13 @@
       </div>
     </div>
 
-    <div class="toggle-group-label" id="uiLangLabel" style="align-self: center; margin-top: 30px;">Oberfläche</div>
-    <div class="lang-dd" id="uiLangDD" style="max-width: 220px;">
+    <button class="settings-bottom-link" id="openSettingsBtn">⚙️ Einstellungen</button>
+
+    <div class="toggle-group-label" id="uiLangLabel" style="align-self: center; margin-top: 20px;">Oberfläche</div>
+    <div class="lang-dd" id="uiLangDD" style="max-width: 90px;">
       <button type="button" class="lang-dd-btn" id="uiLangDDBtn"></button>
       <div class="lang-dd-menu" id="uiLangDDMenu"></div>
     </div>
-
-    <button class="settings-bottom-link" id="openSettingsBtn">⚙️ Einstellungen</button>
   </section>
 
   <!-- ============ KARRIERE (Stufen-/Level-Auswahl) ============ -->
@@ -1589,10 +1589,10 @@
       <div class="profile-bio" id="profileBioText" style="display:none;"></div>
 
       <div class="profile-stats">
-        <div class="profile-stat">
+        <button class="profile-stat profile-stat-link" id="profileRankStat">
           <div class="profile-stat-value" id="profileRankValue">⚔️ 0</div>
           <div class="profile-stat-label" id="profileRankLabel">Rang</div>
-        </div>
+        </button>
         <button class="profile-stat profile-stat-link" id="profileStreakStat">
           <div class="profile-stat-value" id="profileStreakValue">🔥 0</div>
           <div class="profile-stat-label" id="profileStreakLabel">Streak</div>
@@ -1713,13 +1713,46 @@
     </div>
 
     <div class="profile-stat-value" id="marketCoinsValue" style="font-size: 30px;">💎 0</div>
-    <div class="profile-stat-label" id="marketCoinsLabel" style="margin-bottom: 20px;">Coins</div>
+    <div class="profile-stat-label" id="marketCoinsLabel" style="margin-bottom: 4px;">Coins</div>
+    <div class="profile-stat-value" id="marketPlanetsValue" style="font-size: 22px;">🪐 0</div>
+    <div class="profile-stat-label" id="marketPlanetsLabel" style="margin-bottom: 14px;">Planeten</div>
 
-    <div class="toggle-group-label" id="marketAvatarLabel">Profilbilder</div>
+    <button class="career-button" id="planetsExchangeBtn">
+      <span class="career-icon">🪐</span>
+      <span class="career-label" id="planetsExchangeLabel">500 Coins → 50 Planeten</span>
+      <span class="career-arrow">›</span>
+    </button>
+
+    <div class="toggle-group-label" id="redeemCodeLabel" style="margin-top: 16px;">Code einlösen</div>
+    <input class="text-input" id="redeemCodeInput" type="text" placeholder="Code eingeben">
+    <button class="primary-button" id="redeemCodeBtn" style="margin-top: 12px;">Einlösen</button>
+    <div class="bio-saved-msg" id="redeemCodeMsg"></div>
+
+    <div class="toggle-group-label" id="marketAvatarLabel" style="margin-top: 22px;">Profilbilder</div>
     <div class="avatar-grid" id="marketAvatarGrid"></div>
 
     <div class="toggle-group-label" id="marketHeroesLabel" style="margin-top: 26px;">Helden</div>
     <div class="hero-grid" id="marketHeroGrid"></div>
+  </section>
+
+  <!-- ============ RANG ============ -->
+  <section class="screen hidden" id="screen-rank">
+    <button class="back-button" id="backFromRank">← Menü</button>
+
+    <div class="header">
+      <div class="mode-label" id="rankPageTitle">Rang</div>
+    </div>
+
+    <div class="streak-hero">
+      <div class="streak-hero-value" id="rankHeroValue">⚔️ 0</div>
+      <div class="streak-hero-label" id="rankHeroLabel">Aktueller Rang</div>
+    </div>
+
+    <div id="rankProgressWrap" style="width: 100%; margin-top: 26px;">
+      <div class="progress-track"><div class="progress-fill" id="rankProgressFill"></div></div>
+      <div class="progress-counter" id="rankProgressLabel" style="text-align: center; margin-top: 8px;"></div>
+    </div>
+    <div id="rankMaxMsg" class="streak-label" style="display: none; margin-top: 20px;"></div>
   </section>
 
   <!-- ============ STREAK ============ -->
@@ -1743,7 +1776,7 @@
 
     <div class="toggle-group-label" id="friendStreakLabel" style="margin-top: 26px;">Freundes-Streak</div>
     <button class="career-button" id="friendStreakUnlockBtn">
-      <span class="career-icon">🔥🤝</span>
+      <span class="career-icon" id="friendStreakUnlockIcon">🔥</span>
       <span class="career-label" id="friendStreakUnlockLabel">Für 5000 Coins freischalten</span>
       <span class="career-arrow">🔒</span>
     </button>
@@ -2233,12 +2266,26 @@
       friendStreakUnlockTitle: '🔥🤝 Freundes-Streak freischalten?',
       friendStreakUnlockText: (price) => `Für ${price} Coins dauerhaft freischalten und gemeinsame Streaks mit deinen Freunden sehen?`,
       friendStreakLabel: '🔥🤝 Freundes-Streak',
-      friendStreakUnlockLabel: (price) => `Für ${price} Coins freischalten`,
+      friendStreakUnlockLabel: (price) => `Für ${price} 🪐 Planeten freischalten`,
+      notEnoughPlanetsTitle: 'Nicht genug Planeten',
+      notEnoughPlanetsText: (price, have) => `Du brauchst ${price} Planeten, hast aber nur ${have} verfügbar.`,
+      planetsExchangeLabel: (coins, planetsAmt) => `${coins} Coins → ${planetsAmt} Planeten`,
+      planetsExchangeBtn: 'Umtauschen',
+      planetsLabel: 'Planeten',
+      redeemCodeLabel: 'Code einlösen',
+      redeemCodePlaceholder: 'Code eingeben',
+      redeemCodeBtn: 'Einlösen',
+      redeemCodeSuccess: (n) => `✓ ${n} Planeten gutgeschrieben!`,
+      redeemCodeInvalid: '❌ Ungültiger Code',
       friendStreakNoFriends: 'Folge zuerst ein paar Freunden, um gemeinsame Streaks zu sehen.',
       friendStreakMutualDays: (n) => `${n} Tage gemeinsam aktiv`,
       friendStreakNoMutual: 'Noch kein gemeinsamer Streak',
       streakPageTitle: 'Streak',
       streakHeroLabel: 'Tage in Folge',
+      rankPageTitle: 'Rang',
+      rankHeroLabel: 'Aktueller Rang',
+      rankProgressLabel: (have, need, next) => `${have} von ${need} Vokabeln bis Rang ${next}`,
+      rankMaxReached: '👑 Maximaler Rang erreicht — du hast alle Vokabeln gelernt!',
       streakCalendarLabel: 'Kalender',
       streakBarEmpty: 'Noch kein aktiver Streak — leg heute los!',
       weekdayShort: ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'],
@@ -2301,11 +2348,11 @@
       rankLabel: 'Rang',
       avatarLabel: 'Profilbild wählen',
       typingStageBadge: (a, b) => `${a}/${b}`,
-      stageNum: (n) => `Stufe ${n}`,
+      stageNum: (n) => `Levelabschnitt ${n}`,
       stageRange: (a, b) => `Vokabeln ${a}–${b}`,
-      stageLocked: 'Schließe zuerst die vorige Stufe ab',
-      stageSuperLabel: (a, b) => `Stufen ${a}–${b}`,
-      stageSuperSub: (done, total) => `${done} von ${total} Stufen abgeschlossen`,
+      stageLocked: 'Schließe zuerst den vorigen Levelabschnitt ab',
+      stageSuperLabel: (n) => `Stufe ${n}`,
+      stageSuperSub: (done, total) => `${done} von ${total} Levelabschnitten abgeschlossen`,
       levelLine: (lvl, total) => `Level ${lvl} von ${total}`,
       replayLine: (lvl) => `Level ${lvl} · Wiederholung`,
       unlockedLine: (u, t) => `${u} von ${t} Vokabeln freigeschaltet`,
@@ -2391,12 +2438,26 @@
       friendStreakUnlockTitle: '🔥🤝 Desbloquear sequência com amigos?',
       friendStreakUnlockText: (price) => `Desbloquear permanentemente por ${price} coins e ver sequências em comum com seus amigos?`,
       friendStreakLabel: '🔥🤝 Sequência com amigos',
-      friendStreakUnlockLabel: (price) => `Desbloquear por ${price} coins`,
+      friendStreakUnlockLabel: (price) => `Desbloquear por ${price} 🪐 planetas`,
+      notEnoughPlanetsTitle: 'Planetas insuficientes',
+      notEnoughPlanetsText: (price, have) => `Você precisa de ${price} planetas, mas tem apenas ${have} disponíveis.`,
+      planetsExchangeLabel: (coins, planetsAmt) => `${coins} coins → ${planetsAmt} planetas`,
+      planetsExchangeBtn: 'Trocar',
+      planetsLabel: 'Planetas',
+      redeemCodeLabel: 'Resgatar código',
+      redeemCodePlaceholder: 'Digite o código',
+      redeemCodeBtn: 'Resgatar',
+      redeemCodeSuccess: (n) => `✓ ${n} planetas creditados!`,
+      redeemCodeInvalid: '❌ Código inválido',
       friendStreakNoFriends: 'Siga alguns amigos primeiro para ver sequências em comum.',
       friendStreakMutualDays: (n) => `${n} dias ativos juntos`,
       friendStreakNoMutual: 'Ainda sem sequência em comum',
       streakPageTitle: 'Sequência',
       streakHeroLabel: 'Dias seguidos',
+      rankPageTitle: 'Classificação',
+      rankHeroLabel: 'Classificação atual',
+      rankProgressLabel: (have, need, next) => `${have} de ${need} palavras até a classificação ${next}`,
+      rankMaxReached: '👑 Classificação máxima alcançada — você aprendeu todas as palavras!',
       streakCalendarLabel: 'Calendário',
       streakBarEmpty: 'Nenhuma sequência ativa ainda — comece hoje!',
       weekdayShort: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
@@ -2459,11 +2520,11 @@
       rankLabel: 'Classificação',
       avatarLabel: 'Escolher avatar',
       typingStageBadge: (a, b) => `${a}/${b}`,
-      stageNum: (n) => `Estágio ${n}`,
+      stageNum: (n) => `Seção de nível ${n}`,
       stageRange: (a, b) => `Palavras ${a}–${b}`,
-      stageLocked: 'Conclua primeiro o estágio anterior',
-      stageSuperLabel: (a, b) => `Estágios ${a}–${b}`,
-      stageSuperSub: (done, total) => `${done} de ${total} estágios concluídos`,
+      stageLocked: 'Conclua primeiro a seção de nível anterior',
+      stageSuperLabel: (n) => `Estágio ${n}`,
+      stageSuperSub: (done, total) => `${done} de ${total} seções de nível concluídas`,
       levelLine: (lvl, total) => `Nível ${lvl} de ${total}`,
       replayLine: (lvl) => `Nível ${lvl} · Revisão`,
       unlockedLine: (u, t) => `${u} de ${t} palavras desbloqueadas`,
@@ -2549,12 +2610,26 @@
       friendStreakUnlockTitle: '🔥🤝 Unlock friend streaks?',
       friendStreakUnlockText: (price) => `Permanently unlock for ${price} coins and see shared streaks with your friends?`,
       friendStreakLabel: '🔥🤝 Friend streaks',
-      friendStreakUnlockLabel: (price) => `Unlock for ${price} coins`,
+      friendStreakUnlockLabel: (price) => `Unlock for ${price} 🪐 planets`,
+      notEnoughPlanetsTitle: 'Not enough planets',
+      notEnoughPlanetsText: (price, have) => `You need ${price} planets, but only have ${have} available.`,
+      planetsExchangeLabel: (coins, planetsAmt) => `${coins} coins → ${planetsAmt} planets`,
+      planetsExchangeBtn: 'Exchange',
+      planetsLabel: 'Planets',
+      redeemCodeLabel: 'Redeem code',
+      redeemCodePlaceholder: 'Enter code',
+      redeemCodeBtn: 'Redeem',
+      redeemCodeSuccess: (n) => `✓ ${n} planets credited!`,
+      redeemCodeInvalid: '❌ Invalid code',
       friendStreakNoFriends: 'Follow some friends first to see shared streaks.',
       friendStreakMutualDays: (n) => `${n} days active together`,
       friendStreakNoMutual: 'No shared streak yet',
       streakPageTitle: 'Streak',
       streakHeroLabel: 'Days in a row',
+      rankPageTitle: 'Rank',
+      rankHeroLabel: 'Current rank',
+      rankProgressLabel: (have, need, next) => `${have} of ${need} words to rank ${next}`,
+      rankMaxReached: '👑 Maximum rank reached — you\'ve learned every word!',
       streakCalendarLabel: 'Calendar',
       streakBarEmpty: 'No active streak yet — start today!',
       weekdayShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -2617,11 +2692,11 @@
       rankLabel: 'Rank',
       avatarLabel: 'Choose avatar',
       typingStageBadge: (a, b) => `${a}/${b}`,
-      stageNum: (n) => `Stage ${n}`,
+      stageNum: (n) => `Level section ${n}`,
       stageRange: (a, b) => `Words ${a}–${b}`,
-      stageLocked: 'Finish the previous stage first',
-      stageSuperLabel: (a, b) => `Stages ${a}–${b}`,
-      stageSuperSub: (done, total) => `${done} of ${total} stages complete`,
+      stageLocked: 'Finish the previous level section first',
+      stageSuperLabel: (n) => `Stage ${n}`,
+      stageSuperSub: (done, total) => `${done} of ${total} level sections complete`,
       levelLine: (lvl, total) => `Level ${lvl} of ${total}`,
       replayLine: (lvl) => `Level ${lvl} · Replay`,
       unlockedLine: (u, t) => `${u} of ${t} words unlocked`,
@@ -2651,6 +2726,7 @@
   let currentProfile = null; // { name, email, bio, avatar, unlockedAvatars, isPrivate }
   let xp = 0; // Gesamt-XP über alle Sprachen (Lebenszeit-Wert für Rang, Menü, Profil — sinkt nie)
   let walletXp = 0; // aktuell verfügbare, ausgebbare XP (sinkt beim Freischalten von Profilbildern)
+  let planets = 0; // zweite Währung "Planeten" — für erweiterte Käufe (z. B. Freundes-Streak)
   let langXp = { pt: 0, de: 0, en: 0 }; // XP je gelernter Sprache
   let modeXp = { phrases: 0, typing: 0 }; // XP je Spielmodus
   let streak = 0;
@@ -2658,8 +2734,12 @@
   let firstActiveDate = null; // für die "Ø XP pro Tag"-Statistik auf der XP-Seite
   let activeDates = []; // Liste der letzten aktiven Tage ('YYYY-MM-DD'), für den Streak-Kalender
   const ACTIVE_DATES_KEEP = 120; // etwas Puffer über die 90 im Kalender gezeigten Tage hinaus
-  const STREAK_CALENDAR_DAYS = 84; // 12 Wochen à 7 Tage
-  const FRIEND_STREAK_UNLOCK_PRICE = 5000; // Freischaltung der Freundes-Streak-Anzeige (Streak-Seite selbst ist kostenlos)
+  const STREAK_CALENDAR_DAYS = 7; // vorerst nur die letzten 7 Tage zeigen
+  const FRIEND_STREAK_UNLOCK_PRICE = 100; // in Planeten (Streak-Seite selbst ist kostenlos)
+  const PLANETS_EXCHANGE_COST = 500; // Coins je Umtausch
+  const PLANETS_EXCHANGE_AMOUNT = 50; // Planeten je Umtausch
+  const REDEEM_CODE = '2026'; // Test-Code — bewusst unbegrenzt oft einlösbar
+  const REDEEM_CODE_AMOUNT = 50; // Planeten je Einlösung
 
   // Aktive XP-Boosts — mehrere Quellen möglich (Controller-Profilbild, Helden-Karten, …).
   // Jede freigeschaltete Boost-Quelle multipliziert sich in den Gesamt-Boost hinein.
@@ -2841,6 +2921,7 @@
 
         xp = data.xp || 0;
         walletXp = (typeof data.walletXp === 'number') ? data.walletXp : xp;
+        planets = (typeof data.planets === 'number') ? data.planets : 0;
         streak = data.streak || 0;
         lastActiveDate = data.lastActiveDate || null;
         firstActiveDate = data.firstActiveDate || null;
@@ -2883,7 +2964,7 @@
     if (!hasStorage()) return;
     try {
       await db.set('gameState', JSON.stringify({
-        stagesStateByLang, typingStagesStateByLang, xp, walletXp, langXp, modeXp, streak, lastActiveDate, firstActiveDate, activeDates,
+        stagesStateByLang, typingStagesStateByLang, xp, walletXp, planets, langXp, modeXp, streak, lastActiveDate, firstActiveDate, activeDates,
       }));
     } catch (e) {}
     syncSocialStats();
@@ -3134,12 +3215,11 @@
   const LEGACY_AVATAR_EMOJIS = ['🔋', '🌎', '♥️', '🗣️', '🎂', '🍑', '🗡️', '⚽️', '🇧🇷', '🇵🇹', '🇩🇪', '🎧', '🇺🇸', '☕️', '🎮'];
 
   // Controller-Profilbild: teuerstes Bild, schaltet dauerhaften XP-Boost frei.
-  const CONTROLLER_AVATAR_IDX = 14; // 🎮 (letztes Profilbild)
-  const CONTROLLER_PRICE = 1200;
+  const CONTROLLER_AVATAR_IDX = 14; // 🎮 (letztes Profilbild) — geheimer XP-Boost, bewusst nicht angezeigt (Easter Egg)
 
   // Preis eines Profilbilds anhand seines absoluten Index (0-basiert).
+  // Der Controller kostet bewusst genauso viel wie jedes andere Profilbild an seiner Position.
   function avatarPriceForIndex(idx) {
-    if (idx === CONTROLLER_AVATAR_IDX) return CONTROLLER_PRICE;
     const bonusStart = ASSETS.avatars.length - BONUS_AVATAR_COUNT;
     return avatarPriceForBonusPos(idx - bonusStart);
   }
@@ -3258,13 +3338,17 @@
   const xpWalletValue = $('xpWalletValue'), xpWalletLabel = $('xpWalletLabel'), xpWalletBtn = $('xpWalletBtn');
   const backFromMarketplace = $('backFromMarketplace'), marketplaceTitle = $('marketplaceTitle');
   const marketCoinsValue = $('marketCoinsValue'), marketCoinsLabel = $('marketCoinsLabel');
+  const marketPlanetsValue = $('marketPlanetsValue'), marketPlanetsLabel = $('marketPlanetsLabel');
+  const planetsExchangeBtn = $('planetsExchangeBtn'), planetsExchangeLabel = $('planetsExchangeLabel');
+  const redeemCodeLabel = $('redeemCodeLabel'), redeemCodeInput = $('redeemCodeInput');
+  const redeemCodeBtn = $('redeemCodeBtn'), redeemCodeMsg = $('redeemCodeMsg');
   const marketAvatarLabel = $('marketAvatarLabel'), marketAvatarGrid = $('marketAvatarGrid');
   const marketHeroesLabel = $('marketHeroesLabel'), marketHeroGrid = $('marketHeroGrid');
   const backFromStreak = $('backFromStreak'), streakPageTitle = $('streakPageTitle');
   const streakHeroValue = $('streakHeroValue'), streakHeroLabel = $('streakHeroLabel');
   const streakBar = $('streakBar'), streakCalendarLabel = $('streakCalendarLabel');
   const streakWeekdayRow = $('streakWeekdayRow'), streakCalendar = $('streakCalendar');
-  const friendStreakLabel = $('friendStreakLabel'), friendStreakUnlockBtn = $('friendStreakUnlockBtn');
+  const friendStreakLabel = $('friendStreakLabel'), friendStreakUnlockBtn = $('friendStreakUnlockBtn'), friendStreakUnlockIcon = $('friendStreakUnlockIcon');
   const friendStreakUnlockLabel = $('friendStreakUnlockLabel'), friendStreakList = $('friendStreakList');
   const profileStreakStat = $('profileStreakStat');
   const xpAvgPerDayValue = $('xpAvgPerDayValue'), xpAvgPerDayLabel = $('xpAvgPerDayLabel');
@@ -3285,7 +3369,7 @@
   const flashArrow = $('flashArrow'), flashStagePanel = $('flashStagePanel');
   const modePhrasesPlay = $('modePhrasesPlay'), modePhrasesPlayTitle = $('modePhrasesPlayTitle'), modePhrasesPlayDesc = $('modePhrasesPlayDesc');
   const modeTypingPlay = $('modeTypingPlay'), modeTypingPlayTitle = $('modeTypingPlayTitle'), modeTypingPlayDesc = $('modeTypingPlayDesc');
-  const careerBtn = $('careerBtn'), careerBtnLabel = $('careerBtnLabel'), careerTitle = $('careerTitle'), backFromCareer = $('backFromCareer');
+  const careerBtn = $('careerBtn'), careerTitle = $('careerTitle'), backFromCareer = $('backFromCareer');
 
   const profileTitle = $('profileTitle'), profileAvatar = $('profileAvatar'), profileName = $('profileName'), profileEmail = $('profileEmail');
   const profileBioText = $('profileBioText');  const profileStreakValue = $('profileStreakValue'), profileStreakLabel = $('profileStreakLabel');
@@ -3319,7 +3403,11 @@
   const modeTypingToggle = $('modeTypingToggle'), modeTypingTitle = $('modeTypingTitle'), modeTypingDesc = $('modeTypingDesc');
   const typingArrow = $('typingArrow'), typingStagePanel = $('typingStagePanel');
   const pillRank = $('pillRank');
-  const profileRankValue = $('profileRankValue'), profileRankLabel = $('profileRankLabel');
+  const profileRankValue = $('profileRankValue'), profileRankLabel = $('profileRankLabel'), profileRankStat = $('profileRankStat');
+  const backFromRank = $('backFromRank'), rankPageTitle = $('rankPageTitle');
+  const rankHeroValue = $('rankHeroValue'), rankHeroLabel = $('rankHeroLabel');
+  const rankProgressWrap = $('rankProgressWrap'), rankProgressFill = $('rankProgressFill');
+  const rankProgressLabel = $('rankProgressLabel'), rankMaxMsg = $('rankMaxMsg');
   const avatarLabel = $('avatarLabel'), avatarGrid = $('avatarGrid');
   const heroesLabel = $('heroesLabel'), heroesDesc = $('heroesDesc'), heroGrid = $('heroGrid');
   const heroViewOverlay = $('heroViewOverlay'), heroViewImg = $('heroViewImg');
@@ -3345,7 +3433,7 @@
   themeSwitch.addEventListener('click', () => document.body.classList.toggle('dark'));
 
   /* ================= NAVIGATION ================= */
-  const SCREENS = ['login', 'menu', 'career', 'profile', 'profile-edit', 'marketplace', 'streak', 'followers', 'friend-profile', 'xp', 'settings', 'phrases', 'flashcards', 'typing'];
+  const SCREENS = ['login', 'menu', 'career', 'profile', 'profile-edit', 'marketplace', 'streak', 'rank', 'followers', 'friend-profile', 'xp', 'settings', 'phrases', 'flashcards', 'typing'];
   let viewingFriendEmail = null; // welcher Freund gerade in der Profil-Ansicht angezeigt wird
   function showScreen(name) {
     SCREENS.forEach(s => $('screen-' + s).classList.toggle('hidden', s !== name));
@@ -3356,6 +3444,7 @@
     if (name === 'profile-edit') renderProfileEdit();
     if (name === 'marketplace') renderMarketplace();
     if (name === 'streak') renderStreakPage();
+    if (name === 'rank') renderRankPage();
     if (name === 'followers') renderFollowersPage();
     if (name === 'friend-profile') renderFriendProfile();
     if (name === 'xp') renderXpPage();
@@ -3388,10 +3477,12 @@
   }
 
   // Custom Dropdown für Sprachauswahl (Flaggen als SVG statt natives <select>, das kein HTML in <option> erlaubt)
-  function buildLangDropdown(btnEl, menuEl, getValue, setValue) {
+  function buildLangDropdown(btnEl, menuEl, getValue, setValue, iconOnly) {
     function renderBtn() {
       const code = getValue();
-      btnEl.innerHTML = `${FLAG_SVG[code]}<span>${LANG_LABEL[code]}</span><span class="lang-dd-caret">▾</span>`;
+      btnEl.innerHTML = iconOnly
+        ? FLAG_SVG[code]
+        : `${FLAG_SVG[code]}<span>${LANG_LABEL[code]}</span><span class="lang-dd-caret">▾</span>`;
     }
     function renderMenu() {
       menuEl.innerHTML = '';
@@ -3399,7 +3490,7 @@
         const opt = document.createElement('button');
         opt.type = 'button';
         opt.className = 'lang-dd-option' + (code === getValue() ? ' active' : '');
-        opt.innerHTML = `${FLAG_SVG[code]}<span>${LANG_LABEL[code]}</span>`;
+        opt.innerHTML = iconOnly ? FLAG_SVG[code] : `${FLAG_SVG[code]}<span>${LANG_LABEL[code]}</span>`;
         opt.addEventListener('click', () => {
           setValue(code);
           menuEl.classList.remove('open');
@@ -3558,7 +3649,7 @@
       superHead.style.cursor = 'pointer';
       superHead.innerHTML = `
         <div>
-          <div class="stage-group-title">${t('stageSuperLabel', from + 1, to)}</div>
+          <div class="stage-group-title">${t('stageSuperLabel', superIdx + 1)}</div>
           <div class="stage-group-sub">${t('stageSuperSub', completedCount, stagesInGroup.length)}</div>
         </div>
         <div class="stage-group-badge">
@@ -3722,7 +3813,7 @@
     modePhrasesPlayDesc.textContent = t('continuePlayDesc');
     modeTypingPlayTitle.textContent = t('modeTypingTitle');
     modeTypingPlayDesc.textContent = t('continuePlayDesc');
-    careerBtnLabel.textContent = t('careerBtnLabel');
+    careerBtn.title = t('careerBtnLabel');
     const careerBtnIcon = $('careerBtnIcon');
     if (careerBtnIcon) careerBtnIcon.innerHTML = assetHTML('nav.career');
     uiLangLabel.textContent = t('uiLangLabel');
@@ -3757,7 +3848,7 @@
     loginLangDD.refresh();
     renderMenu();
     renderLogin();
-  });
+  }, true);
 
   modePhrasesToggle.addEventListener('click', () => {
     renderPhrasesStagePanel();
@@ -3778,15 +3869,16 @@
     typingArrow.classList.toggle('open', willOpen);
   });
 
-  // Alle Anzeigen führen zum Profil — außer XP/Coins/Streak, die eigene Seiten öffnen
-  [pillProfile, pillRank].forEach(el =>
-    el.addEventListener('click', () => showScreen('profile'))
-  );
+  // Alle Anzeigen führen zum Profil — außer XP/Coins/Streak/Rang, die eigene Seiten öffnen
+  pillProfile.addEventListener('click', () => showScreen('profile'));
   pillXp.addEventListener('click', () => showScreen('xp'));
   pillCoins.addEventListener('click', () => showScreen('marketplace'));
   pillStreak.addEventListener('click', openStreakPage);
+  pillRank.addEventListener('click', () => showScreen('rank'));
+  profileRankStat.addEventListener('click', () => showScreen('rank'));
   profileXpStat.addEventListener('click', () => showScreen('xp'));
   backFromXp.addEventListener('click', () => showScreen('menu'));
+  backFromRank.addEventListener('click', () => showScreen('menu'));
   openSettingsBtn.addEventListener('click', () => showScreen('settings'));
   backFromProfile.addEventListener('click', () => showScreen('menu'));
   backFromSettings.addEventListener('click', () => showScreen('menu'));
@@ -4084,11 +4176,54 @@
     backFromMarketplace.textContent = t('back');
     marketCoinsValue.innerHTML = `${assetHTML('stats.wallet')} ${walletXp}`;
     marketCoinsLabel.textContent = t('marketCoinsLabel');
+    marketPlanetsValue.textContent = `🪐 ${planets}`;
+    marketPlanetsLabel.textContent = t('planetsLabel');
+    planetsExchangeLabel.textContent = t('planetsExchangeLabel', PLANETS_EXCHANGE_COST, PLANETS_EXCHANGE_AMOUNT);
+    redeemCodeLabel.textContent = t('redeemCodeLabel');
+    redeemCodeInput.placeholder = t('redeemCodePlaceholder');
+    redeemCodeBtn.textContent = t('redeemCodeBtn');
+    redeemCodeMsg.textContent = '';
     marketAvatarLabel.textContent = t('marketAvatarLabel');
     marketHeroesLabel.textContent = t('marketHeroesLabel');
     renderAvatarGrid('shop');
     renderHeroGrid('shop');
   }
+
+  // Coins gegen Planeten umtauschen (vorerst einzige Möglichkeit, Planeten zu bekommen — neben Einlöse-Codes)
+  async function exchangePlanetsForCoins() {
+    if (walletXp < PLANETS_EXCHANGE_COST) {
+      await showConfirm({
+        emoji: assetHTML('overlays.warning'),
+        title: t('notEnoughXpTitle'),
+        text: t('notEnoughXpText', PLANETS_EXCHANGE_COST, walletXp),
+        confirmLabel: t('notEnoughXpOk'),
+        singleButton: true,
+      });
+      return;
+    }
+    walletXp -= PLANETS_EXCHANGE_COST;
+    planets += PLANETS_EXCHANGE_AMOUNT;
+    await saveProgress();
+    renderMarketplace();
+  }
+  planetsExchangeBtn.addEventListener('click', exchangePlanetsForCoins);
+
+  // Test-Code, bewusst OHNE Einmal-Sperre — für dieselbe Person beliebig oft einlösbar
+  async function redeemCode() {
+    const entered = redeemCodeInput.value.trim();
+    if (!entered) return;
+    if (entered.toUpperCase() === REDEEM_CODE) {
+      planets += REDEEM_CODE_AMOUNT;
+      await saveProgress();
+      redeemCodeMsg.textContent = t('redeemCodeSuccess', REDEEM_CODE_AMOUNT);
+      redeemCodeInput.value = '';
+      marketPlanetsValue.textContent = `🪐 ${planets}`;
+    } else {
+      redeemCodeMsg.textContent = t('redeemCodeInvalid');
+    }
+  }
+  redeemCodeBtn.addEventListener('click', redeemCode);
+  redeemCodeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') redeemCode(); });
 
   /* ================= STREAK-SEITE ================= */
   // Erreichbar über 🔥 im Menü und Profil — beim ersten Mal Freischalt-Kauf (4000 Coins)
@@ -4096,17 +4231,13 @@
     showScreen('streak');
   }
 
-  // Baut die Liste der Kalendertage (auf volle Wochen aufgerundet, Montag als Wochenstart)
+  // Baut die Liste der letzten STREAK_CALENDAR_DAYS Tage (heute inklusive)
   function buildStreakCalendarDays() {
     const days = [];
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const start = new Date(today);
-    start.setDate(start.getDate() - (STREAK_CALENDAR_DAYS - 1));
-    const startDow = (start.getDay() + 6) % 7; // 0 = Montag
-    start.setDate(start.getDate() - startDow);
-
-    const cursor = new Date(start);
+    const cursor = new Date(today);
+    cursor.setDate(cursor.getDate() - (STREAK_CALENDAR_DAYS - 1));
     while (cursor <= today) {
       days.push(formatLocalDate(cursor));
       cursor.setDate(cursor.getDate() + 1);
@@ -4136,17 +4267,22 @@
   }
 
   function renderStreakCalendar() {
+    const days = buildStreakCalendarDays();
+    const weekdayShort = t('weekdayShort'); // Mo, Di, Mi, Do, Fr, Sa, So
+
     streakWeekdayRow.innerHTML = '';
-    t('weekdayShort').forEach(label => {
+    days.forEach(dateStr => {
+      const d = new Date(dateStr + 'T00:00:00');
+      const mondayFirstIdx = (d.getDay() + 6) % 7; // JS: 0=So -> auf Mo-Start umrechnen
       const cell = document.createElement('div');
       cell.className = 'streak-weekday-cell';
-      cell.textContent = label;
+      cell.textContent = weekdayShort[mondayFirstIdx];
       streakWeekdayRow.appendChild(cell);
     });
 
     streakCalendar.innerHTML = '';
     const today = todayString();
-    buildStreakCalendarDays().forEach(dateStr => {
+    days.forEach(dateStr => {
       const cell = document.createElement('div');
       const isActive = activeDates.includes(dateStr);
       const isToday = dateStr === today;
@@ -4171,6 +4307,40 @@
   backFromStreak.addEventListener('click', () => showScreen('menu'));
   profileStreakStat.addEventListener('click', openStreakPage);
 
+  /* ================= RANG-SEITE ================= */
+  // Kleinste Vokabelzahl, die den angegebenen Rang ergibt (0-100)
+  function vocabForRank(rank) {
+    if (rank <= 0) return 0;
+    return Math.min(totalVocabCount(), Math.ceil(rank * totalVocabCount() / 100));
+  }
+
+  function renderRankPage() {
+    rankPageTitle.textContent = t('rankPageTitle');
+    backFromRank.textContent = t('back');
+    const learned = learnedVocabCount();
+    const currentRank = rankOf(learned);
+    rankHeroValue.innerHTML = `${assetHTML('stats.rank')} ${currentRank}`;
+    rankHeroLabel.textContent = t('rankHeroLabel');
+
+    if (currentRank >= 100) {
+      rankProgressWrap.style.display = 'none';
+      rankMaxMsg.style.display = 'block';
+      rankMaxMsg.textContent = t('rankMaxReached');
+      return;
+    }
+    rankProgressWrap.style.display = 'block';
+    rankMaxMsg.style.display = 'none';
+
+    const startVocab = vocabForRank(currentRank);
+    const nextVocab = vocabForRank(currentRank + 1);
+    const span = Math.max(1, nextVocab - startVocab);
+    const progressed = Math.max(0, Math.min(span, learned - startVocab));
+    const pct = Math.round((progressed / span) * 100);
+
+    rankProgressFill.style.width = pct + '%';
+    rankProgressLabel.textContent = t('rankProgressLabel', progressed, span, currentRank + 1);
+  }
+
   // Zählt, an wie vielen aufeinanderfolgenden Tagen (rückwärts ab heute) beide
   // Seiten gleichzeitig aktiv waren — bricht beim ersten "verpassten" Tag ab.
   function computeMutualStreak(myDates, friendDates) {
@@ -4193,7 +4363,7 @@
 
   async function tryUnlockFriendStreak() {
     const confirmed = await showConfirm({
-      emoji: '🔥🤝',
+      emoji: assetHTML('stats.streak'),
       title: t('friendStreakUnlockTitle'),
       text: t('friendStreakUnlockText', FRIEND_STREAK_UNLOCK_PRICE),
       confirmLabel: t('avatarConfirmYes'),
@@ -4201,18 +4371,18 @@
     });
     if (!confirmed) return;
 
-    if (walletXp < FRIEND_STREAK_UNLOCK_PRICE) {
+    if (planets < FRIEND_STREAK_UNLOCK_PRICE) {
       await showConfirm({
         emoji: assetHTML('overlays.warning'),
-        title: t('notEnoughXpTitle'),
-        text: t('notEnoughXpText', FRIEND_STREAK_UNLOCK_PRICE, walletXp),
+        title: t('notEnoughPlanetsTitle'),
+        text: t('notEnoughPlanetsText', FRIEND_STREAK_UNLOCK_PRICE, planets),
         confirmLabel: t('notEnoughXpOk'),
         singleButton: true,
       });
       return;
     }
 
-    walletXp -= FRIEND_STREAK_UNLOCK_PRICE;
+    planets -= FRIEND_STREAK_UNLOCK_PRICE;
     currentProfile.friendStreakUnlocked = true;
     await saveProfile();
     await saveProgress();
@@ -4222,6 +4392,7 @@
 
   async function renderFriendStreakSection() {
     friendStreakLabel.textContent = t('friendStreakLabel');
+    friendStreakUnlockIcon.innerHTML = assetHTML('stats.streak');
     friendStreakList.innerHTML = '';
 
     if (!currentProfile.friendStreakUnlocked) {
@@ -4321,12 +4492,11 @@
 
   async function tryUnlockAvatar(idx) {
     const price = avatarPriceForIndex(idx);
-    const isController = idx === CONTROLLER_AVATAR_IDX;
 
     const confirmed = await showConfirm({
-      emoji: isController ? assetHTML('avatars.' + idx) : assetHTML('overlays.lockConfirm'),
-      title: isController ? t('boostConfirmTitle') : t('avatarConfirmTitle'),
-      text: isController ? t('boostConfirmText', price) : t('avatarConfirmText', price),
+      emoji: assetHTML('overlays.lockConfirm'),
+      title: t('avatarConfirmTitle'),
+      text: t('avatarConfirmText', price),
       confirmLabel: t('avatarConfirmYes'),
       cancelLabel: t('avatarConfirmCancel'),
     });
@@ -4353,16 +4523,6 @@
     profileAvatar.innerHTML = profilePicHTML(currentProfile);
     renderAvatarGrid('select');
     renderAvatarGrid('shop');
-
-    if (isController) {
-      await showConfirm({
-        emoji: assetHTML('avatars.' + idx),
-        title: t('boostUnlockedTitle'),
-        text: t('boostUnlockedText', XP_BOOST_FACTOR),
-        confirmLabel: t('notEnoughXpOk'),
-        singleButton: true,
-      });
-    }
   }
 
   editProfileBtn.addEventListener('click', () => showScreen('profile-edit'));
@@ -4380,8 +4540,6 @@
     ASSETS.avatars.forEach((_, idx) => {
       const isBonus = idx >= bonusStart;
       const isOwned = !isBonus || owned.includes(idx);
-      const isController = idx === CONTROLLER_AVATAR_IDX;
-      const boostTag = isController ? `<span class="avatar-boost-tag">×${XP_BOOST_FACTOR}</span>` : '';
       const btn = document.createElement('button');
 
       if (mode === 'shop') {
@@ -4389,10 +4547,10 @@
         const price = avatarPriceForIndex(idx);
         btn.className = 'avatar-option' + (isOwned ? ' owned' : ' locked');
         if (isOwned) {
-          btn.innerHTML = `${avatarHTML(idx)}${boostTag}<span class="avatar-owned-check">✓</span>`;
+          btn.innerHTML = `${avatarHTML(idx)}<span class="avatar-owned-check">✓</span>`;
           btn.disabled = true;
         } else {
-          btn.innerHTML = `<span class="avatar-preview">${avatarHTML(idx)}</span>${boostTag}<span class="avatar-lock-overlay">${assetHTML('levelState.locked')}</span><span class="avatar-lock-badge">${price}</span>`;
+          btn.innerHTML = `<span class="avatar-preview">${avatarHTML(idx)}</span><span class="avatar-lock-overlay">${assetHTML('levelState.locked')}</span><span class="avatar-lock-badge">${price}</span>`;
           btn.title = t('avatarLockedTooltip', price);
           btn.addEventListener('click', () => tryUnlockAvatar(idx));
         }
@@ -4400,7 +4558,7 @@
         if (!isOwned) return; // Profil bearbeiten zeigt nur bereits Freigeschaltetes
         const isSelected = currentProfile.heroKey == null && currentProfile.avatarKey === idx;
         btn.className = 'avatar-option' + (isSelected ? ' selected' : '');
-        btn.innerHTML = `${avatarHTML(idx)}${boostTag}`;
+        btn.innerHTML = avatarHTML(idx);
         btn.addEventListener('click', async () => {
           currentProfile.avatarKey = idx;
           currentProfile.heroKey = null; // Emoji-Profilbild aktiv -> Held abwählen
