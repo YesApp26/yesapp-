@@ -693,6 +693,8 @@
 
   /* --- Menü-Kopf --- */
   .menu-header-row { display: flex; align-items: flex-start; justify-content: space-between; width: 100%; gap: 8px; }
+  .menu-logo-row { display: flex; justify-content: center; width: 100%; margin-bottom: 4px; }
+  .menu-yes-logo { height: 30px; width: auto; display: block; }
   .icon-btn {
     width: 42px; height: 42px; border-radius: 14px;
     background: rgba(255,255,255,0.06); backdrop-filter: blur(8px);
@@ -841,6 +843,24 @@
   }
   .mode-card:hover { transform: translateY(-3px); border-color: var(--accent); }
   .mode-card:active { transform: scale(0.98); }
+
+  /* Karriere: schmalere Variante des mode-card-Stils für den Sprung in die Stufen-/Level-Auswahl */
+  .career-button {
+    width: 100%; background: var(--card-glass); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border-radius: 16px; border: 1px solid var(--page-border); box-shadow: var(--shadow-soft);
+    padding: 11px 16px; display: flex; align-items: center; gap: 10px; text-align: left;
+    position: relative; overflow: hidden;
+    transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .career-button::before {
+    content: ''; position: absolute; top: 0; left: 14%; right: 14%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0.6;
+  }
+  .career-button:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .career-button:active { transform: scale(0.98); }
+  .career-icon { font-size: 16px; flex-shrink: 0; }
+  .career-label { flex: 1; font-family: var(--font-display); font-weight: 700; font-size: 13.5px; color: var(--ink); letter-spacing: 0.2px; }
+  .career-arrow { color: var(--accent); font-size: 16px; font-weight: 700; flex-shrink: 0; }
 
   .mode-icon {
     font-size: 23px; width: 46px; height: 46px; border-radius: 14px;
@@ -1385,9 +1405,6 @@
       <div class="app-subtitle" id="loginSubtitle">Wähle deinen Benutzernamen</div>
     </div>
 
-    <div class="toggle-group-label" id="loginNameLabel">Benutzername</div>
-    <input class="text-input" id="loginName" type="text" maxlength="24" placeholder="z. B. Dora">
-
     <div class="toggle-group-label" id="loginEmailLabel">E-Mail</div>
     <input class="text-input" id="loginEmail" type="email" placeholder="dora@beispiel.de">
 
@@ -1405,6 +1422,7 @@
 
   <!-- ============ MENU ============ -->
   <section class="screen hidden" id="screen-menu">
+    <div class="menu-logo-row" id="menuLogoRow"></div>
     <div class="menu-header-row">
       <div class="menu-header-spacer"></div>
       <div class="header">
@@ -1424,28 +1442,30 @@
 
     <div class="mode-list">
       <div class="mode-block">
-        <button class="mode-card" id="modePhrasesToggle">
-          <div class="mode-icon" id="iconModePhrases">💬</div>
+        <button class="mode-card" id="modePhrasesPlay">
+          <div class="mode-icon" id="iconModePhrasesPlay">💬</div>
           <div class="mode-info">
-            <div class="mode-title">Phrases</div>
-            <div class="mode-desc" id="modePhrasesDesc">Multiple-Choice mit Levels</div>
+            <div class="mode-title" id="modePhrasesPlayTitle">Phrases</div>
+            <div class="mode-desc" id="modePhrasesPlayDesc">Weiter mit deiner aktuellen Übung</div>
           </div>
-          <div class="mode-arrow" id="phrasesArrow">▾</div>
         </button>
-        <div class="stage-panel" id="phrasesStagePanel"></div>
       </div>
 
       <div class="mode-block">
-        <button class="mode-card" id="modeTypingToggle">
-          <div class="mode-icon" id="iconModeTyping">✍️</div>
+        <button class="mode-card" id="modeTypingPlay">
+          <div class="mode-icon" id="iconModeTypingPlay">✍️</div>
           <div class="mode-info">
-            <div class="mode-title" id="modeTypingTitle">Tippen</div>
-            <div class="mode-desc" id="modeTypingDesc">Schreibe die Vokabel selbst — Levels wie bei Phrases</div>
+            <div class="mode-title" id="modeTypingPlayTitle">Tippen</div>
+            <div class="mode-desc" id="modeTypingPlayDesc">Weiter mit deiner aktuellen Übung</div>
           </div>
-          <div class="mode-arrow" id="typingArrow">▾</div>
         </button>
-        <div class="stage-panel" id="typingStagePanel"></div>
       </div>
+
+      <button class="career-button" id="careerBtn">
+        <span class="career-icon" id="careerBtnIcon">🎯</span>
+        <span class="career-label" id="careerBtnLabel">Karriere</span>
+        <span class="career-arrow">›</span>
+      </button>
 
       <div class="mode-block">
         <button class="mode-card" id="modeFlashToggle">
@@ -1470,6 +1490,41 @@
 
     <div class="menu-footer-brand">
       <div class="brand-logo-swirl tiny"><svg viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"><path d="M24 18 L50 46"></path><path d="M76 18 L58 40 A10 10 0 1 0 50 58"></path></svg></div>
+    </div>
+  </section>
+
+  <!-- ============ KARRIERE (Stufen-/Level-Auswahl) ============ -->
+  <section class="screen hidden" id="screen-career">
+    <button class="back-button" id="backFromCareer">← Menü</button>
+
+    <div class="header">
+      <div class="mode-label" id="careerTitle">Karriere</div>
+    </div>
+
+    <div class="mode-list">
+      <div class="mode-block">
+        <button class="mode-card" id="modePhrasesToggle">
+          <div class="mode-icon" id="iconModePhrases">💬</div>
+          <div class="mode-info">
+            <div class="mode-title" id="modePhrasesTitle">Spielmodus Phrases</div>
+            <div class="mode-desc" id="modePhrasesDesc">Multiple-Choice mit Levels</div>
+          </div>
+          <div class="mode-arrow" id="phrasesArrow">▾</div>
+        </button>
+        <div class="stage-panel" id="phrasesStagePanel"></div>
+      </div>
+
+      <div class="mode-block">
+        <button class="mode-card" id="modeTypingToggle">
+          <div class="mode-icon" id="iconModeTyping">✍️</div>
+          <div class="mode-info">
+            <div class="mode-title" id="modeTypingTitle">Spielmodus Tippen</div>
+            <div class="mode-desc" id="modeTypingDesc">Schreibe die Vokabel selbst — Levels wie bei Phrases</div>
+          </div>
+          <div class="mode-arrow" id="typingArrow">▾</div>
+        </button>
+        <div class="stage-panel" id="typingStagePanel"></div>
+      </div>
     </div>
   </section>
 
@@ -1553,21 +1608,6 @@
       <div class="profile-name" id="friendProfileName">—</div>
 
       <div id="friendProfilePrivateNote" class="profile-private-note" style="display:none;"></div>
-
-      <div class="profile-stats" id="friendProfileStatsRow">
-        <div class="profile-stat">
-          <div class="profile-stat-value" id="friendProfileRankValue">⚔️ 0</div>
-          <div class="profile-stat-label" id="friendProfileRankLabel">Rang</div>
-        </div>
-        <div class="profile-stat">
-          <div class="profile-stat-value" id="friendProfileStreakValue">🔥 0</div>
-          <div class="profile-stat-label" id="friendProfileStreakLabel">Streak</div>
-        </div>
-        <div class="profile-stat">
-          <div class="profile-stat-value" id="friendProfileXpValue">⭐ 0</div>
-          <div class="profile-stat-label" id="friendProfileXpLabel">XP</div>
-        </div>
-      </div>
     </div>
 
     <div class="toggle-group-label" id="friendProfileStatsLabel" style="display:none;">Statistiken</div>
@@ -1626,7 +1666,12 @@
       <div class="mode-label" id="profileEditTitle">Profil bearbeiten</div>
     </div>
 
-    <div class="toggle-group-label" id="avatarLabel">Profilbild wählen</div>
+    <div class="toggle-group-label" id="editNameLabel">Benutzername</div>
+    <input class="text-input" id="editNameInput" type="text" maxlength="24" placeholder="Dein Name">
+    <button class="primary-button" id="nameSaveBtn" style="margin-top: 12px;">Namen speichern</button>
+    <div class="bio-saved-msg" id="nameSavedMsg"></div>
+
+    <div class="toggle-group-label" id="avatarLabel" style="margin-top: 26px;">Profilbild wählen</div>
     <div class="avatar-grid" id="avatarGrid"></div>
 
     <div class="toggle-group-label" id="heroesLabel" style="margin-top: 26px;">Helden auswählen</div>
@@ -2035,17 +2080,22 @@
     de: {
       appSubtitle: 'Sprachen lernen', uiLangLabel: 'Oberfläche', targetLangLabel: 'Ich möchte lernen',
       modePhrasesDesc: 'Multiple-Choice — tippe für Stufen & Level',
+      modePhrasesPlayTitle: 'Phrases',
+      continuePlayDesc: 'Weiter mit deiner aktuellen Übung',
+      careerBtnLabel: 'Karriere',
+      careerTitle: 'Karriere',
+      careerPhrasesModeLabel: 'Spielmodus Phrases',
+      careerTypingModeLabel: 'Spielmodus Tippen',
       modeFlashTitle: 'Karteikarten', modeFlashDesc: 'Alle Vokabeln in 3 Blöcken à 50 durchblättern',
       flashStageExplain: (n) => `${n}er-Blöcke`,
       back: '← Menü',
       settingsTitle: 'Einstellungen', appearanceLabel: 'Erscheinungsbild',
-      loginSubtitle: 'Melde dich an oder registriere dich', loginNameLabel: 'Benutzername',
-      loginEmailLabel: 'E-Mail (optional bei bestehendem Profil)',
+      loginSubtitle: 'Melde dich an oder registriere dich',
+      loginEmailLabel: 'E-Mail',
       loginPasswordLabel: 'Passwort',
       loginSubmit: "Los geht's →",
-      loginNote: 'Neu hier? E-Mail + Passwort vergeben. Schon registriert? Benutzername (oder E-Mail) + Passwort reicht.',
+      loginNote: 'Neue E-Mail = neues Profil wird angelegt. Bekannte E-Mail = Passwort wird geprüft.',
       loginNeedEmail: 'Bitte gib eine E-Mail-Adresse ein.',
-      loginUnknownUsername: 'Kein bestehendes Profil mit diesem Namen gefunden. Bitte gib deine E-Mail ein.',
       loginNeedPassword: 'Bitte gib ein Passwort ein.',
       loginWrongPassword: '❌ Falsches Passwort für diese E-Mail.',
       greeting: (name) => `Hallo, ${name}! 👋`,
@@ -2096,6 +2146,8 @@
       profileStreakLabel: 'Tage-Streak', profileXpLabel: 'XP gesamt',
       bioLabel: 'Bio (max. 25 Zeilen)', bioPlaceholder: 'Erzähl etwas über dich…',
       bioSave: 'Bio speichern', bioSaved: '✓ Gespeichert!',
+      editNameLabel: 'Benutzername', nameSaveBtn: 'Namen speichern',
+      nameEmptyError: 'Bitte gib einen Namen ein.',
       bioCounter: (n, max) => `${n} / ${max} Zeilen`,
       followLabel: 'Per E-Mail folgen',
       followBtn: '➕ Folgen',
@@ -2170,17 +2222,22 @@
     pt: {
       appSubtitle: 'Aprender idiomas', uiLangLabel: 'Interface', targetLangLabel: 'Quero aprender',
       modePhrasesDesc: 'Múltipla escolha — toque para estágios e níveis',
+      modePhrasesPlayTitle: 'Phrases',
+      continuePlayDesc: 'Continue seu exercício atual',
+      careerBtnLabel: 'Carreira',
+      careerTitle: 'Carreira',
+      careerPhrasesModeLabel: 'Modo de jogo: Phrases',
+      careerTypingModeLabel: 'Modo de jogo: Digitar',
       modeFlashTitle: 'Cartões', modeFlashDesc: 'Percorra todas as palavras em 3 blocos de 50',
       flashStageExplain: (n) => `blocos de ${n}`,
       back: '← Menu',
       settingsTitle: 'Configurações', appearanceLabel: 'Aparência',
-      loginSubtitle: 'Entre ou registre-se', loginNameLabel: 'Nome de usuário',
-      loginEmailLabel: 'E-mail (opcional se já tiver perfil)',
+      loginSubtitle: 'Entre ou registre-se',
+      loginEmailLabel: 'E-mail',
       loginPasswordLabel: 'Senha',
       loginSubmit: 'Vamos lá →',
-      loginNote: 'Novo por aqui? Defina e-mail + senha. Já registrado? Nome de usuário (ou e-mail) + senha bastam.',
+      loginNote: 'E-mail novo = novo perfil é criado. E-mail conhecido = a senha é verificada.',
       loginNeedEmail: 'Digite um endereço de e-mail.',
-      loginUnknownUsername: 'Nenhum perfil encontrado com este nome. Digite seu e-mail.',
       loginNeedPassword: 'Digite uma senha.',
       loginWrongPassword: '❌ Senha incorreta para este e-mail.',
       greeting: (name) => `Olá, ${name}! 👋`,
@@ -2231,6 +2288,8 @@
       profileStreakLabel: 'Dias seguidos', profileXpLabel: 'XP total',
       bioLabel: 'Bio (máx. 25 linhas)', bioPlaceholder: 'Conte algo sobre você…',
       bioSave: 'Salvar bio', bioSaved: '✓ Salvo!',
+      editNameLabel: 'Nome de usuário', nameSaveBtn: 'Salvar nome',
+      nameEmptyError: 'Digite um nome.',
       bioCounter: (n, max) => `${n} / ${max} linhas`,
       followLabel: 'Seguir por e-mail',
       followBtn: '➕ Seguir',
@@ -2305,17 +2364,22 @@
     en: {
       appSubtitle: 'Learn languages', uiLangLabel: 'Interface', targetLangLabel: 'I want to learn',
       modePhrasesDesc: 'Multiple choice — tap for stages & levels',
+      modePhrasesPlayTitle: 'Phrases',
+      continuePlayDesc: 'Continue your current exercise',
+      careerBtnLabel: 'Career',
+      careerTitle: 'Career',
+      careerPhrasesModeLabel: 'Game mode: Phrases',
+      careerTypingModeLabel: 'Game mode: Typing',
       modeFlashTitle: 'Flashcards', modeFlashDesc: 'Browse all words in 3 blocks of 50',
       flashStageExplain: (n) => `blocks of ${n}`,
       back: '← Menu',
       settingsTitle: 'Settings', appearanceLabel: 'Appearance',
-      loginSubtitle: 'Sign in or register', loginNameLabel: 'Username',
-      loginEmailLabel: 'Email (optional if you already have a profile)',
+      loginSubtitle: 'Sign in or register',
+      loginEmailLabel: 'Email',
       loginPasswordLabel: 'Password',
       loginSubmit: "Let's go →",
-      loginNote: 'New here? Set an email + password. Already registered? Username (or email) + password is enough.',
+      loginNote: 'New email = a new profile is created. Known email = the password is checked.',
       loginNeedEmail: 'Please enter an email address.',
-      loginUnknownUsername: 'No existing profile found with this name. Please enter your email.',
       loginNeedPassword: 'Please enter a password.',
       loginWrongPassword: '❌ Wrong password for this email.',
       greeting: (name) => `Hi, ${name}! 👋`,
@@ -2366,6 +2430,8 @@
       profileStreakLabel: 'Day streak', profileXpLabel: 'Total XP',
       bioLabel: 'Bio (max. 25 lines)', bioPlaceholder: 'Tell us about yourself…',
       bioSave: 'Save bio', bioSaved: '✓ Saved!',
+      editNameLabel: 'Username', nameSaveBtn: 'Save name',
+      nameEmptyError: 'Please enter a name.',
       bioCounter: (n, max) => `${n} / ${max} lines`,
       followLabel: 'Follow by email',
       followBtn: '➕ Follow',
@@ -2702,30 +2768,6 @@
     try { await db.set(socialKey(email), JSON.stringify(record), true); } catch (e) {}
   }
 
-  // Benutzername → E-Mail-Zuordnung (geteilt), damit man sich bei einem
-  // bestehenden Profil auch nur mit dem Benutzernamen anmelden kann.
-  // "Wer zuerst kommt, mahlt zuerst": ein Name wird nur verknüpft, wenn er
-  // noch nicht von einer anderen E-Mail belegt ist — so kann niemand aus
-  // Versehen das Konto eines anderen "kapern".
-  function usernameKey(name) { return 'username:' + sanitizeScopeKey((name || '').trim().toLowerCase()); }
-
-  async function getEmailForUsername(name) {
-    if (!hasStorage() || !name) return null;
-    try {
-      const res = await db.get(usernameKey(name), true);
-      return res && res.value ? JSON.parse(res.value).email : null;
-    } catch (e) { return null; }
-  }
-
-  async function registerUsernameMapping(name, email) {
-    if (!hasStorage() || !name || !email) return;
-    try {
-      const existingEmail = await getEmailForUsername(name);
-      if (existingEmail && existingEmail !== email) return; // Name gehört bereits jemand anderem
-      await db.set(usernameKey(name), JSON.stringify({ email }), true);
-    } catch (e) {}
-  }
-
   // Eigenes Profil in der geteilten Registry anlegen/aktualisieren (nur mit E-Mail)
   async function registerSelfSocial() {
     if (!currentProfile || !currentProfile.email) return;
@@ -2904,6 +2946,9 @@
       edit: { type: 'svg', value: '<svg class="asset-icon" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10-10-4-4L4 16z"/><path d="M13 6l4 4"/></svg>' },
       checkCorrect: { type: 'svg', value: '<svg class="asset-icon" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 6"/></svg>' },
     },
+    nav: {
+      career: { type: 'svg', value: '<svg class="asset-icon" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="21" x2="7" y2="4"/><path d="M7 6h11l-2.5 3L18 12H7"/><path d="M7 13H3l2 2.5L3 18h4"/></svg>' },
+    },
     // 15 Profilbilder — die letzten BONUS_AVATAR_COUNT sind kostenpflichtig (siehe AVATAR_PRICE_TIERS)
     avatars: [
       { type: 'svg', value: '<svg class="asset-icon" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="16" height="8" rx="2"/><line x1="21" y1="10.5" x2="21" y2="13.5"/><rect x="6" y="10.3" width="8" height="3.4" fill="#16a34a" stroke="none"/></svg>' },
@@ -3027,8 +3072,8 @@
   /* ================= ELEMENTE ================= */
   const $ = (id) => document.getElementById(id);
 
-  const loginSubtitle = $('loginSubtitle'), loginNameLabel = $('loginNameLabel'), loginEmailLabel = $('loginEmailLabel');
-  const loginName = $('loginName'), loginEmail = $('loginEmail'), loginSubmit = $('loginSubmit'), loginNote = $('loginNote');
+  const loginSubtitle = $('loginSubtitle'), loginEmailLabel = $('loginEmailLabel');
+  const loginEmail = $('loginEmail'), loginSubmit = $('loginSubmit'), loginNote = $('loginNote');
   const loginPassword = $('loginPassword'), loginPasswordLabel = $('loginPasswordLabel'), loginError = $('loginError');
   const loginLangDDBtn = $('loginLangDDBtn'), loginLangDDMenu = $('loginLangDDMenu');
   const profileFollowersValue = $('profileFollowersValue'), profileFollowersLabel = $('profileFollowersLabel');
@@ -3039,10 +3084,7 @@
   const followersListLabel = $('followersListLabel'), followersList = $('followersList');
   const backFromFriendProfile = $('backFromFriendProfile'), friendProfileTitle = $('friendProfileTitle');
   const friendProfileAvatar = $('friendProfileAvatar'), friendProfileName = $('friendProfileName');
-  const friendProfilePrivateNote = $('friendProfilePrivateNote'), friendProfileStatsRow = $('friendProfileStatsRow');
-  const friendProfileRankValue = $('friendProfileRankValue'), friendProfileRankLabel = $('friendProfileRankLabel');
-  const friendProfileStreakValue = $('friendProfileStreakValue'), friendProfileStreakLabel = $('friendProfileStreakLabel');
-  const friendProfileXpValue = $('friendProfileXpValue'), friendProfileXpLabel = $('friendProfileXpLabel');
+  const friendProfilePrivateNote = $('friendProfilePrivateNote');
   const friendHeroesLabel = $('friendHeroesLabel'), friendHeroesGrid = $('friendHeroesGrid');
   const friendProfileStatsLabel = $('friendProfileStatsLabel'), friendProfileStatsList = $('friendProfileStatsList');
   const friendNetworkFollowingLabel = $('friendNetworkFollowingLabel'), friendNetworkFollowingList = $('friendNetworkFollowingList');
@@ -3062,19 +3104,24 @@
   const confirmYesBtn = $('confirmYesBtn'), confirmCancelBtn = $('confirmCancelBtn');
   const xpByLangLabel = $('xpByLangLabel'), xpLangList = $('xpLangList');
   const appSubtitle = $('appSubtitle');
+  const menuLogoRow = $('menuLogoRow');
   const pillProfile = $('pillProfile'), pillStreak = $('pillStreak'), pillXp = $('pillXp');
   const openSettingsBtn = $('openSettingsBtn');
   const uiLangLabel = $('uiLangLabel'), targetLangLabel = $('targetLangLabel');
   const uiLangDDBtn = $('uiLangDDBtn'), uiLangDDMenu = $('uiLangDDMenu'), targetToggle = $('targetToggle');
   const modePhrasesDesc = $('modePhrasesDesc'), modeFlashTitle = $('modeFlashTitle'), modeFlashDesc = $('modeFlashDesc');
-  const modePhrasesToggle = $('modePhrasesToggle'), modeFlashToggle = $('modeFlashToggle');
+  const modePhrasesToggle = $('modePhrasesToggle'), modeFlashToggle = $('modeFlashToggle'), modePhrasesTitle = $('modePhrasesTitle');
   const phrasesArrow = $('phrasesArrow'), phrasesStagePanel = $('phrasesStagePanel');
   const flashArrow = $('flashArrow'), flashStagePanel = $('flashStagePanel');
+  const modePhrasesPlay = $('modePhrasesPlay'), modePhrasesPlayTitle = $('modePhrasesPlayTitle'), modePhrasesPlayDesc = $('modePhrasesPlayDesc');
+  const modeTypingPlay = $('modeTypingPlay'), modeTypingPlayTitle = $('modeTypingPlayTitle'), modeTypingPlayDesc = $('modeTypingPlayDesc');
+  const careerBtn = $('careerBtn'), careerBtnLabel = $('careerBtnLabel'), careerTitle = $('careerTitle'), backFromCareer = $('backFromCareer');
 
   const profileTitle = $('profileTitle'), profileAvatar = $('profileAvatar'), profileName = $('profileName'), profileEmail = $('profileEmail');
   const profileBioText = $('profileBioText');  const profileStreakValue = $('profileStreakValue'), profileStreakLabel = $('profileStreakLabel');
   const profileXpValue = $('profileXpValue'), profileXpLabel = $('profileXpLabel');
   const bioLabel = $('bioLabel'), bioInput = $('bioInput'), bioCounter = $('bioCounter'), bioSaveBtn = $('bioSaveBtn'), bioSavedMsg = $('bioSavedMsg');
+  const editNameLabel = $('editNameLabel'), editNameInput = $('editNameInput'), nameSaveBtn = $('nameSaveBtn'), nameSavedMsg = $('nameSavedMsg');
   const backFromProfile = $('backFromProfile');
   const editProfileBtn = $('editProfileBtn'), profileEditTitle = $('profileEditTitle'), backFromProfileEdit = $('backFromProfileEdit');
 
@@ -3128,7 +3175,7 @@
   themeSwitch.addEventListener('click', () => document.body.classList.toggle('dark'));
 
   /* ================= NAVIGATION ================= */
-  const SCREENS = ['login', 'menu', 'profile', 'profile-edit', 'followers', 'friend-profile', 'xp', 'settings', 'phrases', 'flashcards', 'typing'];
+  const SCREENS = ['login', 'menu', 'career', 'profile', 'profile-edit', 'followers', 'friend-profile', 'xp', 'settings', 'phrases', 'flashcards', 'typing'];
   let viewingFriendEmail = null; // welcher Freund gerade in der Profil-Ansicht angezeigt wird
   function showScreen(name) {
     SCREENS.forEach(s => $('screen-' + s).classList.toggle('hidden', s !== name));
@@ -3141,6 +3188,7 @@
     if (name === 'friend-profile') renderFriendProfile();
     if (name === 'xp') renderXpPage();
     if (name === 'menu') renderMenu();
+    if (name === 'career') renderCareer();
   }
 
   function openFriendProfile(email) {
@@ -3151,7 +3199,6 @@
   /* ================= LOGIN ================= */
   function renderLogin() {
     loginSubtitle.textContent = t('loginSubtitle');
-    loginNameLabel.textContent = t('loginNameLabel');
     loginEmailLabel.textContent = t('loginEmailLabel');
     loginPasswordLabel.textContent = t('loginPasswordLabel');
     loginSubmit.textContent = t('loginSubmit');
@@ -3215,29 +3262,23 @@
     loginError.style.display = 'none';
   }
 
+  // Platzhalter-Name für neue Konten, abgeleitet aus der E-Mail (z. B. "dora@beispiel.de" -> "Dora").
+  // Änderbar jederzeit unter "Profil bearbeiten".
+  function defaultNameFromEmail(email) {
+    const local = (email || '').split('@')[0] || 'Spieler';
+    return local.charAt(0).toUpperCase() + local.slice(1);
+  }
+
   async function handleLoginSubmit() {
     clearLoginError();
-    const name = loginName.value.trim();
-    let email = normEmail(loginEmail.value.trim());
+    const email = normEmail(loginEmail.value.trim());
     const password = loginPassword.value;
 
-    if (!name) { loginName.focus(); return; }
+    if (!email) { showLoginError(t('loginNeedEmail')); loginEmail.focus(); return; }
+    if (!password) { showLoginError(t('loginNeedPassword')); loginPassword.focus(); return; }
 
     loginSubmit.disabled = true;
     try {
-      if (!email) {
-        // Keine E-Mail angegeben — versuchen, sie über den Benutzernamen
-        // eines bestehenden Profils aufzulösen.
-        const foundEmail = await getEmailForUsername(name);
-        if (!foundEmail) {
-          showLoginError(t('loginUnknownUsername'));
-          loginEmail.focus();
-          return;
-        }
-        email = foundEmail;
-      }
-      if (!password) { showLoginError(t('loginNeedPassword')); loginPassword.focus(); return; }
-
       loginScopeOverride = sanitizeScopeKey(email);
       const existing = await loadProfile();
 
@@ -3256,18 +3297,16 @@
             return;
           }
         }
-        existing.name = name || existing.name;
         existing.email = email;
-        await registerUsernameMapping(existing.name, email);
+        if (!existing.name) existing.name = defaultNameFromEmail(email); // alte Profile ohne Namen absichern
         await loadGameStateForCurrentScope(); // Spielstand (XP, Streak, Level) laden, bevor der Streak geprüft wird
         await completeLogin(existing);
       } else {
-        // Neue E-Mail — neues Profil anlegen
+        // Neue E-Mail — neues Profil mit Platzhalter-Namen anlegen
         const pwHash = await hashPassword(password, email);
-        await registerUsernameMapping(name, email);
         await loadGameStateForCurrentScope(); // frischer Scope, lädt saubere Default-Werte
         await completeLogin({
-          name, email, bio: '', pwHash,
+          name: defaultNameFromEmail(email), email, bio: '', pwHash,
           unlockedAvatars: [], unlockedHeroes: [], heroKey: null, isPrivate: false,
         });
       }
@@ -3278,7 +3317,7 @@
   }
 
   loginSubmit.addEventListener('click', handleLoginSubmit);
-  [loginName, loginEmail, loginPassword].forEach(el => {
+  [loginEmail, loginPassword].forEach(el => {
     el.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLoginSubmit(); });
   });
 
@@ -3286,7 +3325,6 @@
     await clearProfile();
     currentProfile = null;
     forgetEmail();
-    loginName.value = '';
     loginEmail.value = '';
     loginPassword.value = '';
     clearLoginError();
@@ -3423,6 +3461,46 @@
     }
   }
 
+  function renderCareer() {
+    careerTitle.textContent = t('careerTitle');
+    backFromCareer.textContent = t('back');
+    const iconModePhrases = $('iconModePhrases'), iconModeTyping = $('iconModeTyping');
+    if (iconModePhrases) iconModePhrases.innerHTML = assetHTML('modes.phrases');
+    if (iconModeTyping) iconModeTyping.innerHTML = assetHTML('modes.typing');
+    modePhrasesTitle.textContent = t('careerPhrasesModeLabel');
+    modePhrasesDesc.textContent = t('modePhrasesDesc');
+    modeTypingTitle.textContent = t('careerTypingModeLabel');
+    modeTypingDesc.textContent = t('modeTypingDesc');
+  }
+  careerBtn.addEventListener('click', () => showScreen('career'));
+  backFromCareer.addEventListener('click', () => showScreen('menu'));
+
+  // Findet die erste noch nicht abgeschlossene Stufe (zum direkten Weiterspielen);
+  // ist alles abgeschlossen, wird das letzte Level der letzten Stufe wiederholt.
+  function findContinueStage(states) {
+    for (let i = 0; i < states.length; i++) {
+      if (!states[i].completed) return { stageIdx: i, level: states[i].activeLevel };
+    }
+    const lastIdx = states.length - 1;
+    return { stageIdx: lastIdx, level: states[lastIdx].activeLevel };
+  }
+
+  function continuePhrasesPlay() {
+    const { stageIdx, level } = findContinueStage(stagesState());
+    currentStageId = stageIdx;
+    playingLevel = level;
+    startRound();
+    showScreen('phrases');
+  }
+  function continueTypingPlay() {
+    const { stageIdx, level } = findContinueStage(typingStagesState());
+    currentTypingStage = stageIdx;
+    typingPlayingLevel = level;
+    showScreen('typing');
+  }
+  modePhrasesPlay.addEventListener('click', continuePhrasesPlay);
+  modeTypingPlay.addEventListener('click', continueTypingPlay);
+
   function renderPhrasesStagePanel() {
     buildStagePanel(phrasesStagePanel, 'phrases', () => stagesState(), (stageIdx, lvl) => {
       currentStageId = stageIdx;
@@ -3453,23 +3531,55 @@
     flashStagePanel.appendChild(grid);
   }
 
+  // Eigenes SVG-Logo für den "Yes!"-Schriftzug — skalierbar, mit Verlauf +
+  // Neon-Glow passend zum Sci-Fi-Theme. Steht jetzt ganz oben im Menü.
+  function yesLogoSVG() {
+    return `
+      <svg class="menu-yes-logo" viewBox="0 0 132 46" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Yes!">
+        <defs>
+          <linearGradient id="menuYesLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#38BDF8" />
+            <stop offset="50%" stop-color="#0EA5E9" />
+            <stop offset="100%" stop-color="#0284C7" />
+          </linearGradient>
+          <filter id="menuYesLogoGlow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="2.4" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        <text x="3" y="34" font-family="'Space Grotesk', sans-serif" font-size="34"
+          font-weight="700" letter-spacing="0.5" fill="url(#menuYesLogoGrad)" filter="url(#menuYesLogoGlow)">Yes!</text>
+      </svg>
+    `;
+  }
+
   function renderMenu() {
+    menuLogoRow.innerHTML = yesLogoSVG();
     appSubtitle.textContent = currentProfile ? t('greeting', currentProfile.name) : t('appSubtitle');
     pillProfile.innerHTML = currentProfile ? profilePicHTML(currentProfile) : assetHTML('stats.profileDefault');
     pillRank.innerHTML = `${assetHTML('stats.rank')} ${t('rankStat', rankOf(xp))}`;
     pillStreak.innerHTML = `${assetHTML('stats.streak')} ${t('streakStat', streak)}`;
     pillXp.innerHTML = `${assetHTML('stats.xp')} ${t('xpStat', xp)}`;
-    const iconModePhrases = $('iconModePhrases'), iconModeTyping = $('iconModeTyping'), iconModeFlash = $('iconModeFlash');
-    if (iconModePhrases) iconModePhrases.innerHTML = assetHTML('modes.phrases');
-    if (iconModeTyping) iconModeTyping.innerHTML = assetHTML('modes.typing');
+    const iconModeFlash = $('iconModeFlash');
     if (iconModeFlash) iconModeFlash.innerHTML = assetHTML('modes.flashcards');
+    const iconModePhrasesPlay = $('iconModePhrasesPlay'), iconModeTypingPlay = $('iconModeTypingPlay');
+    if (iconModePhrasesPlay) iconModePhrasesPlay.innerHTML = assetHTML('modes.phrases');
+    if (iconModeTypingPlay) iconModeTypingPlay.innerHTML = assetHTML('modes.typing');
+    modePhrasesPlayTitle.textContent = t('modePhrasesPlayTitle');
+    modePhrasesPlayDesc.textContent = t('continuePlayDesc');
+    modeTypingPlayTitle.textContent = t('modeTypingTitle');
+    modeTypingPlayDesc.textContent = t('continuePlayDesc');
+    careerBtnLabel.textContent = t('careerBtnLabel');
+    const careerBtnIcon = $('careerBtnIcon');
+    if (careerBtnIcon) careerBtnIcon.innerHTML = assetHTML('nav.career');
     uiLangLabel.textContent = t('uiLangLabel');
     targetLangLabel.textContent = t('targetLangLabel');
-    modePhrasesDesc.textContent = t('modePhrasesDesc');
     modeFlashTitle.textContent = t('modeFlashTitle');
     modeFlashDesc.textContent = t('modeFlashDesc');
-    modeTypingTitle.textContent = t('modeTypingTitle');
-    modeTypingDesc.textContent = t('modeTypingDesc');
     backFromPhrases.textContent = t('back');
     backFromFlashcards.textContent = t('back');
     backFromTyping.textContent = t('back');
@@ -3617,6 +3727,10 @@
     if (!currentProfile) return;
     profileEditTitle.textContent = t('profileEditTitle');
     backFromProfileEdit.textContent = `← ${t('profileTitle')}`;
+    editNameLabel.textContent = t('editNameLabel');
+    editNameInput.value = currentProfile.name || '';
+    nameSaveBtn.textContent = t('nameSaveBtn');
+    nameSavedMsg.textContent = '';
     avatarLabel.textContent = t('avatarLabel');
     renderAvatarGrid();
     heroesLabel.textContent = t('heroesLabel');
@@ -3699,7 +3813,6 @@
     const isPrivate = !!(rec && rec.isPrivate);
     friendProfilePrivateNote.style.display = isPrivate ? 'block' : 'none';
     friendProfilePrivateNote.textContent = t('profilePrivateNote');
-    friendProfileStatsRow.style.display = 'none'; // ersetzt durch die vollständige Statistik-Liste unten
     friendProfileStatsLabel.style.display = isPrivate ? 'none' : '';
     friendHeroesLabel.style.display = isPrivate ? 'none' : '';
     friendHeroesGrid.style.display = isPrivate ? 'none' : 'grid';
@@ -4165,6 +4278,18 @@
     currentProfile.bio = limitBioLines(bioInput.value.trim());
     await saveProfile();
     bioSavedMsg.textContent = t('bioSaved');
+  });
+
+  editNameInput.addEventListener('input', () => { nameSavedMsg.textContent = ''; });
+
+  nameSaveBtn.addEventListener('click', async () => {
+    if (!currentProfile) return;
+    const newName = editNameInput.value.trim();
+    if (!newName) { nameSavedMsg.textContent = t('nameEmptyError'); return; }
+    currentProfile.name = newName;
+    await saveProfile();
+    await registerSelfSocial(); // Name auch im geteilten Profil aktualisieren (Freunde sehen ihn sonst veraltet)
+    nameSavedMsg.textContent = t('bioSaved');
   });
 
   /* ================= PHRASES (Best-of-5 mit klickbaren Leveln) ================= */
